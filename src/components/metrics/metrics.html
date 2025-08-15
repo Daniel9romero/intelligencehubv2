@@ -1,0 +1,158 @@
+<!-- Metrics Section -->
+<section id="metrics" class="section">
+    <h2>Métricas de Éxito</h2>
+    
+    <h3>KPIs de Impacto del Negocio</h3>
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <div class="stat-label">Decisiones Informadas</div>
+            <input type="number" id="metricDecisions" class="metric-input" placeholder="0" onchange="window.uiController.saveAllData()">
+            <div class="stat-label">Meta: 10 por mes</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Oportunidades ($MXN)</div>
+            <input type="text" id="metricOpportunities" class="metric-input" placeholder="0" onchange="window.uiController.saveAllData()">
+            <div class="stat-label">Meta: $1M MXN</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Riesgos Mitigados</div>
+            <input type="number" id="metricRisks" class="metric-input" placeholder="0" onchange="window.uiController.saveAllData()">
+            <div class="stat-label">Meta: 5 críticos</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Tiempo Ahorrado (hrs)</div>
+            <input type="number" id="metricTime" class="metric-input" placeholder="0" onchange="window.uiController.saveAllData()">
+            <div class="stat-label">Meta: 100 hrs/mes</div>
+        </div>
+    </div>
+
+    <h3>Análisis de Rendimiento</h3>
+    <div class="data-container">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            <div>
+                <h4>Resumen del Mes</h4>
+                <div id="monthlyMetrics">
+                    <!-- Monthly metrics will be calculated here -->
+                </div>
+            </div>
+            <div>
+                <h4>Comparación con Objetivos</h4>
+                <div id="goalComparison">
+                    <!-- Goal comparison will be shown here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn btn-secondary" onclick="generateMetricsReport()">Generar Reporte de Métricas</button>
+        <button class="btn btn-secondary" onclick="exportMetrics()">Exportar Datos</button>
+        <button class="btn btn-primary" onclick="window.uiController.saveAllData()">Guardar Métricas</button>
+    </div>
+</section>
+
+<script>
+// Generate metrics report
+function generateMetricsReport() {
+    const data = window.dataManager.getData();
+    const metrics = data.metrics || {};
+    
+    // Calculate progress towards goals
+    const decisionsProgress = Math.min((parseInt(metrics.decisions) || 0) / 10 * 100, 100);
+    const opportunitiesProgress = Math.min((parseFloat(metrics.opportunities) || 0) / 1000000 * 100, 100);
+    const risksProgress = Math.min((parseInt(metrics.risks) || 0) / 5 * 100, 100);
+    const timeProgress = Math.min((parseInt(metrics.time) || 0) / 100 * 100, 100);
+    
+    let report = `REPORTE DE MÉTRICAS - BAFAR INTELLIGENCE HUB\n`;
+    report += `Fecha: ${new Date().toLocaleDateString('es-MX')}\n\n`;
+    
+    report += `MÉTRICAS ACTUALES:\n`;
+    report += `- Decisiones Informadas: ${metrics.decisions || 0} (${decisionsProgress.toFixed(1)}% del objetivo)\n`;
+    report += `- Oportunidades: ${Utils.formatCurrency(metrics.opportunities || 0)} (${opportunitiesProgress.toFixed(1)}% del objetivo)\n`;
+    report += `- Riesgos Mitigados: ${metrics.risks || 0} (${risksProgress.toFixed(1)}% del objetivo)\n`;
+    report += `- Tiempo Ahorrado: ${metrics.time || 0} hrs (${timeProgress.toFixed(1)}% del objetivo)\n\n`;
+    
+    report += `ANÁLISIS:\n`;
+    const avgProgress = (decisionsProgress + opportunitiesProgress + risksProgress + timeProgress) / 4;
+    report += `- Progreso promedio hacia objetivos: ${avgProgress.toFixed(1)}%\n`;
+    
+    if (avgProgress >= 80) {
+        report += `- Estado: EXCELENTE - Superando expectativas\n`;
+    } else if (avgProgress >= 60) {
+        report += `- Estado: BUENO - En camino hacia los objetivos\n`;
+    } else if (avgProgress >= 40) {
+        report += `- Estado: REGULAR - Necesita atención\n`;
+    } else {
+        report += `- Estado: CRÍTICO - Requiere acción inmediata\n`;
+    }
+    
+    // Create and download the report
+    const blob = new Blob([report], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `reporte-metricas-${new Date().toISOString().split('T')[0]}.txt`;
+    link.click();
+    
+    Utils.showNotification('Reporte de métricas generado', 'success');
+}
+
+// Export metrics data
+function exportMetrics() {
+    const data = window.dataManager.getData();
+    const metricsData = {
+        metrics: data.metrics,
+        exportDate: new Date().toISOString(),
+        goals: {
+            decisions: 10,
+            opportunities: 1000000,
+            risks: 5,
+            time: 100
+        }
+    };
+    
+    Utils.exportToJSON(metricsData, 'bafar-metricas.json');
+    Utils.showNotification('Métricas exportadas', 'success');
+}
+
+// Update metrics display when values change
+function updateMetricsDisplay() {
+    const data = window.dataManager.getData();
+    const metrics = data.metrics || {};
+    
+    // Update monthly metrics
+    const monthlyDiv = document.getElementById('monthlyMetrics');
+    if (monthlyDiv) {
+        monthlyDiv.innerHTML = `
+            <div style="display: grid; gap: 10px;">
+                <div>Decisiones: <strong>${metrics.decisions || 0}</strong></div>
+                <div>Oportunidades: <strong>${Utils.formatCurrency(metrics.opportunities || 0)}</strong></div>
+                <div>Riesgos: <strong>${metrics.risks || 0}</strong></div>
+                <div>Tiempo: <strong>${metrics.time || 0} hrs</strong></div>
+            </div>
+        `;
+    }
+    
+    // Update goal comparison
+    const goalDiv = document.getElementById('goalComparison');
+    if (goalDiv) {
+        const decisionsProgress = Math.min((parseInt(metrics.decisions) || 0) / 10 * 100, 100);
+        const opportunitiesProgress = Math.min((parseFloat(metrics.opportunities) || 0) / 1000000 * 100, 100);
+        const risksProgress = Math.min((parseInt(metrics.risks) || 0) / 5 * 100, 100);
+        const timeProgress = Math.min((parseInt(metrics.time) || 0) / 100 * 100, 100);
+        
+        goalDiv.innerHTML = `
+            <div style="display: grid; gap: 10px;">
+                <div>Decisiones: ${decisionsProgress.toFixed(1)}%</div>
+                <div>Oportunidades: ${opportunitiesProgress.toFixed(1)}%</div>
+                <div>Riesgos: ${risksProgress.toFixed(1)}%</div>
+                <div>Tiempo: ${timeProgress.toFixed(1)}%</div>
+            </div>
+        `;
+    }
+}
+
+// Update display when metrics change
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(updateMetricsDisplay, 1000);
+});
+</script>

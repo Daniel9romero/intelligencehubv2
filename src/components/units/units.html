@@ -1,0 +1,68 @@
+<!-- Business Units Section -->
+<section id="units" class="section">
+    <h2>Configuración de Unidades de Negocio</h2>
+    
+    <div class="data-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3>Registro de Unidades y Responsables</h3>
+            <div>
+                <button class="btn btn-primary" onclick="window.uiController.saveAllData()">Guardar Cambios</button>
+            </div>
+        </div>
+
+        <!-- Add Unit Form -->
+        <div id="addUnitForm" style="background: #f8f9fa; padding: 15px; margin-bottom: 20px; border-radius: 4px; border: 2px dashed #dee2e6;">
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="text" id="newUnitName" placeholder="Nombre de la nueva unidad" style="flex: 1; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;">
+                <button class="btn" onclick="addUnitFromForm()">+ Agregar Unidad</button>
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th width="5%">#</th>
+                    <th width="25%">Unidad de Negocio</th>
+                    <th width="20%">Responsable</th>
+                    <th width="20%">Email</th>
+                    <th width="10%">Frecuencia</th>
+                    <th width="10%">Estado</th>
+                    <th width="10%">Acción</th>
+                </tr>
+            </thead>
+            <tbody id="unitsTableBody">
+                <!-- Units will be added here -->
+            </tbody>
+        </table>
+        
+        <div style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 4px;">
+            <small><strong>Nota:</strong> Al agregar o eliminar unidades, se actualizará automáticamente la sección de "Necesidades de Información".</small>
+        </div>
+    </div>
+</section>
+
+<script>
+// Add unit from form function (specific to this component)
+function addUnitFromForm() {
+    const input = document.getElementById('newUnitName');
+    const name = input ? input.value.trim() : '';
+    
+    if (!name) {
+        Utils.showNotification('Por favor ingrese un nombre para la unidad', 'warning');
+        return;
+    }
+    
+    const newUnit = window.uiController.addUnit({
+        name: name,
+        responsible: '',
+        email: '',
+        frequency: 'Semanal',
+        status: 'Pendiente'
+    });
+    
+    // Clear the input
+    input.value = '';
+    
+    Utils.showNotification('Unidad agregada: ' + newUnit.name, 'success');
+}
+</script>

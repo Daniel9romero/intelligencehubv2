@@ -1,0 +1,58 @@
+<!-- Research Matrix Section -->
+<section id="research" class="section">
+    <h2>Matriz de Investigación</h2>
+    
+    <div class="alert alert-info">
+        Configure los tópicos de investigación específicos para cada unidad de negocio, asigne responsables y establezca frecuencias de actualización.
+    </div>
+
+    <div id="researchMatrixContainer">
+        <!-- Research matrix cards will be populated here -->
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn btn-secondary" onclick="generateResearchReport()">Generar Reporte</button>
+        <button class="btn btn-secondary" onclick="Utils.exportToJSON(window.dataManager.getData().research, 'bafar-research-matrix.json')">Exportar Matriz</button>
+        <button class="btn btn-primary" onclick="window.uiController.saveAllData()">Guardar Matriz de Investigación</button>
+    </div>
+</section>
+
+<script>
+// Generate research report function
+function generateResearchReport() {
+    const data = window.dataManager.getData();
+    const summary = Utils.generateReportSummary(data);
+    
+    let report = `REPORTE DE MATRIZ DE INVESTIGACIÓN - BAFAR\n`;
+    report += `Fecha: ${summary.lastUpdate}\n\n`;
+    report += `RESUMEN EJECUTIVO:\n`;
+    report += `- Unidades totales: ${summary.totalUnits}\n`;
+    report += `- Unidades activas: ${summary.activeUnits}\n`;
+    report += `- Tópicos de investigación: ${summary.totalTopics}\n`;
+    report += `- Tasa de completitud: ${summary.completionRate}%\n\n`;
+    
+    report += `DETALLE POR UNIDAD:\n`;
+    data.units.forEach(unit => {
+        const research = data.research[unit.id] || { topics: [] };
+        report += `\n${unit.name}:\n`;
+        report += `  Responsable: ${unit.responsible || 'No asignado'}\n`;
+        report += `  Estado: ${unit.status}\n`;
+        report += `  Tópicos: ${research.topics.length}\n`;
+        
+        if (research.topics.length > 0) {
+            research.topics.forEach((topic, index) => {
+                report += `    ${index + 1}. ${topic.topic || 'Sin nombre'} (${topic.frequency || 'Sin frecuencia'})\n`;
+            });
+        }
+    });
+    
+    // Create and download the report
+    const blob = new Blob([report], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `reporte-investigacion-${new Date().toISOString().split('T')[0]}.txt`;
+    link.click();
+    
+    Utils.showNotification('Reporte generado y descargado', 'success');
+}
+</script>

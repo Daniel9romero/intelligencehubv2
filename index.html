@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAFAR Intelligence Hub - Centro de Inteligencia Competitiva</title>
+    
+    <!-- CSS Modules -->
+    <link rel="stylesheet" href="src/styles/base.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/modules.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>BAFAR INTELLIGENCE HUB</h1>
+            <p>Centro de Inteligencia Competitiva Personalizada por Unidad de Negocio</p>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <button onclick="window.uiController.showSection('dashboard', this)" class="active">Dashboard</button>
+            <button onclick="window.uiController.showSection('units', this)">Unidades de Negocio</button>
+            <button onclick="window.uiController.showSection('needs', this)">Necesidades de Información</button>
+            <button onclick="window.uiController.showSection('research', this)">Matriz de Investigación</button>
+            <button onclick="window.uiController.showSection('timeline', this)">Cronograma</button>
+            <button onclick="window.uiController.showSection('metrics', this)">Métricas</button>
+        </nav>
+
+        <!-- Content Container -->
+        <div class="content" id="contentContainer">
+            <!-- Components will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Save Indicator -->
+    <div class="save-indicator" id="saveIndicator">
+        Datos guardados correctamente
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="src/scripts/utils.js"></script>
+    <script src="src/scripts/data-manager.js"></script>
+    <script src="src/scripts/ui-controllers.js"></script>
+
+    <!-- Application Initialization -->
+    <script>
+        // Global instances
+        let dataManager;
+        let uiController;
+
+        // Component loader utility
+        class ComponentLoader {
+            static async loadComponent(componentPath, targetId) {
+                try {
+                    const response = await fetch(componentPath);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const html = await response.text();
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.innerHTML = html;
+                    }
+                    return true;
+                } catch (error) {
+                    console.error('Error loading component:', error);
+                    return false;
+                }
+            }
+
+            static async loadAllComponents() {
+                const components = [
+                    'src/components/dashboard/dashboard.html',
+                    'src/components/units/units.html',
+                    'src/components/needs/needs.html',
+                    'src/components/research/research.html',
+                    'src/components/timeline/timeline.html',
+                    'src/components/metrics/metrics.html'
+                ];
+
+                try {
+                    const responses = await Promise.all(
+                        components.map(component => fetch(component))
+                    );
+
+                    const htmlContents = await Promise.all(
+                        responses.map(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.text();
+                        })
+                    );
+
+                    // Combine all components
+                    const combinedHTML = htmlContents.join('\n');
+                    document.getElementById('contentContainer').innerHTML = combinedHTML;
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Error loading components:', error);
+                    // Fallback: show error message
+                    document.getElementById('contentContainer').innerHTML = `
+                        <div class="alert alert-warning">
+                            <strong>Modo de Desarrollo:</strong> No se pudieron cargar los componentes modulares. 
+                            Usando versión integrada como fallback.
+                        </div>
+                    `;
+                    return false;
+                }
+            }
+        }
+
+        // Fallback content if components can't be loaded
+        function loadFallbackContent() {
+            const fallbackHTML = `
+                <!-- Fallback: Basic dashboard -->
+                <section id="dashboard" class="section active">
+                    <h2>Dashboard Ejecutivo</h2>
+                    <div class="alert alert-info">
+                        <strong>Objetivo del Proyecto:</strong> Implementar en 90 días un sistema de gestión del conocimiento que proporcione inteligencia competitiva personalizada para cada unidad de negocio.
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Días Restantes</div>
+                            <div class="stat-number" id="daysRemaining">90</div>
+                            <div class="stat-label">Fecha Inicio: <span id="startDate">--</span></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Unidades Activas</div>
+                            <div class="stat-number" id="unitsCount">0</div>
+                            <div class="stat-label">Total Configuradas</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Progreso Sprint</div>
+                            <div class="stat-number" id="progressPercent">0%</div>
+                            <div class="stat-label">Fase: Configuración</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Placeholder sections -->
+                <section id="units" class="section">
+                    <h2>Unidades de Negocio</h2>
+                    <div class="alert alert-info">Cargando módulo de unidades...</div>
+                </section>
+
+                <section id="needs" class="section">
+                    <h2>Necesidades de Información</h2>
+                    <div class="alert alert-info">Cargando módulo de necesidades...</div>
+                </section>
+
+                <section id="research" class="section">
+                    <h2>Matriz de Investigación</h2>
+                    <div class="alert alert-info">Cargando módulo de investigación...</div>
+                </section>
+
+                <section id="timeline" class="section">
+                    <h2>Cronograma</h2>
+                    <div class="alert alert-info">Cargando módulo de cronograma...</div>
+                </section>
+
+                <section id="metrics" class="section">
+                    <h2>Métricas</h2>
+                    <div class="alert alert-info">Cargando módulo de métricas...</div>
+                </section>
+            `;
+            
+            document.getElementById('contentContainer').innerHTML = fallbackHTML;
+        }
+
+        // Application initialization
+        async function initializeApp() {
+            try {
+                // Initialize data manager
+                dataManager = new DataManager();
+                dataManager.initApp();
+                
+                // Make data manager globally accessible
+                window.dataManager = dataManager;
+
+                // Try to load modular components
+                const componentsLoaded = await ComponentLoader.loadAllComponents();
+                
+                if (!componentsLoaded) {
+                    console.log('Using fallback content');
+                    loadFallbackContent();
+                }
+
+                // Initialize UI controller
+                uiController = new UIController(dataManager);
+                window.uiController = uiController;
+
+                // Update UI
+                uiController.updateUI();
+
+                // Auto-save every 60 seconds
+                setInterval(() => {
+                    uiController.saveAllData();
+                }, 60000);
+
+                // Show success notification
+                setTimeout(() => {
+                    Utils.showNotification('BAFAR Intelligence Hub inicializado correctamente', 'success');
+                }, 1000);
+
+                console.log('BAFAR Intelligence Hub initialized successfully');
+
+            } catch (error) {
+                console.error('Error initializing application:', error);
+                
+                // Emergency fallback
+                document.getElementById('contentContainer').innerHTML = `
+                    <div class="alert alert-warning">
+                        <strong>Error de Inicialización:</strong> Ocurrió un problema al cargar la aplicación. 
+                        Por favor, recarga la página o contacta al administrador.
+                    </div>
+                `;
+            }
+        }
+
+        // Start the application when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Global helper functions for backward compatibility
+        window.showSection = function(sectionId, button) {
+            if (window.uiController) {
+                window.uiController.showSection(sectionId, button);
+            }
+        };
+
+        window.saveAllData = function() {
+            if (window.uiController) {
+                window.uiController.saveAllData();
+            }
+        };
+
+        // Development utilities (remove in production)
+        window.dev = {
+            dataManager: () => window.dataManager,
+            uiController: () => window.uiController,
+            utils: Utils,
+            resetApp: () => {
+                localStorage.clear();
+                location.reload();
+            },
+            exportAllData: () => {
+                Utils.exportToJSON(window.dataManager.getData(), 'bafar-full-backup.json');
+            }
+        };
+    </script>
+</body>
+</html>

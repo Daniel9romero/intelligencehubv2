@@ -1,0 +1,122 @@
+<!-- Timeline Section -->
+<section id="timeline" class="section">
+    <h2>Cronograma de Implementación - 90 Días</h2>
+    
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-date">Semanas 1-2</div>
+            <div class="timeline-content">
+                <strong>FASE 1: DESCUBRIMIENTO</strong>
+                <ul>
+                    <li>Entrevistas con ejecutivos</li>
+                    <li>Mapeo de necesidades</li>
+                    <li>Configuración de herramientas</li>
+                </ul>
+                <div style="margin-top: 10px;">
+                    <div class="progress-container" style="height: 20px;">
+                        <div class="progress-bar" style="width: 85%; font-size: 12px;">85% Completado</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-date">Semanas 3-8</div>
+            <div class="timeline-content">
+                <strong>FASE 2: INVESTIGACIÓN INTENSIVA</strong>
+                <ul>
+                    <li>Producción de 30-40 documentos</li>
+                    <li>Creación de biblioteca digital</li>
+                    <li>Desarrollo de dashboards</li>
+                </ul>
+                <div style="margin-top: 10px;">
+                    <div class="progress-container" style="height: 20px;">
+                        <div class="progress-bar" style="width: 25%; font-size: 12px;">25% En Progreso</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-date">Semanas 9-10</div>
+            <div class="timeline-content">
+                <strong>FASE 3: PLATAFORMA DIGITAL</strong>
+                <ul>
+                    <li>Implementación de blog interno</li>
+                    <li>Migración de contenido</li>
+                    <li>Sistema de distribución</li>
+                </ul>
+                <div style="margin-top: 10px;">
+                    <div class="progress-container" style="height: 20px;">
+                        <div class="progress-bar" style="width: 5%; font-size: 12px;">5% Planeado</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-date">Semanas 11-12</div>
+            <div class="timeline-content">
+                <strong>FASE 4: LANZAMIENTO</strong>
+                <ul>
+                    <li>Campaña de comunicación</li>
+                    <li>Capacitación de usuarios</li>
+                    <li>Medición y ajustes</li>
+                </ul>
+                <div style="margin-top: 10px;">
+                    <div class="progress-container" style="height: 20px;">
+                        <div class="progress-bar" style="width: 0%; font-size: 12px;">0% Pendiente</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn btn-secondary" onclick="exportTimeline()">Exportar Cronograma</button>
+        <button class="btn btn-primary" onclick="updateTimelineProgress()">Actualizar Progreso</button>
+    </div>
+</section>
+
+<script>
+// Export timeline function
+function exportTimeline() {
+    const timelineData = {
+        project: "BAFAR Intelligence Hub",
+        duration: "90 días",
+        phases: [
+            {
+                name: "FASE 1: DESCUBRIMIENTO",
+                weeks: "1-2",
+                progress: 85,
+                tasks: ["Entrevistas con ejecutivos", "Mapeo de necesidades", "Configuración de herramientas"]
+            },
+            {
+                name: "FASE 2: INVESTIGACIÓN INTENSIVA", 
+                weeks: "3-8",
+                progress: 25,
+                tasks: ["Producción de 30-40 documentos", "Creación de biblioteca digital", "Desarrollo de dashboards"]
+            },
+            {
+                name: "FASE 3: PLATAFORMA DIGITAL",
+                weeks: "9-10", 
+                progress: 5,
+                tasks: ["Implementación de blog interno", "Migración de contenido", "Sistema de distribución"]
+            },
+            {
+                name: "FASE 4: LANZAMIENTO",
+                weeks: "11-12",
+                progress: 0,
+                tasks: ["Campaña de comunicación", "Capacitación de usuarios", "Medición y ajustes"]
+            }
+        ],
+        exportDate: new Date().toISOString()
+    };
+    
+    Utils.exportToJSON(timelineData, 'bafar-cronograma.json');
+    Utils.showNotification('Cronograma exportado', 'success');
+}
+
+// Update timeline progress function
+function updateTimelineProgress() {
+    // This would typically connect to a project management system
+    Utils.showNotification('Funcionalidad en desarrollo - conectar con sistema de PM', 'info');
+}
+</script>

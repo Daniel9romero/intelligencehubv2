@@ -1,0 +1,61 @@
+<!-- Dashboard Section -->
+<section id="dashboard" class="section active">
+    <h2>Dashboard Ejecutivo</h2>
+    
+    <div class="alert alert-info">
+        <strong>Objetivo del Proyecto:</strong> Implementar en 90 días un sistema de gestión del conocimiento que proporcione inteligencia competitiva personalizada para cada unidad de negocio.
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <div class="stat-label">Días Restantes</div>
+            <div class="stat-number" id="daysRemaining">90</div>
+            <div class="stat-label">Fecha Inicio: <span id="startDate">--</span></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Unidades Activas</div>
+            <div class="stat-number" id="unitsCount">0</div>
+            <div class="stat-label">Total Configuradas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Progreso Sprint</div>
+            <div class="stat-number" id="progressPercent">0%</div>
+            <div class="stat-label">Fase: Configuración</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Documentos Meta</div>
+            <div class="stat-number">0</div>
+            <div class="stat-label">de 40 objetivo</div>
+        </div>
+    </div>
+
+    <h3>Flujo de Procesamiento de Inteligencia</h3>
+    <div class="process-flow">
+        <div class="process-step">
+            <div class="step-icon">1</div>
+            <div class="step-title">CAPTURA</div>
+            <div class="step-time">30 min/día</div>
+        </div>
+        <div class="process-step">
+            <div class="step-icon">2</div>
+            <div class="step-title">VALIDACIÓN</div>
+            <div class="step-time">15 min/doc</div>
+        </div>
+        <div class="process-step">
+            <div class="step-icon">3</div>
+            <div class="step-title">SÍNTESIS</div>
+            <div class="step-time">15 min/doc</div>
+        </div>
+        <div class="process-step">
+            <div class="step-icon">4</div>
+            <div class="step-title">DISTRIBUCIÓN</div>
+            <div class="step-time">Automática</div>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn btn-secondary" onclick="window.dataManager.fixDataStructure(); window.uiController.updateUI(); Utils.showNotification('Estructura de datos reparada', 'success')">Reparar Estructura de Datos</button>
+        <button class="btn btn-danger" onclick="if(confirm('¿Reiniciar todos los datos?')) { window.dataManager.resetData(); window.uiController.updateUI(); Utils.showNotification('Datos reiniciados', 'success'); }">Reiniciar Todo</button>
+        <button class="btn btn-primary" onclick="window.uiController.saveAllData()">Guardar Cambios</button>
+    </div>
+</section>
