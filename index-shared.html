@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAFAR Intelligence Hub - Centro de Inteligencia Competitiva</title>
+    <style>
+        /* Base styles - Reset and typography */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Typography */
+        h2 {
+            color: #1e3a5f;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #c41e3a;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: #2c4158;
+            font-size: 1.3em;
+            margin: 25px 0 15px 0;
+            font-weight: 600;
+        }
+
+        /* Layout */
+        .content {
+            padding: 30px 40px;
+            min-height: calc(100vh - 200px);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Header */
+        .header {
+            background: #1e3a5f;
+            color: white;
+            padding: 30px 40px;
+            border-bottom: 4px solid #c41e3a;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 8px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* Status indicator */
+        .status-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .status-offline {
+            background: #dc3545;
+            animation: none;
+        }
+
+        /* Navigation */
+        .nav {
+            background: #2c4158;
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: flex-start;
+            overflow-x: auto;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .nav button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 14px 24px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+            white-space: nowrap;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav button.active {
+            background: #c41e3a;
+            font-weight: 600;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            text-align: center;
+            transition: box-shadow 0.2s;
+            border-radius: 8px;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #1e3a5f;
+            margin: 8px 0;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Tables */
+        .data-container {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .data-table th {
+            background: #2c4158;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .data-table td {
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .data-table input, 
+        .data-table select, 
+        .data-table textarea {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            font-family: inherit;
+            font-size: 14px;
+            border-radius: 4px;
+            background: #f8f9fa;
+            cursor: not-allowed;
+        }
+
+        .data-table textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        /* Buttons */
+        .btn {
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+            margin: 5px;
+            border-radius: 4px;
+        }
+
+        .btn:hover {
+            background: #2c4158;
+        }
+
+        .btn-primary {
+            background: #c41e3a;
+        }
+
+        .btn-primary:hover {
+            background: #a01729;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Process Flow */
+        .process-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            padding: 25px;
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            overflow-x: auto;
+            border-radius: 8px;
+        }
+
+        .process-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            min-width: 140px;
+        }
+
+        .step-icon {
+            width: 70px;
+            height: 70px;
+            background: #1e3a5f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #1e3a5f;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .step-time {
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-left: 4px solid;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .alert-info {
+            border-left-color: #1e3a5f;
+            background: #e7f3ff;
+        }
+
+        .alert-success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .alert-warning {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+
+        .alert-error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        /* Intelligence Needs Grid */
+        .needs-grid {
+            display: grid;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .unit-needs {
+            border: 1px solid #e0e0e0;
+            background: white;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        .unit-header {
+            background: #2c4158;
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .unit-body {
+            padding: 20px;
+        }
+
+        .needs-section {
+            margin-bottom: 20px;
+        }
+
+        .needs-section h5 {
+            color: #1e3a5f;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .needs-content {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 4px;
+            border-left: 3px solid #1e3a5f;
+            min-height: 60px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #2c3e50;
+        }
+
+        .needs-content:empty::before {
+            content: "No definido";
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* Research Matrix Styles */
+        .unit-research-card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .unit-research-header {
+            background: #2c4158;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .unit-research-header:hover {
+            background: #34495e;
+        }
+
+        .unit-research-header h3 {
+            margin: 0;
+            color: white;
+            font-size: 18px;
+        }
+
+        .unit-info {
+            display: flex;
+            gap: 30px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .unit-research-body {
+            padding: 20px;
+            background: #fafafa;
+        }
+
+        .research-topics-table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+            margin-top: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .research-topics-table th {
+            background: #e9ecef;
+            color: #2c4158;
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .research-topics-table td {
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            font-size: 14px;
+        }
+
+        .unit-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c4158;
+        }
+
+        .expand-icon {
+            transition: transform 0.3s;
+        }
+
+        .expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .priority-high {
+            background: #ffebee;
+        }
+
+        .priority-medium {
+            background: #fff3e0;
+        }
+
+        .priority-low {
+            background: #e8f5e9;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .timeline-date {
+            min-width: 120px;
+            font-weight: 600;
+            color: #c41e3a;
+            font-size: 14px;
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: #fafafa;
+            padding: 15px;
+            border-left: 3px solid #c41e3a;
+            margin-left: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: #e9ecef;
+            height: 40px;
+            margin: 20px 0;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: #c41e3a;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            transition: width 0.5s ease;
+            font-size: 14px;
+        }
+
+        /* Loading indicator */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            font-size: 16px;
+            color: #1e3a5f;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1e3a5f;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .unit-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+            }
+
+            .timeline-date {
+                min-width: auto;
+                margin-bottom: 10px;
+            }
+
+            .timeline-content {
+                margin-left: 0;
+                border-left: none;
+                border-top: 3px solid #c41e3a;
+                border-radius: 8px;
+            }
+
+            .status-indicator {
+                position: static;
+                margin-top: 10px;
+                justify-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>BAFAR INTELLIGENCE HUB</h1>
+            <p>Centro de Inteligencia Competitiva - Modo Visualización</p>
+            <div class="status-indicator" id="connectionStatus">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Conectado</span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <button onclick="showSection('dashboard', this)" class="active">Dashboard</button>
+            <button onclick="showSection('units', this)">Unidades de Negocio</button>
+            <button onclick="showSection('needs', this)">Necesidades de Información</button>
+            <button onclick="showSection('research', this)">Matriz de Investigación</button>
+            <button onclick="showSection('timeline', this)">Cronograma</button>
+            <button onclick="showSection('metrics', this)">Métricas</button>
+        </nav>
+
+        <div class="content">
+            <!-- Loading Section -->
+            <div id="loadingSection" class="loading">
+                <div class="spinner"></div>
+                Cargando datos del Intelligence Hub...
+            </div>
+
+            <!-- Error Section -->
+            <div id="errorSection" class="section" style="display: none;">
+                <div class="alert alert-error">
+                    <strong>Error de Conexión:</strong> No se pudieron cargar los datos del servidor.
+                    <br><br>
+                    <button class="btn btn-primary" onclick="loadData()">Reintentar</button>
+                    <button class="btn btn-secondary" onclick="loadLocalFallback()">Usar Datos Locales</button>
+                </div>
+            </div>
+
+            <!-- DASHBOARD SECTION -->
+            <section id="dashboard" class="section">
+                <h2>Dashboard Ejecutivo</h2>
+                
+                <div class="alert alert-info">
+                    <strong>Objetivo del Proyecto:</strong> Implementar en 90 días un sistema de gestión del conocimiento que proporcione inteligencia competitiva personalizada para cada unidad de negocio.
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Días Restantes</div>
+                        <div class="stat-number" id="daysRemaining">--</div>
+                        <div class="stat-label">Fecha Inicio: <span id="startDate">--</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Unidades Activas</div>
+                        <div class="stat-number" id="unitsCount">--</div>
+                        <div class="stat-label">Total Configuradas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Progreso Sprint</div>
+                        <div class="stat-number" id="progressPercent">--%</div>
+                        <div class="stat-label">Fase: Configuración</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Última Actualización</div>
+                        <div class="stat-number" id="lastUpdate">--</div>
+                        <div class="stat-label">Por: <span id="lastEditor">--</span></div>
+                    </div>
+                </div>
+
+                <h3>Flujo de Procesamiento de Inteligencia</h3>
+                <div class="process-flow">
+                    <div class="process-step">
+                        <div class="step-icon">1</div>
+                        <div class="step-title">CAPTURA</div>
+                        <div class="step-time">30 min/día</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-icon">2</div>
+                        <div class="step-title">VALIDACIÓN</div>
+                        <div class="step-time">15 min/doc</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-icon">3</div>
+                        <div class="step-title">SÍNTESIS</div>
+                        <div class="step-time">15 min/doc</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-icon">4</div>
+                        <div class="step-title">DISTRIBUCIÓN</div>
+                        <div class="step-time">Automática</div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>Modo Visualización:</strong> Los datos se actualizan automáticamente desde SharePoint. 
+                    Para modificar la información, contacte al administrador del sistema.
+                </div>
+            </section>
+
+            <!-- BUSINESS UNITS SECTION -->
+            <section id="units" class="section">
+                <h2>Configuración de Unidades de Negocio</h2>
+                
+                <div class="data-container">
+                    <h3>Registro de Unidades y Responsables</h3>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="25%">Unidad de Negocio</th>
+                                <th width="20%">Responsable</th>
+                                <th width="20%">Email</th>
+                                <th width="15%">Frecuencia</th>
+                                <th width="15%">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="unitsTableBody">
+                            <!-- Units will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- INTELLIGENCE NEEDS SECTION -->
+            <section id="needs" class="section">
+                <h2>Necesidades de Información por Unidad</h2>
+                
+                <div class="alert alert-info">
+                    Necesidades de información específicas configuradas para cada unidad de negocio.
+                </div>
+
+                <div id="needsContainer" class="needs-grid">
+                    <!-- Needs will be loaded here -->
+                </div>
+            </section>
+
+            <!-- RESEARCH MATRIX SECTION -->
+            <section id="research" class="section">
+                <h2>Matriz de Investigación</h2>
+                
+                <div class="alert alert-info">
+                    Tópicos de investigación configurados por unidad de negocio con responsables y frecuencias de actualización.
+                </div>
+
+                <div id="researchMatrixContainer">
+                    <!-- Research matrix will be loaded here -->
+                </div>
+            </section>
+
+            <!-- TIMELINE SECTION -->
+            <section id="timeline" class="section">
+                <h2>Cronograma de Implementación - 90 Días</h2>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">Semanas 1-2</div>
+                        <div class="timeline-content">
+                            <strong>FASE 1: DESCUBRIMIENTO</strong>
+                            <ul style="margin: 10px 0 10px 20px;">
+                                <li>Entrevistas con ejecutivos</li>
+                                <li>Mapeo de necesidades</li>
+                                <li>Configuración de herramientas</li>
+                            </ul>
+                            <div class="progress-container" style="height: 20px;">
+                                <div class="progress-bar" style="width: 85%; font-size: 12px;">85% Completado</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">Semanas 3-8</div>
+                        <div class="timeline-content">
+                            <strong>FASE 2: INVESTIGACIÓN INTENSIVA</strong>
+                            <ul style="margin: 10px 0 10px 20px;">
+                                <li>Producción de 30-40 documentos</li>
+                                <li>Creación de biblioteca digital</li>
+                                <li>Desarrollo de dashboards</li>
+                            </ul>
+                            <div class="progress-container" style="height: 20px;">
+                                <div class="progress-bar" id="phase2Progress" style="width: 25%; font-size: 12px;">25% En Progreso</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">Semanas 9-10</div>
+                        <div class="timeline-content">
+                            <strong>FASE 3: PLATAFORMA DIGITAL</strong>
+                            <ul style="margin: 10px 0 10px 20px;">
+                                <li>Implementación de blog interno</li>
+                                <li>Migración de contenido</li>
+                                <li>Sistema de distribución</li>
+                            </ul>
+                            <div class="progress-container" style="height: 20px;">
+                                <div class="progress-bar" style="width: 5%; font-size: 12px;">5% Planeado</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">Semanas 11-12</div>
+                        <div class="timeline-content">
+                            <strong>FASE 4: LANZAMIENTO</strong>
+                            <ul style="margin: 10px 0 10px 20px;">
+                                <li>Campaña de comunicación</li>
+                                <li>Capacitación de usuarios</li>
+                                <li>Medición y ajustes</li>
+                            </ul>
+                            <div class="progress-container" style="height: 20px;">
+                                <div class="progress-bar" style="width: 0%; font-size: 12px;">0% Pendiente</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- METRICS SECTION -->
+            <section id="metrics" class="section">
+                <h2>Métricas de Éxito</h2>
+                
+                <h3>KPIs de Impacto del Negocio</h3>
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Decisiones Informadas</div>
+                        <div class="stat-number" id="metricDecisions">--</div>
+                        <div class="stat-label">Meta: 10 por mes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Oportunidades ($MXN)</div>
+                        <div class="stat-number" id="metricOpportunities">--</div>
+                        <div class="stat-label">Meta: $1M MXN</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Riesgos Mitigados</div>
+                        <div class="stat-number" id="metricRisks">--</div>
+                        <div class="stat-label">Meta: 5 críticos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Tiempo Ahorrado (hrs)</div>
+                        <div class="stat-number" id="metricTime">--</div>
+                        <div class="stat-label">Meta: 100 hrs/mes</div>
+                    </div>
+                </div>
+
+                <h3>Análisis de Rendimiento</h3>
+                <div class="data-container">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div>
+                            <h4>Resumen del Mes</h4>
+                            <div id="monthlyMetrics">
+                                <!-- Monthly metrics will be calculated here -->
+                            </div>
+                        </div>
+                        <div>
+                            <h4>Comparación con Objetivos</h4>
+                            <div id="goalComparison">
+                                <!-- Goal comparison will be shown here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // Global data structure
+        let appData = {};
+        let isConnected = false;
+        let autoRefreshInterval;
+
+        // Configuration
+        const config = {
+            dataUrl: './data.json', // URL del archivo JSON en SharePoint
+            refreshInterval: 30000, // 30 segundos
+            maxRetries: 3,
+            retryDelay: 5000
+        };
+
+        // Connection status management
+        function updateConnectionStatus(connected, message = '') {
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            
+            isConnected = connected;
+            
+            if (connected) {
+                statusDot.className = 'status-dot';
+                statusText.textContent = 'Conectado';
+            } else {
+                statusDot.className = 'status-dot status-offline';
+                statusText.textContent = message || 'Desconectado';
+            }
+        }
+
+        // Load data from SharePoint
+        async function loadData(retryCount = 0) {
+            try {
+                console.log('Loading data from:', config.dataUrl);
+                
+                const response = await fetch(config.dataUrl, {
+                    method: 'GET',
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                // Validate data structure
+                if (!data.units || !data.needs || !data.research) {
+                    throw new Error('Estructura de datos inválida');
+                }
+
+                appData = data;
+                updateConnectionStatus(true);
+                hideLoadingShowContent();
+                updateUI();
+                
+                console.log('Data loaded successfully:', data);
+                return true;
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                
+                if (retryCount < config.maxRetries) {
+                    console.log(`Retrying in ${config.retryDelay}ms... (${retryCount + 1}/${config.maxRetries})`);
+                    updateConnectionStatus(false, `Reintentando... (${retryCount + 1}/${config.maxRetries})`);
+                    
+                    setTimeout(() => {
+                        loadData(retryCount + 1);
+                    }, config.retryDelay);
+                } else {
+                    updateConnectionStatus(false, 'Error de conexión');
+                    showErrorSection();
+                }
+                return false;
+            }
+        }
+
+        // Load local fallback data
+        function loadLocalFallback() {
+            console.log('Loading local fallback data...');
+            
+            // Basic fallback data
+            appData = {
+                project: "BAFAR Intelligence Hub",
+                version: "1.0 (Local)",
+                lastUpdate: new Date().toLocaleDateString('es-MX'),
+                lastEditor: "Sistema Local",
+                units: [
+                    { id: 1, name: 'DPC Carnes Frías', responsible: '', email: '', frequency: 'Semanal', status: 'Pendiente' },
+                    { id: 2, name: 'Food Service', responsible: '', email: '', frequency: 'Diaria', status: 'Pendiente' },
+                    { id: 3, name: 'Retail', responsible: '', email: '', frequency: 'Semanal', status: 'Pendiente' },
+                    { id: 4, name: 'Exportación', responsible: '', email: '', frequency: 'Diaria', status: 'Pendiente' },
+                    { id: 5, name: 'Agroindustrial', responsible: '', email: '', frequency: 'Semanal', status: 'Pendiente' }
+                ],
+                needs: {},
+                research: {},
+                metrics: { decisions: 0, opportunities: 0, risks: 0, time: 0 },
+                startDate: '2024-01-01',
+                progress: 15
+            };
+
+            // Initialize empty needs and research
+            appData.units.forEach(unit => {
+                appData.needs[unit.id] = {
+                    critical: '', competitors: '', regulations: '', market: '', technology: ''
+                };
+                appData.research[unit.id] = { topics: [] };
+            });
+
+            updateConnectionStatus(false, 'Modo local');
+            hideLoadingShowContent();
+            updateUI();
+        }
+
+        // UI Management
+        function hideLoadingShowContent() {
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('errorSection').style.display = 'none';
+            
+            // Show first section (dashboard)
+            const dashboard = document.getElementById('dashboard');
+            if (dashboard) {
+                dashboard.style.display = 'block';
+            }
+        }
+
+        function showErrorSection() {
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('errorSection').style.display = 'block';
+        }
+
+        // Update all UI elements
+        function updateUI() {
+            updateDashboard();
+            updateUnitsTable();
+            updateNeedsSection();
+            updateResearchMatrix();
+            updateMetrics();
+        }
+
+        // Update dashboard
+        function updateDashboard() {
+            if (!appData.startDate) return;
+
+            const start = new Date(appData.startDate);
+            const today = new Date();
+            const diff = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+            const remaining = Math.max(0, 90 - diff);
+            
+            document.getElementById('daysRemaining').textContent = remaining;
+            document.getElementById('startDate').textContent = appData.startDate;
+            
+            const totalUnits = appData.units?.length || 0;
+            const activeUnits = appData.units?.filter(u => u.responsible && u.responsible.trim() !== '').length || 0;
+            document.getElementById('unitsCount').textContent = `${activeUnits}/${totalUnits}`;
+            
+            document.getElementById('progressPercent').textContent = (appData.progress || 0) + '%';
+            document.getElementById('lastUpdate').textContent = appData.lastUpdate || '--';
+            document.getElementById('lastEditor').textContent = appData.lastEditor || '--';
+
+            // Update phase 2 progress based on overall progress
+            const phase2Progress = document.getElementById('phase2Progress');
+            if (phase2Progress && appData.progress) {
+                const phase2Percent = Math.max(0, Math.min(100, (appData.progress - 15) * 2));
+                phase2Progress.style.width = phase2Percent + '%';
+                phase2Progress.textContent = `${phase2Percent}% En Progreso`;
+            }
+        }
+
+        // Update units table
+        function updateUnitsTable() {
+            const tbody = document.getElementById('unitsTableBody');
+            if (!tbody || !appData.units) return;
+            
+            tbody.innerHTML = '';
+            
+            appData.units.forEach((unit, index) => {
+                const row = tbody.insertRow();
+                
+                row.insertCell(0).textContent = index + 1;
+                row.insertCell(1).textContent = unit.name || '';
+                row.insertCell(2).textContent = unit.responsible || 'No asignado';
+                row.insertCell(3).textContent = unit.email || 'No definido';
+                row.insertCell(4).textContent = unit.frequency || '';
+                
+                const statusCell = row.insertCell(5);
+                statusCell.textContent = unit.status || '';
+                statusCell.style.fontWeight = 'bold';
+                statusCell.style.color = unit.status === 'Activo' ? '#28a745' : 
+                                       unit.status === 'En Proceso' ? '#ffc107' : '#6c757d';
+            });
+        }
+
+        // Update needs section
+        function updateNeedsSection() {
+            const container = document.getElementById('needsContainer');
+            if (!container || !appData.units || !appData.needs) return;
+            
+            container.innerHTML = '';
+            
+            appData.units.forEach(unit => {
+                const needs = appData.needs[unit.id] || {};
+                
+                const unitDiv = document.createElement('div');
+                unitDiv.className = 'unit-needs';
+                unitDiv.innerHTML = `
+                    <div class="unit-header">${unit.name}</div>
+                    <div class="unit-body">
+                        <div class="needs-section">
+                            <h5>Información Crítica del Negocio</h5>
+                            <div class="needs-content">${needs.critical || ''}</div>
+                        </div>
+                        <div class="needs-section">
+                            <h5>Monitoreo de Competencia</h5>
+                            <div class="needs-content">${needs.competitors || ''}</div>
+                        </div>
+                        <div class="needs-section">
+                            <h5>Regulaciones y Normatividad</h5>
+                            <div class="needs-content">${needs.regulations || ''}</div>
+                        </div>
+                        <div class="needs-section">
+                            <h5>Tendencias de Mercado</h5>
+                            <div class="needs-content">${needs.market || ''}</div>
+                        </div>
+                        <div class="needs-section">
+                            <h5>Innovación y Tecnología</h5>
+                            <div class="needs-content">${needs.technology || ''}</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(unitDiv);
+            });
+        }
+
+        // Update research matrix
+        function updateResearchMatrix() {
+            const container = document.getElementById('researchMatrixContainer');
+            if (!container || !appData.units || !appData.research) return;
+            
+            container.innerHTML = '';
+            
+            appData.units.forEach(unit => {
+                const research = appData.research[unit.id] || { topics: [] };
+                const topicsCount = research.topics.length;
+                
+                const unitCard = document.createElement('div');
+                unitCard.className = 'unit-research-card';
+                unitCard.innerHTML = `
+                    <div class="unit-research-header" onclick="toggleResearchCard(${unit.id})">
+                        <h3>${unit.name}</h3>
+                        <div class="unit-info">
+                            <span>Responsable: ${unit.responsible || 'No asignado'}</span>
+                            <span>Tópicos: ${topicsCount}</span>
+                            <span>Estado: ${unit.status}</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                    </div>
+                    <div class="unit-research-body" id="research-body-${unit.id}" style="display: block;">
+                        <div class="unit-summary">
+                            <div class="summary-item">
+                                <div class="summary-label">Total Tópicos</div>
+                                <div class="summary-value">${topicsCount}</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-label">Investigaciones/Mes</div>
+                                <div class="summary-value">${calculateMonthlyResearch(research.topics)}</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-label">Próxima Entrega</div>
+                                <div class="summary-value">${getNextDelivery(research.topics)}</div>
+                            </div>
+                        </div>
+                        
+                        <h4>Tópicos de Investigación</h4>
+                        <table class="research-topics-table">
+                            <thead>
+                                <tr>
+                                    <th width="30%">Tópico</th>
+                                    <th width="15%">Frecuencia</th>
+                                    <th width="15%">Próxima Fecha</th>
+                                    <th width="25%">Responsable</th>
+                                    <th width="15%">Prioridad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${generateTopicsRows(research.topics)}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                container.appendChild(unitCard);
+            });
+        }
+
+        // Generate topic rows for research matrix (read-only)
+        function generateTopicsRows(topics) {
+            if (!topics || topics.length === 0) {
+                return '<tr><td colspan="5" style="text-align: center; color: #6c757d;">No hay tópicos configurados</td></tr>';
+            }
+            
+            return topics.map(topic => `
+                <tr class="${getPriorityClass(topic.priority)}">
+                    <td>${topic.topic || 'Sin nombre'}</td>
+                    <td>${topic.frequency || '--'}</td>
+                    <td>${formatDate(topic.nextDate)}</td>
+                    <td>${topic.responsible || 'No asignado'}</td>
+                    <td>${topic.priority || '--'}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Update metrics
+        function updateMetrics() {
+            if (!appData.metrics) return;
+
+            const metrics = appData.metrics;
+            
+            document.getElementById('metricDecisions').textContent = metrics.decisions || 0;
+            document.getElementById('metricOpportunities').textContent = formatCurrency(metrics.opportunities || 0);
+            document.getElementById('metricRisks').textContent = metrics.risks || 0;
+            document.getElementById('metricTime').textContent = metrics.time || 0;
+
+            // Update analysis displays
+            updateMetricsDisplay();
+        }
+
+        function updateMetricsDisplay() {
+            const metrics = appData.metrics || {};
+            
+            // Update monthly metrics
+            const monthlyDiv = document.getElementById('monthlyMetrics');
+            if (monthlyDiv) {
+                monthlyDiv.innerHTML = `
+                    <div style="display: grid; gap: 10px;">
+                        <div>Decisiones: <strong>${metrics.decisions || 0}</strong></div>
+                        <div>Oportunidades: <strong>${formatCurrency(metrics.opportunities || 0)}</strong></div>
+                        <div>Riesgos: <strong>${metrics.risks || 0}</strong></div>
+                        <div>Tiempo: <strong>${metrics.time || 0} hrs</strong></div>
+                    </div>
+                `;
+            }
+            
+            // Update goal comparison
+            const goalDiv = document.getElementById('goalComparison');
+            if (goalDiv) {
+                const decisionsProgress = Math.min((parseInt(metrics.decisions) || 0) / 10 * 100, 100);
+                const opportunitiesProgress = Math.min((parseFloat(metrics.opportunities) || 0) / 1000000 * 100, 100);
+                const risksProgress = Math.min((parseInt(metrics.risks) || 0) / 5 * 100, 100);
+                const timeProgress = Math.min((parseInt(metrics.time) || 0) / 100 * 100, 100);
+                
+                goalDiv.innerHTML = `
+                    <div style="display: grid; gap: 10px;">
+                        <div>Decisiones: <strong>${decisionsProgress.toFixed(1)}%</strong></div>
+                        <div>Oportunidades: <strong>${opportunitiesProgress.toFixed(1)}%</strong></div>
+                        <div>Riesgos: <strong>${risksProgress.toFixed(1)}%</strong></div>
+                        <div>Tiempo: <strong>${timeProgress.toFixed(1)}%</strong></div>
+                    </div>
+                `;
+            }
+        }
+
+        // Helper functions
+        function calculateMonthlyResearch(topics) {
+            if (!topics || topics.length === 0) return 0;
+            
+            let monthly = 0;
+            topics.forEach(topic => {
+                if (topic && topic.frequency) {
+                    switch(topic.frequency) {
+                        case 'Diaria': monthly += 30; break;
+                        case 'Semanal': monthly += 4; break;
+                        case 'Quincenal': monthly += 2; break;
+                        case 'Mensual': monthly += 1; break;
+                        case 'Trimestral': monthly += 0.33; break;
+                    }
+                }
+            });
+            return Math.round(monthly);
+        }
+
+        function getNextDelivery(topics) {
+            if (!topics || topics.length === 0) return 'N/A';
+            
+            const dates = topics
+                .filter(t => t && t.nextDate)
+                .map(t => new Date(t.nextDate))
+                .filter(d => !isNaN(d.getTime()) && d >= new Date())
+                .sort((a, b) => a - b);
+            
+            if (dates.length === 0) return 'Sin fecha';
+            
+            const nextDate = dates[0];
+            const options = { day: 'numeric', month: 'short' };
+            return nextDate.toLocaleDateString('es-MX', options);
+        }
+
+        function getPriorityClass(priority) {
+            switch(priority) {
+                case 'Alta': return 'priority-high';
+                case 'Media': return 'priority-medium';
+                case 'Baja': return 'priority-low';
+                default: return '';
+            }
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 0
+            }).format(amount || 0);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '--';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('es-MX');
+            } catch {
+                return '--';
+            }
+        }
+
+        // Toggle research card visibility
+        function toggleResearchCard(unitId) {
+            const body = document.getElementById(`research-body-${unitId}`);
+            const header = body.previousElementSibling;
+            
+            if (body.style.display === 'none') {
+                body.style.display = 'block';
+                header.classList.add('expanded');
+            } else {
+                body.style.display = 'none';
+                header.classList.remove('expanded');
+            }
+        }
+
+        // Navigation
+        function showSection(sectionId, button) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+                section.style.display = 'none';
+            });
+            
+            // Show selected section
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.classList.add('active');
+                section.style.display = 'block';
+            }
+            
+            // Update nav buttons
+            if (button) {
+                document.querySelectorAll('.nav button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+            }
+        }
+
+        // Auto-refresh functionality
+        function startAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            
+            autoRefreshInterval = setInterval(async () => {
+                if (isConnected) {
+                    console.log('Auto-refreshing data...');
+                    await loadData();
+                }
+            }, config.refreshInterval);
+        }
+
+        function stopAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+            }
+        }
+
+        // Initialize application
+        async function initApp() {
+            console.log('BAFAR Intelligence Hub - Modo Visualización');
+            console.log('Initializing...');
+            
+            // Try to load data
+            const success = await loadData();
+            
+            if (success) {
+                // Start auto-refresh
+                startAutoRefresh();
+                console.log('Auto-refresh started');
+            }
+        }
+
+        // Page visibility API for auto-refresh management
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopAutoRefresh();
+                console.log('Page hidden - auto-refresh stopped');
+            } else {
+                startAutoRefresh();
+                console.log('Page visible - auto-refresh restarted');
+                // Immediate refresh when page becomes visible
+                loadData();
+            }
+        });
+
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', initApp);
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            stopAutoRefresh();
+        });
+
+        // Make functions available globally for onclick handlers
+        window.loadData = loadData;
+        window.loadLocalFallback = loadLocalFallback;
+        window.showSection = showSection;
+        window.toggleResearchCard = toggleResearchCard;
+    </script>
+</body>
+</html>

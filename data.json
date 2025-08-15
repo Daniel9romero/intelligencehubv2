@@ -1,0 +1,163 @@
+{
+  "project": "BAFAR Intelligence Hub",
+  "version": "1.0",
+  "lastUpdate": "2024-12-19",
+  "lastEditor": "Jose Daniel Lopez",
+  "units": [
+    {
+      "id": 1,
+      "name": "DPC Carnes Frías",
+      "responsible": "",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente"
+    },
+    {
+      "id": 2,
+      "name": "Food Service",
+      "responsible": "",
+      "email": "",
+      "frequency": "Diaria",
+      "status": "Pendiente"
+    },
+    {
+      "id": 3,
+      "name": "Retail",
+      "responsible": "",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente"
+    },
+    {
+      "id": 4,
+      "name": "Exportación",
+      "responsible": "",
+      "email": "",
+      "frequency": "Diaria",
+      "status": "Pendiente"
+    },
+    {
+      "id": 5,
+      "name": "Agroindustrial",
+      "responsible": "",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente"
+    }
+  ],
+  "needs": {
+    "1": {
+      "critical": "Monitoreo de precios de competencia en carnes frías premium",
+      "competitors": "Análisis de FUD, San Rafael, Kir, Zwan - estrategias de pricing y promociones",
+      "regulations": "Cambios en NOM-051, regulaciones de sodio, etiquetado frontal",
+      "market": "Tendencias de consumo saludable, productos plant-based, mercado premium",
+      "technology": "Nuevas tecnologías de conservación, empaquetado inteligente, trazabilidad"
+    },
+    "2": {
+      "critical": "Análisis de licitaciones gubernamentales y contratos institucionales",
+      "competitors": "Monitoreo de Sigma Alimentos, Bachoco, Pilgrim's Pride en canal institucional",
+      "regulations": "Requisitos sanitarios COFEPRIS, normas de calidad institucional",
+      "market": "Crecimiento del canal HoReCa post-COVID, tendencias gastronómicas",
+      "technology": "Soluciones de food service, equipos de cocción, logística B2B"
+    },
+    "3": {
+      "critical": "Performance en cadenas retail: Walmart, Soriana, Chedraui, Oxxo",
+      "competitors": "Estrategias de Tyson, Pilgrim's, Bachoco en retail masivo",
+      "regulations": "Políticas de sustentabilidad de retailers, certificaciones ESG",
+      "market": "E-commerce alimentario, private label, canales digitales",
+      "technology": "Sistemas POS, analytics retail, supply chain visibility"
+    },
+    "4": {
+      "critical": "Oportunidades en mercados internacionales: Asia, Europa, LATAM",
+      "competitors": "Players globales: JBS, Tyson, BRF, Hormel en mercados objetivo",
+      "regulations": "Barreras arancelarias, certificaciones internacionales, FDA, CE",
+      "market": "Demanda de proteína en mercados emergentes, productos halal/kosher",
+      "technology": "Logística internacional, cold chain, certificaciones digitales"
+    },
+    "5": {
+      "critical": "Precios de commodities: maíz, soya, sorgo - impacto en costos",
+      "competitors": "Estrategias de integración vertical de competidores",
+      "regulations": "Políticas agrícolas, apoyos gubernamentales, sustentabilidad",
+      "market": "Volatilidad de granos, mercados de futuros, clima",
+      "technology": "Agricultura de precisión, feed alternativo, bioseguridad"
+    }
+  },
+  "research": {
+    "1": {
+      "topics": [
+        {
+          "topic": "Análisis competitivo mensual - Carnes Frías Premium",
+          "frequency": "Mensual",
+          "nextDate": "2024-01-15",
+          "responsible": "Equipo Inteligencia",
+          "priority": "Alta"
+        },
+        {
+          "topic": "Monitoreo NOM-051 y regulaciones",
+          "frequency": "Quincenal",
+          "nextDate": "2024-01-08",
+          "responsible": "Área Regulatoria",
+          "priority": "Alta"
+        }
+      ]
+    },
+    "2": {
+      "topics": [
+        {
+          "topic": "Licitaciones gubernamentales activas",
+          "frequency": "Semanal",
+          "nextDate": "2024-01-05",
+          "responsible": "Área Comercial",
+          "priority": "Alta"
+        }
+      ]
+    },
+    "3": {
+      "topics": [
+        {
+          "topic": "Performance retail y share of shelf",
+          "frequency": "Mensual",
+          "nextDate": "2024-01-20",
+          "responsible": "Trade Marketing",
+          "priority": "Media"
+        }
+      ]
+    },
+    "4": {
+      "topics": [
+        {
+          "topic": "Oportunidades mercados asiáticos",
+          "frequency": "Trimestral",
+          "nextDate": "2024-03-01",
+          "responsible": "Desarrollo Internacional",
+          "priority": "Media"
+        }
+      ]
+    },
+    "5": {
+      "topics": [
+        {
+          "topic": "Precios commodities y forecast",
+          "frequency": "Semanal",
+          "nextDate": "2024-01-03",
+          "responsible": "Procurement",
+          "priority": "Alta"
+        }
+      ]
+    }
+  },
+  "metrics": {
+    "decisions": 5,
+    "opportunities": 2500000,
+    "risks": 3,
+    "time": 45
+  },
+  "startDate": "2024-01-01",
+  "progress": 15,
+  "config": {
+    "adminMode": false,
+    "dataUrl": "./data.json",
+    "autoRefresh": 300000,
+    "allowEdits": false
+  }
+}
