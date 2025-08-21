@@ -1392,6 +1392,20 @@
             console.log('BAFAR Intelligence Hub - Modo Visualización');
             console.log('Initializing...');
             
+            // Check user session first
+            const userSession = sessionStorage.getItem('user');
+            if (!userSession) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Set up user info
+            const user = JSON.parse(userSession);
+            const userInfoEl = document.getElementById('userInfo');
+            if (userInfoEl) {
+                userInfoEl.textContent = `Usuario: ${user.username} (${user.role})`;
+            }
+            
             // Try to load data
             const success = await loadData();
             

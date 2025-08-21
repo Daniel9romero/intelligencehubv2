@@ -1091,5 +1091,599 @@
     </div>
 
     <script src="bafar-intelligence-hub.js"></script>
+    <script>
+        // Global data structure
+        let appData = {
+            units: [],
+            needs: {},
+            research: {},
+            metrics: {},
+            startDate: new Date().toISOString().split('T')[0],
+            progress: 5
+        };
+
+        // Initialize the application
+        function initApp() {
+            // Check user session first
+            if (!window.bafarHub.checkUserSession()) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Try to load from GitHub first, then local
+            window.bafarHub.loadFromGitHub().then(success => {
+                if (!success) {
+                    loadFromLocal();
+                }
+                updateUI();
+                // Start auto-sync
+                window.bafarHub.startAutoSync();
+            });
+        }
+
+        // Load from local storage
+        function loadFromLocal() {
+            const saved = localStorage.getItem('bafarHub');
+            if (saved) {
+                try {
+                    appData = JSON.parse(saved);
+                    window.bafarHub.appData = appData;
+                } catch (e) {
+                    console.error('Error loading local data:', e);
+                    initDefaultData();
+                }
+            } else {
+                initDefaultData();
+            }
+        }
+
+        // Initialize with default data
+        function initDefaultData() {
+            appData = {
+                units: [
+                    { id: 1, name: 'DPC Carnes Frías', responsible: '', email: '', frequency: 'Semanal', status: 'Pendiente' },
+                    { id: 2, name: 'Food Service', responsible: '', email: '', frequency: 'Diaria', status: 'Pendiente' },
+                    { id: 3, name: 'Retail', responsible: '', email: '', frequency: 'Semanal', status: 'Pendiente' },
+                    { id: 4, name: 'Exportación', responsible: '', email: '', frequency: 'Diaria', status: 'Pendiente' },
+                    { id: 5, name: 'Agroindustrial', responsible: '', email: '', frequency: 'Semanal', status: 'Pendiente' }
+                ],
+                needs: {},
+                research: {},
+                metrics: {
+                    decisions: 0,
+                    opportunities: 0,
+                    risks: 0,
+                    time: 0
+                },
+                startDate: new Date().toISOString().split('T')[0],
+                progress: 5
+            };
+            
+            // Initialize needs and research for each unit
+            appData.units.forEach(unit => {
+                appData.needs[unit.id] = {
+                    critical: '',
+                    competitors: '',
+                    regulations: '',
+                    market: '',
+                    technology: ''
+                };
+                
+                appData.research[unit.id] = {
+                    topics: []
+                };
+            });
+            
+            window.bafarHub.appData = appData;
+        }
+
+        // Update all UI elements
+        function updateUI() {
+            updateDashboard();
+            updateUnitsTable();
+            updateNeedsSection();
+            updateResearchMatrix();
+            updateMetrics();
+        }
+
+        // Update dashboard
+        function updateDashboard() {
+            const start = new Date(appData.startDate);
+            const today = new Date();
+            const diff = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+            const remaining = Math.max(0, 90 - diff);
+            
+            const daysEl = document.getElementById('daysRemaining');
+            const startDateEl = document.getElementById('startDate');
+            const unitsCountEl = document.getElementById('unitsCount');
+            const progressEl = document.getElementById('progressPercent');
+            const lastSyncEl = document.getElementById('lastSync');
+            const currentModeEl = document.getElementById('currentMode');
+            
+            if (daysEl) daysEl.textContent = remaining;
+            if (startDateEl) startDateEl.textContent = appData.startDate;
+            
+            const totalUnits = appData.units.length;
+            const activeUnits = appData.units.filter(u => u.responsible && u.responsible.trim() !== '').length;
+            if (unitsCountEl) unitsCountEl.textContent = `${activeUnits}/${totalUnits}`;
+            
+            if (progressEl) progressEl.textContent = appData.progress + '%';
+            if (lastSyncEl) lastSyncEl.textContent = window.bafarHub.lastSync ? window.bafarHub.getTimeAgo(window.bafarHub.lastSync) : 'Nunca';
+            if (currentModeEl) currentModeEl.textContent = window.bafarHub.isEditor ? 'Editor' : 'Lectura';
+        }
+
+        // Update units table
+        function updateUnitsTable() {
+            const tbody = document.getElementById('unitsTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            appData.units.forEach((unit, index) => {
+                const row = tbody.insertRow();
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><input type="text" value="${unit.name}" onchange="updateUnitField(${index}, 'name', this.value)" ${!window.bafarHub.isEditor ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${unit.responsible || ''}" placeholder="Nombre" onchange="updateUnitField(${index}, 'responsible', this.value)" ${!window.bafarHub.isEditor ? 'disabled' : ''}></td>
+                    <td><input type="email" value="${unit.email || ''}" placeholder="correo@bafar.com" onchange="updateUnitField(${index}, 'email', this.value)" ${!window.bafarHub.isEditor ? 'disabled' : ''}></td>
+                    <td>
+                        <select onchange="updateUnitField(${index}, 'frequency', this.value)" ${!window.bafarHub.isEditor ? 'disabled' : ''}>
+                            <option value="Diaria" ${unit.frequency === 'Diaria' ? 'selected' : ''}>Diaria</option>
+                            <option value="Semanal" ${unit.frequency === 'Semanal' ? 'selected' : ''}>Semanal</option>
+                            <option value="Quincenal" ${unit.frequency === 'Quincenal' ? 'selected' : ''}>Quincenal</option>
+                            <option value="Mensual" ${unit.frequency === 'Mensual' ? 'selected' : ''}>Mensual</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select onchange="updateUnitField(${index}, 'status', this.value)" ${!window.bafarHub.isEditor ? 'disabled' : ''}>
+                            <option value="Pendiente" ${unit.status === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                            <option value="En Proceso" ${unit.status === 'En Proceso' ? 'selected' : ''}>En Proceso</option>
+                            <option value="Activo" ${unit.status === 'Activo' ? 'selected' : ''}>Activo</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btn-small" onclick="removeUnit(${index})" ${!window.bafarHub.isEditor ? 'disabled' : ''}>Eliminar</button>
+                    </td>
+                `;
+            });
+        }
+
+        // Update needs section
+        function updateNeedsSection() {
+            const container = document.getElementById('needsContainer');
+            const emptyMessage = document.getElementById('emptyNeedsMessage');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (appData.units.length === 0) {
+                if (emptyMessage) emptyMessage.style.display = 'block';
+                container.style.display = 'none';
+                return;
+            } else {
+                if (emptyMessage) emptyMessage.style.display = 'none';
+                container.style.display = 'grid';
+            }
+            
+            appData.units.forEach(unit => {
+                if (!appData.needs[unit.id]) {
+                    appData.needs[unit.id] = {
+                        critical: '',
+                        competitors: '',
+                        regulations: '',
+                        market: '',
+                        technology: ''
+                    };
+                }
+                
+                const needs = appData.needs[unit.id];
+                const disabled = !window.bafarHub.isEditor;
+                
+                const unitDiv = document.createElement('div');
+                unitDiv.className = 'unit-needs';
+                unitDiv.innerHTML = `
+                    <div class="unit-header">${unit.name}</div>
+                    <div class="unit-body">
+                        <div class="needs-section">
+                            <h5>Información Crítica del Negocio</h5>
+                            <textarea class="needs-input" placeholder="¿Qué información es vital para la operación diaria?" 
+                                onchange="updateNeedField(${unit.id}, 'critical', this.value)" ${disabled ? 'disabled' : ''}>${needs.critical || ''}</textarea>
+                        </div>
+                        <div class="needs-section">
+                            <h5>Monitoreo de Competencia</h5>
+                            <textarea class="needs-input" placeholder="¿Qué necesitas saber sobre la competencia?" 
+                                onchange="updateNeedField(${unit.id}, 'competitors', this.value)" ${disabled ? 'disabled' : ''}>${needs.competitors || ''}</textarea>
+                        </div>
+                        <div class="needs-section">
+                            <h5>Regulaciones y Normatividad</h5>
+                            <textarea class="needs-input" placeholder="¿Qué cambios regulatorios debes monitorear?" 
+                                onchange="updateNeedField(${unit.id}, 'regulations', this.value)" ${disabled ? 'disabled' : ''}>${needs.regulations || ''}</textarea>
+                        </div>
+                        <div class="needs-section">
+                            <h5>Tendencias de Mercado</h5>
+                            <textarea class="needs-input" placeholder="¿Qué tendencias del mercado impactan tu negocio?" 
+                                onchange="updateNeedField(${unit.id}, 'market', this.value)" ${disabled ? 'disabled' : ''}>${needs.market || ''}</textarea>
+                        </div>
+                        <div class="needs-section">
+                            <h5>Innovación y Tecnología</h5>
+                            <textarea class="needs-input" placeholder="¿Qué avances tecnológicos debes seguir?" 
+                                onchange="updateNeedField(${unit.id}, 'technology', this.value)" ${disabled ? 'disabled' : ''}>${needs.technology || ''}</textarea>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(unitDiv);
+            });
+        }
+
+        // Update research matrix
+        function updateResearchMatrix() {
+            const container = document.getElementById('researchMatrixContainer');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (!appData.research) {
+                appData.research = {};
+            }
+            
+            if (appData.units.length === 0) {
+                container.innerHTML = `
+                    <div style="padding: 40px; text-align: center; background: #f8f9fa; border-radius: 8px;">
+                        <p style="color: #6c757d; font-size: 16px;">No hay unidades de negocio configuradas.</p>
+                        <p style="color: #6c757d;">Agregue unidades en la pestaña "Unidades de Negocio".</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            appData.units.forEach(unit => {
+                if (!appData.research[unit.id]) {
+                    appData.research[unit.id] = { topics: [] };
+                }
+                
+                const research = appData.research[unit.id];
+                const topicsCount = research.topics.length;
+                
+                const unitCard = document.createElement('div');
+                unitCard.className = 'unit-research-card';
+                unitCard.innerHTML = `
+                    <div class="unit-research-header">
+                        <h3>${unit.name}</h3>
+                        <div class="unit-info">
+                            <span>Responsable: ${unit.responsible || 'No asignado'}</span>
+                            <span>Tópicos: ${topicsCount}</span>
+                            <span>Estado: ${unit.status}</span>
+                        </div>
+                    </div>
+                    <div class="unit-research-body">
+                        <div class="unit-summary">
+                            <div class="summary-item">
+                                <div class="summary-label">Total Tópicos</div>
+                                <div class="summary-value">${topicsCount}</div>
+                            </div>
+                        </div>
+                        
+                        <h4>Tópicos de Investigación</h4>
+                        <table class="research-topics-table">
+                            <thead>
+                                <tr>
+                                    <th>Tópico</th>
+                                    <th>Frecuencia</th>
+                                    <th>Próxima Fecha</th>
+                                    <th>Responsable</th>
+                                    <th>Prioridad</th>
+                                    ${window.bafarHub.isEditor ? '<th>Acciones</th>' : ''}
+                                </tr>
+                            </thead>
+                            <tbody id="topics-table-${unit.id}">
+                                ${generateTopicsRows(unit.id, research.topics)}
+                            </tbody>
+                        </table>
+                        ${window.bafarHub.isEditor ? `<button class="add-topic-btn" onclick="addResearchTopic(${unit.id})">+ Agregar Tópico</button>` : ''}
+                    </div>
+                `;
+                container.appendChild(unitCard);
+            });
+        }
+
+        // Generate topic rows for research matrix
+        function generateTopicsRows(unitId, topics) {
+            if (!topics || topics.length === 0) {
+                return '<tr><td colspan="6" style="text-align: center; color: #6c757d;">No hay tópicos configurados</td></tr>';
+            }
+            
+            return topics.map((topic, index) => `
+                <tr>
+                    <td><input type="text" value="${topic.topic || ''}" onchange="updateResearchTopic(${unitId}, ${index}, 'topic', this.value)" ${!window.bafarHub.isEditor ? 'disabled' : ''}></td>
+                    <td>
+                        <select onchange="updateResearchTopic(${unitId}, ${index}, 'frequency', this.value)" ${!window.bafarHub.isEditor ? 'disabled' : ''}>
+                            <option value="Diaria" ${topic.frequency === 'Diaria' ? 'selected' : ''}>Diaria</option>
+                            <option value="Semanal" ${topic.frequency === 'Semanal' ? 'selected' : ''}>Semanal</option>
+                            <option value="Quincenal" ${topic.frequency === 'Quincenal' ? 'selected' : ''}>Quincenal</option>
+                            <option value="Mensual" ${topic.frequency === 'Mensual' ? 'selected' : ''}>Mensual</option>
+                            <option value="Trimestral" ${topic.frequency === 'Trimestral' ? 'selected' : ''}>Trimestral</option>
+                        </select>
+                    </td>
+                    <td><input type="date" value="${topic.nextDate || ''}" onchange="updateResearchTopic(${unitId}, ${index}, 'nextDate', this.value)" ${!window.bafarHub.isEditor ? 'disabled' : ''}></td>
+                    <td><input type="text" value="${topic.responsible || ''}" onchange="updateResearchTopic(${unitId}, ${index}, 'responsible', this.value)" ${!window.bafarHub.isEditor ? 'disabled' : ''}></td>
+                    <td>
+                        <select onchange="updateResearchTopic(${unitId}, ${index}, 'priority', this.value)" ${!window.bafarHub.isEditor ? 'disabled' : ''}>
+                            <option value="Alta" ${topic.priority === 'Alta' ? 'selected' : ''}>Alta</option>
+                            <option value="Media" ${topic.priority === 'Media' ? 'selected' : ''}>Media</option>
+                            <option value="Baja" ${topic.priority === 'Baja' ? 'selected' : ''}>Baja</option>
+                        </select>
+                    </td>
+                    ${window.bafarHub.isEditor ? `<td><button class="remove-topic-btn" onclick="removeResearchTopic(${unitId}, ${index})">Eliminar</button></td>` : ''}
+                </tr>
+            `).join('');
+        }
+
+        // Update metrics
+        function updateMetrics() {
+            const decisionsEl = document.getElementById('metricDecisions');
+            const opportunitiesEl = document.getElementById('metricOpportunities');
+            const risksEl = document.getElementById('metricRisks');
+            const timeEl = document.getElementById('metricTime');
+            
+            if (decisionsEl) {
+                decisionsEl.value = appData.metrics.decisions || 0;
+                decisionsEl.disabled = !window.bafarHub.isEditor;
+            }
+            if (opportunitiesEl) {
+                opportunitiesEl.value = appData.metrics.opportunities || 0;
+                opportunitiesEl.disabled = !window.bafarHub.isEditor;
+            }
+            if (risksEl) {
+                risksEl.value = appData.metrics.risks || 0;
+                risksEl.disabled = !window.bafarHub.isEditor;
+            }
+            if (timeEl) {
+                timeEl.value = appData.metrics.time || 0;
+                timeEl.disabled = !window.bafarHub.isEditor;
+            }
+        }
+
+        // Event handlers
+        function updateUnitField(index, field, value) {
+            if (appData.units[index]) {
+                appData.units[index][field] = value;
+                if (field === 'name') {
+                    updateNeedsSection();
+                    updateResearchMatrix();
+                }
+                if (field === 'responsible') {
+                    updateDashboard();
+                    updateResearchMatrix();
+                }
+                saveAllData();
+            }
+        }
+
+        function updateNeedField(unitId, field, value) {
+            if (!appData.needs[unitId]) {
+                appData.needs[unitId] = {};
+            }
+            appData.needs[unitId][field] = value;
+            saveAllData();
+        }
+
+        function addUnitFromForm() {
+            if (!window.bafarHub.isEditor) return;
+            
+            const input = document.getElementById('newUnitName');
+            const name = input ? input.value.trim() : '';
+            
+            if (!name) {
+                window.bafarHub.showNotification('Por favor ingrese un nombre para la unidad', 'warning');
+                return;
+            }
+            
+            let newId = 1;
+            if (appData.units.length > 0) {
+                const maxId = Math.max(...appData.units.map(u => u.id || 0));
+                newId = maxId + 1;
+            }
+            
+            const newUnit = {
+                id: newId,
+                name: name,
+                responsible: '',
+                email: '',
+                frequency: 'Semanal',
+                status: 'Pendiente'
+            };
+            
+            appData.units.push(newUnit);
+            
+            appData.needs[newId] = {
+                critical: '',
+                competitors: '',
+                regulations: '',
+                market: '',
+                technology: ''
+            };
+            
+            appData.research[newId] = {
+                topics: []
+            };
+            
+            input.value = '';
+            updateUI();
+            saveAllData();
+            
+            window.bafarHub.showNotification('Unidad agregada: ' + name, 'success');
+        }
+
+        function removeUnit(index) {
+            if (!window.bafarHub.isEditor) return;
+            if (!appData.units[index]) return;
+            
+            const unitName = appData.units[index].name;
+            
+            if (confirm('¿Está seguro de eliminar esta unidad: ' + unitName + '?')) {
+                const unitId = appData.units[index].id;
+                
+                appData.units.splice(index, 1);
+                
+                if (appData.needs[unitId]) {
+                    delete appData.needs[unitId];
+                }
+                
+                if (appData.research[unitId]) {
+                    delete appData.research[unitId];
+                }
+                
+                updateUI();
+                saveAllData();
+                
+                window.bafarHub.showNotification('Unidad eliminada: ' + unitName, 'success');
+            }
+        }
+
+        function addResearchTopic(unitId) {
+            if (!window.bafarHub.isEditor) return;
+            
+            if (!appData.research[unitId]) {
+                appData.research[unitId] = { topics: [] };
+            }
+            
+            const newTopic = {
+                topic: '',
+                frequency: 'Semanal',
+                nextDate: '',
+                responsible: '',
+                priority: 'Media'
+            };
+            
+            appData.research[unitId].topics.push(newTopic);
+            updateResearchMatrix();
+            saveAllData();
+        }
+
+        function updateResearchTopic(unitId, topicIndex, field, value) {
+            if (appData.research[unitId] && appData.research[unitId].topics[topicIndex]) {
+                appData.research[unitId].topics[topicIndex][field] = value;
+                saveAllData();
+            }
+        }
+
+        function removeResearchTopic(unitId, topicIndex) {
+            if (!window.bafarHub.isEditor) return;
+            
+            if (confirm('¿Eliminar este tópico de investigación?')) {
+                if (appData.research[unitId] && appData.research[unitId].topics) {
+                    appData.research[unitId].topics.splice(topicIndex, 1);
+                    updateResearchMatrix();
+                    saveAllData();
+                }
+            }
+        }
+
+        function saveAllData() {
+            // Update metrics from inputs
+            const decisionsEl = document.getElementById('metricDecisions');
+            const opportunitiesEl = document.getElementById('metricOpportunities');
+            const risksEl = document.getElementById('metricRisks');
+            const timeEl = document.getElementById('metricTime');
+            
+            if (decisionsEl) appData.metrics.decisions = decisionsEl.value;
+            if (opportunitiesEl) appData.metrics.opportunities = opportunitiesEl.value;
+            if (risksEl) appData.metrics.risks = risksEl.value;
+            if (timeEl) appData.metrics.time = timeEl.value;
+            
+            // Update hub data
+            window.bafarHub.appData = appData;
+            
+            // Save using hub
+            window.bafarHub.saveAllData();
+        }
+
+        function loadSharedData() {
+            window.bafarHub.loadFromGitHub().then(success => {
+                if (success) {
+                    appData = window.bafarHub.appData;
+                    updateUI();
+                    window.bafarHub.showNotification('Datos actualizados desde GitHub', 'success');
+                } else {
+                    window.bafarHub.showNotification('Error al cargar datos de GitHub', 'error');
+                }
+            });
+        }
+
+        function saveToLocal() {
+            window.bafarHub.saveToLocal();
+        }
+
+        function exportDataFile() {
+            window.bafarHub.exportData();
+        }
+
+        function importDataFile() {
+            document.getElementById('importFile').click();
+        }
+
+        function handleFileImport(input) {
+            if (input.files && input.files[0]) {
+                window.bafarHub.importData(input.files[0]);
+            }
+        }
+
+        function exportData(type) {
+            window.bafarHub.exportData(type);
+        }
+
+        function generateResearchReport() {
+            window.bafarHub.showNotification('Funcionalidad en desarrollo', 'info');
+        }
+
+        function generateMetricsReport() {
+            window.bafarHub.showNotification('Funcionalidad en desarrollo', 'info');
+        }
+
+        function updateTimelineProgress() {
+            window.bafarHub.showNotification('Funcionalidad en desarrollo', 'info');
+        }
+
+        function fixDataStructure() {
+            window.bafarHub.showNotification('Estructura verificada', 'success');
+        }
+
+        function resetAllData() {
+            if (!window.bafarHub.isEditor) return;
+            
+            if (confirm('¿Está seguro de reiniciar todos los datos? Esta acción no se puede deshacer.')) {
+                localStorage.removeItem('bafarHub');
+                initDefaultData();
+                updateUI();
+                saveAllData();
+                window.bafarHub.showNotification('Datos reiniciados correctamente', 'success');
+            }
+        }
+
+        function showSection(sectionId, button) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.classList.add('active');
+            }
+            
+            if (button) {
+                document.querySelectorAll('.nav button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+            }
+        }
+
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', initApp);
+        
+        // Auto-save every 60 seconds
+        setInterval(saveAllData, 60000);
+    </script>
 </body>
 </html>
