@@ -812,15 +812,15 @@
 
                 <!-- Sync Panel -->
                 <div class="sync-panel">
-                    <h4>🔄 Control de Sincronización</h4>
-                    <p><strong>Estado:</strong> <span id="syncStatusText">Verificando conexión...</span></p>
+                    <h4>🔄 Estado de Sincronización</h4>
+                    <p><strong>Estado:</strong> <span id="syncStatusText">Conectando...</span></p>
+                    <p><strong>Última actualización:</strong> <span id="lastSyncTime">Nunca</span></p>
                     <div class="sync-actions">
-                        <button class="btn btn-success btn-small" onclick="loadSharedData()" id="loadBtn">⬇️ Cargar Datos Compartidos</button>
-                        <button class="btn btn-warning btn-small" onclick="saveToLocal()" id="saveLocalBtn">💾 Guardar Local</button>
-                        <button class="btn btn-primary btn-small" onclick="saveToGitHub()" id="saveGitHubBtn">🚀 Sincronizar con GitHub</button>
-                        <button class="btn btn-secondary btn-small" onclick="exportDataFile()">📤 Exportar Mis Datos</button>
-                        <button class="btn btn-secondary btn-small" onclick="importDataFile()">📥 Importar Datos</button>
-                        <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleFileImport(this)">
+                        <button class="btn btn-primary btn-small" onclick="refreshData()" id="refreshBtn">🔄 Actualizar Datos</button>
+                        <button class="btn btn-success btn-small" onclick="saveToGitHub()" id="saveGitHubBtn">💾 Sincronizar Cambios</button>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                        💡 Los cambios se guardan automáticamente. Usa "Sincronizar" para compartir con el equipo.
                     </div>
                 </div>
 
@@ -1117,16 +1117,17 @@
             }
 
             // Initialize sync status
-            window.bafarHub.updateSyncStatus('syncing');
+            document.getElementById('syncStatusText').textContent = 'Conectando...';
 
             // Try to load from GitHub first, then local
             window.bafarHub.loadFromGitHub().then(success => {
                 if (success) {
                     appData = window.bafarHub.appData;
-                    window.bafarHub.updateSyncStatus('connected');
+                    document.getElementById('syncStatusText').textContent = '✅ Conectado a GitHub - Datos actualizados';
+                    window.bafarHub.lastSync = new Date();
                 } else {
                     loadFromLocal();
-                    window.bafarHub.updateSyncStatus('local');
+                    document.getElementById('syncStatusText').textContent = '⚠️ Modo Local - Sin conexión a GitHub';
                 }
                 updateUI();
                 // Start auto-sync
@@ -1134,7 +1135,7 @@
             }).catch(error => {
                 console.error('Error initializing:', error);
                 loadFromLocal();
-                window.bafarHub.updateSyncStatus('error');
+                document.getElementById('syncStatusText').textContent = '❌ Error de conexión - Usando datos locales';
                 updateUI();
             });
         }
@@ -1229,7 +1230,16 @@
             if (unitsCountEl) unitsCountEl.textContent = `${activeUnits}/${totalUnits}`;
             
             if (progressEl) progressEl.textContent = appData.progress + '%';
-            if (lastSyncEl) lastSyncEl.textContent = window.bafarHub?.lastSync ? window.bafarHub.getTimeAgo(window.bafarHub.lastSync) : 'Nunca';
+            
+            // Update last sync time in multiple places
+            const timeAgo = window.bafarHub?.lastSync ? window.bafarHub.getTimeAgo(window.bafarHub.lastSync) : 'Nunca';
+            if (lastSyncEl) lastSyncEl.textContent = timeAgo;
+            
+            const lastSyncTimeEl = document.getElementById('lastSyncTime');
+            if (lastSyncTimeEl && window.bafarHub?.lastSync) {
+                lastSyncTimeEl.textContent = window.bafarHub.lastSync.toLocaleTimeString();
+            }
+            
             if (currentModeEl) currentModeEl.textContent = window.bafarHub?.isEditor ? 'Editor' : 'Lectura';
         }
 
@@ -1651,44 +1661,34 @@
             window.bafarHub.saveAllData();
         }
 
-        function loadSharedData() {
-            window.bafarHub.updateSyncStatus('syncing');
-            document.getElementById('syncStatusText').textContent = 'Cargando desde GitHub...';
+        // Función unificada para actualizar datos
+        function refreshData() {
+            document.getElementById('syncStatusText').textContent = '🔄 Actualizando desde GitHub...';
+            document.getElementById('refreshBtn').disabled = true;
+            document.getElementById('refreshBtn').textContent = '🔄 Actualizando...';
             
             window.bafarHub.loadFromGitHub().then(success => {
                 if (success) {
                     appData = window.bafarHub.appData;
                     updateUI();
-                    window.bafarHub.updateSyncStatus('connected');
-                    document.getElementById('syncStatusText').textContent = 'Conectado - Datos actualizados';
+                    const now = new Date();
+                    window.bafarHub.lastSync = now;
+                    document.getElementById('syncStatusText').textContent = '✅ Conectado a GitHub - Datos actualizados';
+                    document.getElementById('lastSyncTime').textContent = now.toLocaleTimeString();
                     window.bafarHub.showNotification('Datos actualizados desde GitHub', 'success');
                 } else {
-                    window.bafarHub.updateSyncStatus('error');
-                    document.getElementById('syncStatusText').textContent = 'Error de conexión - Usando datos locales';
-                    window.bafarHub.showNotification('Error al cargar datos de GitHub', 'error');
+                    document.getElementById('syncStatusText').textContent = '⚠️ Sin conexión - Usando datos locales';
+                    window.bafarHub.showNotification('No se pudo conectar a GitHub', 'warning');
                 }
+                
+                document.getElementById('refreshBtn').disabled = false;
+                document.getElementById('refreshBtn').textContent = '🔄 Actualizar Datos';
             });
         }
 
-        function saveToLocal() {
-            window.bafarHub.appData = appData;
-            window.bafarHub.saveToLocal();
-            window.bafarHub.updateSyncStatus('local');
-            document.getElementById('syncStatusText').textContent = 'Datos guardados localmente';
-        }
-
+        // Funciones simplificadas - solo las necesarias
         function exportDataFile() {
             window.bafarHub.exportData();
-        }
-
-        function importDataFile() {
-            document.getElementById('importFile').click();
-        }
-
-        function handleFileImport(input) {
-            if (input.files && input.files[0]) {
-                window.bafarHub.importData(input.files[0]);
-            }
         }
 
         function exportData(type) {
