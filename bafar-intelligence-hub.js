@@ -78,7 +78,10 @@ class BafarIntelligenceHub {
     // Load data from GitHub
     async loadFromGitHub() {
         try {
-            const url = `https://raw.githubusercontent.com/${this.githubRepo}/${this.branch}/${this.dataFile}`;
+            // Use GitHub Pages URL instead of raw GitHub
+            const url = `https://daniel9romero.github.io/BafarIntelligence/${this.dataFile}?t=${Date.now()}`;
+            console.log('Loading data from:', url);
+            
             const response = await fetch(url, {
                 cache: 'no-cache',
                 headers: {
@@ -89,12 +92,14 @@ class BafarIntelligenceHub {
             
             if (response.ok) {
                 const data = await response.json();
+                console.log('Data loaded successfully from GitHub:', data);
                 this.appData = data;
                 this.lastSync = new Date();
                 this.updateSyncStatus('connected');
                 this.updateAllUI();
                 return true;
             } else {
+                console.error('GitHub response not ok:', response.status, response.statusText);
                 this.updateSyncStatus('error');
                 return false;
             }
