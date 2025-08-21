@@ -817,6 +817,7 @@
                     <div class="sync-actions">
                         <button class="btn btn-success btn-small" onclick="loadSharedData()" id="loadBtn">⬇️ Cargar Datos Compartidos</button>
                         <button class="btn btn-warning btn-small" onclick="saveToLocal()" id="saveLocalBtn">💾 Guardar Local</button>
+                        <button class="btn btn-primary btn-small" onclick="saveToGitHub()" id="saveGitHubBtn">🚀 Sincronizar con GitHub</button>
                         <button class="btn btn-secondary btn-small" onclick="exportDataFile()">📤 Exportar Mis Datos</button>
                         <button class="btn btn-secondary btn-small" onclick="importDataFile()">📥 Importar Datos</button>
                         <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleFileImport(this)">
@@ -878,7 +879,7 @@
                 <div class="action-buttons">
                     <button class="btn btn-secondary" onclick="fixDataStructure()">Reparar Estructura de Datos</button>
                     <button class="btn btn-danger" onclick="resetAllData()">Reiniciar Todo</button>
-                    <button class="btn btn-primary" onclick="saveAllData()">Guardar Cambios</button>
+                    <button class="btn btn-primary" onclick="saveToGitHub()">💾 Guardar en GitHub</button>
                 </div>
             </section>
 
@@ -890,7 +891,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <h3>Registro de Unidades y Responsables</h3>
                         <div>
-                            <button class="btn btn-primary" onclick="saveAllData()">Guardar Cambios</button>
+                            <button class="btn btn-primary" onclick="saveToGitHub()">💾 Guardar en GitHub</button>
                         </div>
                     </div>
 
@@ -944,7 +945,7 @@
 
                 <div class="action-buttons">
                     <button class="btn btn-secondary" onclick="exportData('needs')">Exportar Necesidades</button>
-                    <button class="btn btn-primary" onclick="saveAllData()">Guardar Necesidades</button>
+                    <button class="btn btn-primary" onclick="saveToGitHub()">💾 Guardar en GitHub Necesidades</button>
                 </div>
             </section>
 
@@ -963,7 +964,7 @@
                 <div class="action-buttons">
                     <button class="btn btn-secondary" onclick="generateResearchReport()">Generar Reporte</button>
                     <button class="btn btn-secondary" onclick="exportData('research')">Exportar Matriz</button>
-                    <button class="btn btn-primary" onclick="saveAllData()">Guardar Matriz de Investigación</button>
+                    <button class="btn btn-primary" onclick="saveToGitHub()">💾 Guardar en GitHub Matriz de Investigación</button>
                 </div>
             </section>
 
@@ -1085,7 +1086,7 @@
                 <div class="action-buttons">
                     <button class="btn btn-secondary" onclick="generateMetricsReport()">Generar Reporte de Métricas</button>
                     <button class="btn btn-secondary" onclick="exportData('metrics')">Exportar Datos</button>
-                    <button class="btn btn-primary" onclick="saveAllData()">Guardar Métricas</button>
+                    <button class="btn btn-primary" onclick="saveToGitHub()">💾 Guardar en GitHub Métricas</button>
                 </div>
             </section>
         </div>
@@ -1115,14 +1116,26 @@
                 return;
             }
 
+            // Initialize sync status
+            window.bafarHub.updateSyncStatus('syncing');
+
             // Try to load from GitHub first, then local
             window.bafarHub.loadFromGitHub().then(success => {
-                if (!success) {
+                if (success) {
+                    appData = window.bafarHub.appData;
+                    window.bafarHub.updateSyncStatus('connected');
+                } else {
                     loadFromLocal();
+                    window.bafarHub.updateSyncStatus('local');
                 }
                 updateUI();
                 // Start auto-sync
                 window.bafarHub.startAutoSync();
+            }).catch(error => {
+                console.error('Error initializing:', error);
+                loadFromLocal();
+                window.bafarHub.updateSyncStatus('error');
+                updateUI();
             });
         }
 
@@ -1605,32 +1618,63 @@
             const risksEl = document.getElementById('metricRisks');
             const timeEl = document.getElementById('metricTime');
             
-            if (decisionsEl) appData.metrics.decisions = decisionsEl.value;
-            if (opportunitiesEl) appData.metrics.opportunities = opportunitiesEl.value;
-            if (risksEl) appData.metrics.risks = risksEl.value;
-            if (timeEl) appData.metrics.time = timeEl.value;
+            if (decisionsEl) appData.metrics.decisions = parseInt(decisionsEl.value) || 0;
+            if (opportunitiesEl) appData.metrics.opportunities = parseInt(opportunitiesEl.value) || 0;
+            if (risksEl) appData.metrics.risks = parseInt(risksEl.value) || 0;
+            if (timeEl) appData.metrics.time = parseInt(timeEl.value) || 0;
+            
+            // Update metadata
+            appData.lastUpdate = new Date().toISOString();
+            appData.lastEditor = window.bafarHub.user?.username || 'Usuario';
             
             // Update hub data
             window.bafarHub.appData = appData;
             
-            // Save using hub
+            // Save locally only (no GitHub modal for every change)
+            window.bafarHub.saveToLocal();
+            
+            // Show subtle notification
+            window.bafarHub.showNotification('Cambios guardados localmente', 'success', 1500);
+        }
+        
+        // Manual save to GitHub (for explicit saves)
+        function saveToGitHub() {
+            if (!window.bafarHub.isEditor) {
+                window.bafarHub.showNotification('Solo los editores pueden guardar cambios', 'warning');
+                return;
+            }
+            
+            // Update hub data
+            window.bafarHub.appData = appData;
+            
+            // Use the hub's GitHub save method
             window.bafarHub.saveAllData();
         }
 
         function loadSharedData() {
+            window.bafarHub.updateSyncStatus('syncing');
+            document.getElementById('syncStatusText').textContent = 'Cargando desde GitHub...';
+            
             window.bafarHub.loadFromGitHub().then(success => {
                 if (success) {
                     appData = window.bafarHub.appData;
                     updateUI();
+                    window.bafarHub.updateSyncStatus('connected');
+                    document.getElementById('syncStatusText').textContent = 'Conectado - Datos actualizados';
                     window.bafarHub.showNotification('Datos actualizados desde GitHub', 'success');
                 } else {
+                    window.bafarHub.updateSyncStatus('error');
+                    document.getElementById('syncStatusText').textContent = 'Error de conexión - Usando datos locales';
                     window.bafarHub.showNotification('Error al cargar datos de GitHub', 'error');
                 }
             });
         }
 
         function saveToLocal() {
+            window.bafarHub.appData = appData;
             window.bafarHub.saveToLocal();
+            window.bafarHub.updateSyncStatus('local');
+            document.getElementById('syncStatusText').textContent = 'Datos guardados localmente';
         }
 
         function exportDataFile() {
