@@ -1,0 +1,445 @@
+// BAFAR Intelligence Hub - Core JavaScript Module
+// Sistema de sincronización con GitHub para colaboración real
+
+class BafarIntelligenceHub {
+    constructor() {
+        this.githubRepo = 'Daniel9romero/BafarIntelligence';
+        this.branch = 'main';
+        this.dataFile = 'data.json';
+        this.appData = this.initDefaultData();
+        this.user = null;
+        this.syncInterval = null;
+        this.lastSync = null;
+        this.isEditor = false;
+    }
+
+    // Initialize default data structure
+    initDefaultData() {
+        return {
+            units: [
+                { id: 1, name: 'DPC Carnes Frías', responsible: '', email: '', frequency: 'Semanal', status: 'Pendiente' },
+                { id: 2, name: 'Food Service', responsible: '', email: '', frequency: 'Diaria', status: 'Pendiente' },
+                { id: 3, name: 'Retail', responsible: '', email: '', frequency: 'Semanal', status: 'Pendiente' },
+                { id: 4, name: 'Exportación', responsible: '', email: '', frequency: 'Diaria', status: 'Pendiente' },
+                { id: 5, name: 'Agroindustrial', responsible: '', email: '', frequency: 'Semanal', status: 'Pendiente' }
+            ],
+            needs: {},
+            research: {},
+            metrics: {
+                decisions: 0,
+                opportunities: 0,
+                risks: 0,
+                time: 0
+            },
+            startDate: new Date().toISOString().split('T')[0],
+            progress: 15,
+            lastUpdate: new Date().toISOString(),
+            lastEditor: ''
+        };
+    }
+
+    // Check user session
+    checkUserSession() {
+        const userSession = sessionStorage.getItem('user');
+        if (userSession) {
+            this.user = JSON.parse(userSession);
+            this.isEditor = this.user.role === 'editor';
+            this.updateUserInterface();
+            return true;
+        }
+        return false;
+    }
+
+    // Update UI based on user role
+    updateUserInterface() {
+        const userInfo = document.getElementById('userInfo');
+        const syncStatus = document.getElementById('syncStatus');
+        const modeIndicator = document.getElementById('modeIndicator');
+        
+        if (userInfo) {
+            userInfo.textContent = `Usuario: ${this.user.username}`;
+        }
+        
+        if (modeIndicator) {
+            modeIndicator.textContent = this.isEditor ? 'Modo Editor' : 'Modo Lectura';
+            modeIndicator.style.background = this.isEditor ? 'rgba(40, 167, 69, 0.2)' : 'rgba(255, 193, 7, 0.2)';
+        }
+        
+        // Disable inputs if viewer
+        if (!this.isEditor) {
+            document.querySelectorAll('input, select, textarea, button.btn-primary').forEach(el => {
+                if (!el.classList.contains('allow-viewer')) {
+                    el.disabled = true;
+                }
+            });
+        }
+    }
+
+    // Load data from GitHub
+    async loadFromGitHub() {
+        try {
+            const url = `https://raw.githubusercontent.com/${this.githubRepo}/${this.branch}/${this.dataFile}`;
+            const response = await fetch(url, {
+                cache: 'no-cache',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                this.appData = data;
+                this.lastSync = new Date();
+                this.updateSyncStatus('connected');
+                this.updateAllUI();
+                return true;
+            } else {
+                this.updateSyncStatus('error');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error loading from GitHub:', error);
+            this.updateSyncStatus('error');
+            this.loadFromLocal();
+            return false;
+        }
+    }
+
+    // Save data locally
+    saveToLocal() {
+        try {
+            localStorage.setItem('bafarHub', JSON.stringify(this.appData));
+            this.showNotification('Datos guardados localmente', 'success');
+            return true;
+        } catch (error) {
+            console.error('Error saving locally:', error);
+            this.showNotification('Error al guardar localmente', 'error');
+            return false;
+        }
+    }
+
+    // Load data from local storage
+    loadFromLocal() {
+        const saved = localStorage.getItem('bafarHub');
+        if (saved) {
+            try {
+                this.appData = JSON.parse(saved);
+                this.updateSyncStatus('local');
+                this.updateAllUI();
+                return true;
+            } catch (error) {
+                console.error('Error loading local data:', error);
+                this.appData = this.initDefaultData();
+                return false;
+            }
+        }
+        return false;
+    }
+
+    // Update sync status indicator
+    updateSyncStatus(status) {
+        const syncDot = document.getElementById('syncDot');
+        const syncText = document.getElementById('syncText');
+        const lastSyncEl = document.getElementById('lastSync');
+        
+        if (syncDot && syncText) {
+            switch (status) {
+                case 'connected':
+                    syncDot.className = 'sync-dot';
+                    syncText.textContent = 'Conectado a GitHub';
+                    break;
+                case 'local':
+                    syncDot.className = 'sync-dot sync-local';
+                    syncText.textContent = 'Modo Local';
+                    break;
+                case 'error':
+                    syncDot.className = 'sync-dot sync-error';
+                    syncText.textContent = 'Error de Conexión';
+                    break;
+                case 'syncing':
+                    syncDot.className = 'sync-dot';
+                    syncText.textContent = 'Sincronizando...';
+                    break;
+            }
+        }
+        
+        if (lastSyncEl && this.lastSync) {
+            const timeAgo = this.getTimeAgo(this.lastSync);
+            lastSyncEl.textContent = timeAgo;
+        }
+    }
+
+    // Get time ago string
+    getTimeAgo(date) {
+        const seconds = Math.floor((new Date() - date) / 1000);
+        
+        if (seconds < 60) return 'Hace un momento';
+        if (seconds < 3600) return `Hace ${Math.floor(seconds / 60)} minutos`;
+        if (seconds < 86400) return `Hace ${Math.floor(seconds / 3600)} horas`;
+        return `Hace ${Math.floor(seconds / 86400)} días`;
+    }
+
+    // Start auto-sync
+    startAutoSync() {
+        // Initial sync
+        this.loadFromGitHub();
+        
+        // Set up interval (every 30 seconds)
+        this.syncInterval = setInterval(() => {
+            this.loadFromGitHub();
+        }, 30000);
+    }
+
+    // Stop auto-sync
+    stopAutoSync() {
+        if (this.syncInterval) {
+            clearInterval(this.syncInterval);
+            this.syncInterval = null;
+        }
+    }
+
+    // Save all data
+    async saveAllData() {
+        if (!this.isEditor) {
+            this.showNotification('Solo los editores pueden guardar cambios', 'warning');
+            return false;
+        }
+        
+        // Update metadata
+        this.appData.lastUpdate = new Date().toISOString();
+        this.appData.lastEditor = this.user.username;
+        
+        // Save locally
+        this.saveToLocal();
+        
+        // For GitHub saving, we need to create a commit
+        // This would require GitHub API token which we'll document
+        this.showNotification('Para guardar en GitHub, usa: git add data.json && git commit -m "Update" && git push', 'info');
+        
+        return true;
+    }
+
+    // Export data as JSON
+    exportData(type = 'full') {
+        const timestamp = new Date().toISOString().split('T')[0];
+        let dataToExport;
+        let filename;
+        
+        switch (type) {
+            case 'needs':
+                dataToExport = this.appData.needs;
+                filename = `bafar-needs-${timestamp}.json`;
+                break;
+            case 'research':
+                dataToExport = this.appData.research;
+                filename = `bafar-research-${timestamp}.json`;
+                break;
+            case 'metrics':
+                dataToExport = this.appData.metrics;
+                filename = `bafar-metrics-${timestamp}.json`;
+                break;
+            default:
+                dataToExport = this.appData;
+                filename = `bafar-full-backup-${timestamp}.json`;
+        }
+        
+        const dataStr = JSON.stringify(dataToExport, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(dataBlob);
+        link.download = filename;
+        link.click();
+        
+        URL.revokeObjectURL(link.href);
+        this.showNotification('Datos exportados correctamente', 'success');
+    }
+
+    // Import data from file
+    importData(file) {
+        const reader = new FileReader();
+        
+        reader.onload = (event) => {
+            try {
+                const importedData = JSON.parse(event.target.result);
+                
+                // Validate and merge data
+                if (importedData.units && importedData.needs && importedData.research) {
+                    this.appData = importedData;
+                    this.saveToLocal();
+                    this.updateAllUI();
+                    this.showNotification('Datos importados correctamente', 'success');
+                } else {
+                    this.showNotification('Formato de archivo inválido', 'error');
+                }
+            } catch (error) {
+                console.error('Error importing data:', error);
+                this.showNotification('Error al importar datos', 'error');
+            }
+        };
+        
+        reader.readAsText(file);
+    }
+
+    // Update all UI elements
+    updateAllUI() {
+        if (typeof updateDashboard === 'function') updateDashboard();
+        if (typeof updateUnitsTable === 'function') updateUnitsTable();
+        if (typeof updateNeedsSection === 'function') updateNeedsSection();
+        if (typeof updateResearchMatrix === 'function') updateResearchMatrix();
+        if (typeof updateMetrics === 'function') updateMetrics();
+    }
+
+    // Show notification
+    showNotification(message, type = 'info', duration = 3000) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+        `;
+        
+        switch(type) {
+            case 'success':
+                notification.style.background = '#28a745';
+                break;
+            case 'error':
+                notification.style.background = '#dc3545';
+                break;
+            case 'warning':
+                notification.style.background = '#ffc107';
+                notification.style.color = '#000';
+                break;
+            case 'info':
+                notification.style.background = '#17a2b8';
+                break;
+            default:
+                notification.style.background = '#1e3a5f';
+        }
+        
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, duration);
+    }
+
+    // Format currency
+    formatCurrency(amount, currency = 'MXN') {
+        const formatter = new Intl.NumberFormat('es-MX', {
+            style: 'currency',
+            currency: currency,
+        });
+        return formatter.format(amount || 0);
+    }
+
+    // Generate instructions for GitHub setup
+    generateGitHubInstructions() {
+        const instructions = `
+INSTRUCCIONES PARA SINCRONIZACIÓN CON GITHUB
+============================================
+
+1. GUARDAR CAMBIOS LOCALMENTE:
+   - Edita el archivo data.json con tus cambios
+   - Guarda el archivo en tu computadora
+
+2. SUBIR CAMBIOS A GITHUB:
+   
+   Opción A - Línea de Comandos:
+   -----------------------------
+   git add data.json
+   git commit -m "Actualizar datos - ${new Date().toLocaleDateString()}"
+   git push origin main
+   
+   Opción B - GitHub Desktop:
+   --------------------------
+   1. Abre GitHub Desktop
+   2. Selecciona el repositorio BafarIntelligence
+   3. Verás data.json en cambios
+   4. Escribe mensaje de commit
+   5. Click en "Commit to main"
+   6. Click en "Push origin"
+   
+   Opción C - GitHub Web:
+   ----------------------
+   1. Ve a: https://github.com/${this.githubRepo}
+   2. Abre el archivo data.json
+   3. Click en el lápiz (Edit)
+   4. Pega tus cambios
+   5. Commit changes con descripción
+
+3. VERIFICAR SINCRONIZACIÓN:
+   - Espera 1-2 minutos
+   - Refresca esta página
+   - Los cambios aparecerán automáticamente
+
+USUARIOS Y CONTRASEÑAS
+======================
+Editores (pueden modificar):
+- Usuario: admin / Contraseña: bafar2024
+- Usuario: daniel / Contraseña: intel2024
+- Usuario: carlos / Contraseña: bafar789
+
+Lectores (solo visualización):
+- Usuario: viewer / Contraseña: view2024
+- Usuario: juan / Contraseña: bafar123
+- Usuario: ana / Contraseña: bafar456
+        `;
+        
+        return instructions;
+    }
+}
+
+// Initialize global instance
+window.bafarHub = new BafarIntelligenceHub();
+
+// CSS Animation Styles
+const animationStyles = `
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+`;
+
+// Add animation styles to document
+const styleSheet = document.createElement('style');
+styleSheet.textContent = animationStyles;
+document.head.appendChild(styleSheet);
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    // Check user session
+    if (!window.bafarHub.checkUserSession()) {
+        // Redirect to login if no session
+        if (!window.location.href.includes('index.html')) {
+            window.location.href = 'index.html';
+        }
+    } else {
+        // Start auto-sync if user is logged in
+        window.bafarHub.startAutoSync();
+    }
+});
+
+// Export for use in other modules
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = BafarIntelligenceHub;
+}
