@@ -152,8 +152,8 @@
     "risks": 3,
     "time": 45
   },
-  "startDate": "2024-01-01",
-  "progress": 15,
+  "startDate": "2024-12-01",
+  "progress": 25,
   "config": {
     "adminMode": false,
     "dataUrl": "./data.json",

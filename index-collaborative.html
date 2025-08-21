@@ -827,7 +827,12 @@
                     <div class="stat-card">
                         <div class="stat-label">Días Restantes</div>
                         <div class="stat-number" id="daysRemaining">90</div>
-                        <div class="stat-label">Fecha Inicio: <span id="startDate">--</span></div>
+                        <div class="stat-label">
+                            Fecha Inicio: 
+                            <input type="date" id="startDateInput" onchange="updateStartDate(this.value)" 
+                                   style="border: none; background: transparent; color: #666; font-size: 12px; margin-top: 5px; ${!window.bafarHub?.isEditor ? 'pointer-events: none;' : ''}" 
+                                   ${!window.bafarHub?.isEditor ? 'disabled' : ''}>
+                        </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Unidades Activas</div>
@@ -1194,22 +1199,35 @@
             const remaining = Math.max(0, 90 - diff);
             
             const daysEl = document.getElementById('daysRemaining');
-            const startDateEl = document.getElementById('startDate');
+            const startDateInputEl = document.getElementById('startDateInput');
             const unitsCountEl = document.getElementById('unitsCount');
             const progressEl = document.getElementById('progressPercent');
             const lastSyncEl = document.getElementById('lastSync');
             const currentModeEl = document.getElementById('currentMode');
             
             if (daysEl) daysEl.textContent = remaining;
-            if (startDateEl) startDateEl.textContent = appData.startDate;
+            if (startDateInputEl) {
+                startDateInputEl.value = appData.startDate;
+                startDateInputEl.disabled = !window.bafarHub?.isEditor;
+            }
             
             const totalUnits = appData.units.length;
             const activeUnits = appData.units.filter(u => u.responsible && u.responsible.trim() !== '').length;
             if (unitsCountEl) unitsCountEl.textContent = `${activeUnits}/${totalUnits}`;
             
             if (progressEl) progressEl.textContent = appData.progress + '%';
-            if (lastSyncEl) lastSyncEl.textContent = window.bafarHub.lastSync ? window.bafarHub.getTimeAgo(window.bafarHub.lastSync) : 'Nunca';
-            if (currentModeEl) currentModeEl.textContent = window.bafarHub.isEditor ? 'Editor' : 'Lectura';
+            if (lastSyncEl) lastSyncEl.textContent = window.bafarHub?.lastSync ? window.bafarHub.getTimeAgo(window.bafarHub.lastSync) : 'Nunca';
+            if (currentModeEl) currentModeEl.textContent = window.bafarHub?.isEditor ? 'Editor' : 'Lectura';
+        }
+
+        // Update start date
+        function updateStartDate(newDate) {
+            if (!window.bafarHub?.isEditor) return;
+            
+            appData.startDate = newDate;
+            updateDashboard(); // Recalculate days remaining
+            saveAllData();
+            window.bafarHub.showNotification('Fecha de inicio actualizada', 'success');
         }
 
         // Update units table

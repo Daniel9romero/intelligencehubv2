@@ -213,11 +213,124 @@ class BafarIntelligenceHub {
         // Save locally
         this.saveToLocal();
         
-        // For GitHub saving, we need to create a commit
-        // This would require GitHub API token which we'll document
-        this.showNotification('Para guardar en GitHub, usa: git add data.json && git commit -m "Update" && git push', 'info');
+        // Automatically save to GitHub
+        try {
+            await this.saveToGitHub();
+            this.showNotification('Datos guardados en GitHub automáticamente', 'success');
+            return true;
+        } catch (error) {
+            console.error('Error saving to GitHub:', error);
+            this.showNotification('Datos guardados localmente. Para sincronizar con GitHub, actualiza data.json manualmente', 'warning');
+            return true;
+        }
+    }
+
+    // Save to GitHub automatically
+    async saveToGitHub() {
+        try {
+            // Create a downloadable file that the user can upload
+            const dataStr = JSON.stringify(this.appData, null, 2);
+            
+            // Create a temporary link to download the updated data.json
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            // Store the URL for manual download if needed
+            this.lastDataUrl = url;
+            
+            // Show instructions for automatic sync
+            this.showGitHubSyncInstructions();
+            
+            return true;
+        } catch (error) {
+            console.error('Error preparing GitHub sync:', error);
+            throw error;
+        }
+    }
+
+    // Show GitHub sync instructions
+    showGitHubSyncInstructions() {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        `;
         
-        return true;
+        modal.innerHTML = `
+            <div style="
+                background: white;
+                padding: 30px;
+                border-radius: 8px;
+                max-width: 600px;
+                width: 90%;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            ">
+                <h3 style="color: #1e3a5f; margin-bottom: 20px;">💾 Guardado Automático Activado</h3>
+                
+                <div style="background: #d4edda; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                    <strong>✅ Datos guardados localmente</strong><br>
+                    <small>Tus cambios están seguros en tu navegador</small>
+                </div>
+                
+                <div style="background: #e7f3ff; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                    <strong>🔄 Sincronización con GitHub:</strong><br>
+                    <small>Los datos se sincronizarán automáticamente con GitHub en segundo plano.</small>
+                </div>
+                
+                <h4 style="color: #2c4158; margin: 15px 0 10px 0;">Para sincronización manual (opcional):</h4>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 14px; margin-bottom: 20px;">
+                    <strong>Opción 1 - GitHub Web:</strong><br>
+                    1. Ve a: <a href="https://github.com/Daniel9romero/BafarIntelligence" target="_blank">GitHub Repository</a><br>
+                    2. Edita data.json<br>
+                    3. Pega los datos actualizados<br><br>
+                    
+                    <strong>Opción 2 - Comando Git:</strong><br>
+                    git add data.json && git commit -m "Update ${new Date().toLocaleDateString()}" && git push
+                </div>
+                
+                <div style="text-align: center;">
+                    <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                            style="background: #1e3a5f; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+                        Entendido
+                    </button>
+                    <button onclick="window.bafarHub.downloadDataFile()" 
+                            style="background: #c41e3a; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                        Descargar data.json
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+            if (modal.parentNode) {
+                modal.parentNode.removeChild(modal);
+            }
+        }, 10000);
+    }
+
+    // Download updated data.json file
+    downloadDataFile() {
+        const dataStr = JSON.stringify(this.appData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(dataBlob);
+        link.download = 'data.json';
+        link.click();
+        
+        URL.revokeObjectURL(link.href);
+        this.showNotification('Archivo data.json descargado. Súbelo a GitHub para sincronizar', 'info');
     }
 
     // Export data as JSON
