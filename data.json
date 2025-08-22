@@ -1,7 +1,7 @@
 {
   "project": "BAFAR Intelligence Hub",
   "version": "1.0",
-  "lastUpdate": "2025-08-22T17:32:03.126Z",
+  "lastUpdate": "2025-08-22T17:35:38.115Z",
   "lastEditor": "Administrador",
   "units": [
     {
@@ -43,6 +43,14 @@
       "email": "",
       "frequency": "Semanal",
       "status": "Pendiente"
+    },
+    {
+      "id": 6,
+      "name": "PISOT",
+      "responsible": "",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente"
     }
   ],
   "needs": {
@@ -80,6 +88,13 @@
       "regulations": "Políticas agrícolas, apoyos gubernamentales, sustentabilidad",
       "market": "Volatilidad de granos, mercados de futuros, clima",
       "technology": "Agricultura de precisión, feed alternativo, bioseguridad"
+    },
+    "6": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
     }
   },
   "research": {
@@ -144,6 +159,9 @@
           "priority": "Alta"
         }
       ]
+    },
+    "6": {
+      "topics": []
     }
   },
   "metrics": {
