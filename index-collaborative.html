@@ -1052,16 +1052,57 @@
         .level-0 .org-card {
             background: linear-gradient(135deg, #1e3a5f, #2c5282);
             color: white;
+            border-color: #1e3a5f;
         }
         
-        .level-1 .org-card {
-            background: linear-gradient(135deg, #c41e3a, #e53e3e);
+        .level-0 .org-card .org-title {
             color: white;
         }
         
+        .level-0 .org-card .org-name {
+            color: #e0e8f0;
+        }
+        
+        .level-1 .org-card {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .level-1 .org-card .org-title {
+            color: white;
+        }
+        
+        .level-1 .org-card .org-name {
+            color: #e8f5e8;
+        }
+        
         .level-2 .org-card {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
             border-color: #007bff;
+        }
+        
+        .level-2 .org-card .org-title {
+            color: white;
+        }
+        
+        .level-2 .org-card .org-name {
+            color: #e3f2fd;
+        }
+        
+        .level-3 .org-card {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #212529;
+            border-color: #ffc107;
+        }
+        
+        .level-3 .org-card .org-title {
+            color: #212529;
+        }
+        
+        .level-3 .org-card .org-name {
+            color: #6c5300;
         }
         
         .btn-small {
@@ -1077,6 +1118,167 @@
         
         .btn-small:hover {
             background: #0056b3;
+        }
+        
+        /* Org Position Form Modal */
+        .org-form-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .org-form-content {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .org-form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .org-form-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .org-form-close:hover {
+            color: #c41e3a;
+        }
+        
+        .org-form-group {
+            margin-bottom: 20px;
+        }
+        
+        .org-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1e3a5f;
+        }
+        
+        .org-form-group input,
+        .org-form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .org-form-group input:focus,
+        .org-form-group select:focus {
+            outline: none;
+            border-color: #c41e3a;
+            box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.1);
+        }
+        
+        .org-form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        
+        .org-form-actions button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .org-form-actions .btn-primary {
+            background: #c41e3a;
+            color: white;
+        }
+        
+        .org-form-actions .btn-primary:hover {
+            background: #a01729;
+        }
+        
+        .org-form-actions .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .org-form-actions .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .supervisor-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .supervisor-info h4 {
+            margin: 0 0 10px 0;
+            color: #28a745;
+            font-size: 14px;
+        }
+        
+        .supervisor-option {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .supervisor-option:hover {
+            border-color: #c41e3a;
+            background: rgba(196, 30, 58, 0.05);
+        }
+        
+        .supervisor-option.selected {
+            border-color: #c41e3a;
+            background: rgba(196, 30, 58, 0.1);
+        }
+        
+        .supervisor-option h5 {
+            margin: 0 0 5px 0;
+            color: #1e3a5f;
+            font-size: 14px;
+        }
+        
+        .supervisor-option p {
+            margin: 0;
+            color: #666;
+            font-size: 12px;
         }
         
         /* Form Styles in Modal */
@@ -1489,6 +1691,48 @@
                             </button>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Org Position Form Modal -->
+            <div id="orgFormModal" class="org-form-modal">
+                <div class="org-form-content">
+                    <div class="org-form-header">
+                        <h3 id="orgFormTitle">➕ Agregar Nueva Posición</h3>
+                        <button class="org-form-close" onclick="closeOrgForm()">&times;</button>
+                    </div>
+                    
+                    <form id="orgPositionForm">
+                        <div class="org-form-group">
+                            <label for="orgPositionTitle">🏷️ Título del Puesto *</label>
+                            <input type="text" id="orgPositionTitle" placeholder="Ej: Director General, Gerente de Ventas, Coordinador..." required>
+                        </div>
+                        
+                        <div class="org-form-group">
+                            <label for="orgPositionName">👤 Nombre de la Persona</label>
+                            <input type="text" id="orgPositionName" placeholder="Nombre completo (opcional)">
+                        </div>
+                        
+                        <div class="org-form-group">
+                            <label for="orgPositionEmail">📧 Email</label>
+                            <input type="email" id="orgPositionEmail" placeholder="correo@grupobafar.com (opcional)">
+                        </div>
+                        
+                        <div id="supervisorSelection" class="org-form-group">
+                            <label>👨‍💼 ¿A quién reporta esta posición?</label>
+                            <div class="supervisor-info">
+                                <h4>Selecciona el supervisor directo:</h4>
+                                <div id="supervisorOptions">
+                                    <!-- Supervisor options will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="org-form-actions">
+                            <button type="button" class="btn-secondary" onclick="closeOrgForm()">Cancelar</button>
+                            <button type="submit" class="btn-primary">💾 Guardar Posición</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -2719,11 +2963,9 @@
         }
         
         function addOrgPosition() {
-            const title = prompt('Título del puesto:');
-            if (!title) return;
+            if (!window.currentUnitId) return;
             
-            const name = prompt('Nombre de la persona (opcional):') || '';
-            
+            // Initialize organizational structure
             if (!appData.organizational) {
                 appData.organizational = {};
             }
@@ -2732,49 +2974,133 @@
                 appData.organizational[window.currentUnitId] = [];
             }
             
-            // Ask for supervisor if there are existing positions
-            let parentId = null;
-            const existingPositions = appData.organizational[window.currentUnitId];
+            // Clear form
+            document.getElementById('orgPositionTitle').value = '';
+            document.getElementById('orgPositionName').value = '';
+            document.getElementById('orgPositionEmail').value = '';
+            document.getElementById('orgFormTitle').textContent = '➕ Agregar Nueva Posición';
             
-            if (existingPositions.length > 0) {
-                const supervisorChoice = confirm('¿Esta posición tiene un supervisor directo?\n\nOK = Sí, seleccionar supervisor\nCancelar = No, es posición de nivel superior');
-                
-                if (supervisorChoice) {
-                    // Show list of potential supervisors
-                    let supervisorOptions = 'Selecciona el supervisor directo:\n\n';
-                    existingPositions.forEach((pos, index) => {
-                        supervisorOptions += `${index + 1}. ${pos.title}${pos.name ? ' - ' + pos.name : ''}\n`;
-                    });
-                    supervisorOptions += '\nIngresa el número del supervisor:';
-                    
-                    const supervisorIndex = prompt(supervisorOptions);
-                    if (supervisorIndex && !isNaN(supervisorIndex)) {
-                        const index = parseInt(supervisorIndex) - 1;
-                        if (index >= 0 && index < existingPositions.length) {
-                            parentId = existingPositions[index].id;
-                        }
-                    }
-                }
+            // Setup supervisor options
+            setupSupervisorOptions();
+            
+            // Show form modal
+            document.getElementById('orgFormModal').style.display = 'flex';
+            
+            // Focus on title field
+            setTimeout(() => {
+                document.getElementById('orgPositionTitle').focus();
+            }, 100);
+        }
+        
+        function setupSupervisorOptions(excludeId = null) {
+            const container = document.getElementById('supervisorOptions');
+            const existingPositions = appData.organizational[window.currentUnitId] || [];
+            
+            // Filter out the position being edited and its descendants
+            let availablePositions = existingPositions.filter(pos => {
+                if (!excludeId) return true; // If not editing, all positions available
+                if (pos.id === excludeId) return false; // Can't be supervisor of itself
+                return !isDescendant(pos.id, excludeId, existingPositions); // Can't be supervisor of ancestor
+            });
+            
+            let html = `
+                <div class="supervisor-option selected" data-parent-id="null">
+                    <h5>🔝 Sin supervisor directo</h5>
+                    <p>Esta es una posición de nivel superior (Director, Gerente General, etc.)</p>
+                </div>
+            `;
+            
+            availablePositions.forEach(pos => {
+                html += `
+                    <div class="supervisor-option" data-parent-id="${pos.id}">
+                        <h5>${pos.title}</h5>
+                        <p>${pos.name || 'Sin asignar'}${pos.email ? ' • ' + pos.email : ''}</p>
+                    </div>
+                `;
+            });
+            
+            if (availablePositions.length === 0) {
+                html += `
+                    <div style="text-align: center; padding: 20px; color: #666;">
+                        <p>No hay otras posiciones disponibles como supervisores</p>
+                    </div>
+                `;
             }
             
-            const newPosition = {
-                id: Date.now().toString(),
-                title: title,
-                name: name,
-                unitId: window.currentUnitId,
-                parentId: parentId
-            };
+            container.innerHTML = html;
             
-            appData.organizational[window.currentUnitId].push(newPosition);
-            
-            // Reload org chart
-            loadOrgChart(window.currentUnitId);
-            
-            // Save data
-            saveAllData();
-            
-            showNotification(`✅ Posición "${title}" agregada`, 'success');
+            // Add click handlers for supervisor selection
+            container.querySelectorAll('.supervisor-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    container.querySelectorAll('.supervisor-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    option.classList.add('selected');
+                });
+            });
         }
+        
+        function closeOrgForm() {
+            document.getElementById('orgFormModal').style.display = 'none';
+            window.editingPositionId = null;
+        }
+        
+        function handleOrgFormSubmit(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('orgPositionTitle').value.trim();
+            const name = document.getElementById('orgPositionName').value.trim();
+            const email = document.getElementById('orgPositionEmail').value.trim();
+            
+            if (!title) {
+                alert('Por favor ingresa el título del puesto');
+                return;
+            }
+            
+            // Get selected supervisor
+            const selectedSupervisor = document.querySelector('.supervisor-option.selected');
+            const parentId = selectedSupervisor ? selectedSupervisor.dataset.parentId : null;
+            const finalParentId = parentId === 'null' ? null : parentId;
+            
+            if (window.editingPositionId) {
+                // Edit existing position
+                const position = appData.organizational[window.currentUnitId].find(pos => pos.id === window.editingPositionId);
+                if (position) {
+                    position.title = title;
+                    position.name = name;
+                    position.email = email;
+                    position.parentId = finalParentId;
+                    
+                    showNotification(`✅ Posición "${title}" actualizada`, 'success');
+                }
+            } else {
+                // Add new position
+                const newPosition = {
+                    id: Date.now().toString(),
+                    title: title,
+                    name: name,
+                    email: email,
+                    unitId: window.currentUnitId,
+                    parentId: finalParentId
+                };
+                
+                appData.organizational[window.currentUnitId].push(newPosition);
+                showNotification(`✅ Posición "${title}" agregada`, 'success');
+            }
+            
+            // Reload org chart and save data
+            loadOrgChart(window.currentUnitId);
+            saveAllData();
+            closeOrgForm();
+        }
+        
+        // Add form submit handler
+        document.addEventListener('DOMContentLoaded', () => {
+            const orgForm = document.getElementById('orgPositionForm');
+            if (orgForm) {
+                orgForm.addEventListener('submit', handleOrgFormSubmit);
+            }
+        });
         
         function editOrgPosition(positionId) {
             const orgData = appData.organizational[window.currentUnitId];
@@ -2782,49 +3108,35 @@
             
             if (!position) return;
             
-            const newTitle = prompt('Título del puesto:', position.title);
-            if (newTitle === null) return;
+            // Set form to edit mode
+            window.editingPositionId = positionId;
             
-            const newName = prompt('Nombre de la persona:', position.name || '');
-            if (newName === null) return;
+            // Fill form with existing data
+            document.getElementById('orgPositionTitle').value = position.title || '';
+            document.getElementById('orgPositionName').value = position.name || '';
+            document.getElementById('orgPositionEmail').value = position.email || '';
+            document.getElementById('orgFormTitle').textContent = '✏️ Editar Posición';
             
-            // Ask if they want to change supervisor
-            const changeSupervisor = confirm('¿Quieres cambiar el supervisor de esta posición?');
+            // Setup supervisor options (excluding this position and its descendants)
+            setupSupervisorOptions(positionId);
             
-            if (changeSupervisor) {
-                // Get potential supervisors (exclude self and children)
-                const potentialSupervisors = orgData.filter(pos => 
-                    pos.id !== positionId && !isDescendant(pos.id, positionId, orgData)
-                );
-                
-                if (potentialSupervisors.length > 0) {
-                    let supervisorOptions = 'Selecciona el nuevo supervisor:\n\n0. Sin supervisor (nivel superior)\n';
-                    potentialSupervisors.forEach((pos, index) => {
-                        supervisorOptions += `${index + 1}. ${pos.title}${pos.name ? ' - ' + pos.name : ''}\n`;
-                    });
-                    supervisorOptions += '\nIngresa el número:';
-                    
-                    const supervisorIndex = prompt(supervisorOptions);
-                    if (supervisorIndex !== null && !isNaN(supervisorIndex)) {
-                        const index = parseInt(supervisorIndex);
-                        if (index === 0) {
-                            position.parentId = null;
-                        } else if (index > 0 && index <= potentialSupervisors.length) {
-                            position.parentId = potentialSupervisors[index - 1].id;
-                        }
-                    }
-                } else {
-                    alert('No hay otros cargos disponibles como supervisores');
+            // Select current supervisor
+            setTimeout(() => {
+                const currentSupervisorId = position.parentId || 'null';
+                const supervisorOption = document.querySelector(`.supervisor-option[data-parent-id="${currentSupervisorId}"]`);
+                if (supervisorOption) {
+                    document.querySelectorAll('.supervisor-option').forEach(opt => opt.classList.remove('selected'));
+                    supervisorOption.classList.add('selected');
                 }
-            }
+            }, 100);
             
-            position.title = newTitle;
-            position.name = newName;
+            // Show form modal
+            document.getElementById('orgFormModal').style.display = 'flex';
             
-            loadOrgChart(window.currentUnitId);
-            saveAllData();
-            
-            showNotification(`✅ Posición "${newTitle}" actualizada`, 'success');
+            // Focus on title field
+            setTimeout(() => {
+                document.getElementById('orgPositionTitle').focus();
+            }, 100);
         }
         
         // Helper function to check if position is descendant of another
