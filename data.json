@@ -1,7 +1,7 @@
 {
   "project": "BAFAR Intelligence Hub",
   "version": "1.0",
-  "lastUpdate": "2025-08-22T18:14:09.468Z",
+  "lastUpdate": "2025-08-22T18:16:20.421Z",
   "lastEditor": "Administrador",
   "units": [
     {
@@ -215,6 +215,14 @@
         "id": "1755886113897",
         "title": "pisto",
         "name": "juan",
+        "unitId": 1,
+        "parentId": "1755886095132"
+      },
+      {
+        "id": "1755886571106",
+        "title": "Gerente Mercadotecnia DPC",
+        "name": "Elias Chavez",
+        "email": "",
         "unitId": 1,
         "parentId": "1755886095132"
       }
