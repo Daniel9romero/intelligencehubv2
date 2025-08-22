@@ -1,7 +1,7 @@
 {
   "project": "BAFAR Intelligence Hub",
   "version": "1.0",
-  "lastUpdate": "2025-08-22T18:55:30.915Z",
+  "lastUpdate": "2025-08-22T18:55:35.738Z",
   "lastEditor": "Administrador",
   "units": [
     {
@@ -522,19 +522,17 @@
     "1": [
       {
         "id": "1755886095132",
-        "title": "Director DPC",
-        "name": "Walter Eldo Burr",
+        "title": "DIRECTOR",
+        "name": "juan",
         "unitId": 1,
-        "parentId": null,
-        "email": ""
+        "parentId": null
       },
       {
         "id": "1755886113897",
-        "title": "Gerente Nacional de Autoservicio",
-        "name": "Mario Camacho",
+        "title": "pisto",
+        "name": "juan",
         "unitId": 1,
-        "parentId": "1755886095132",
-        "email": ""
+        "parentId": "1755886095132"
       },
       {
         "id": "1755886571106",
@@ -543,88 +541,6 @@
         "email": "",
         "unitId": 1,
         "parentId": "1755886095132"
-      },
-      {
-        "id": "1755888200630",
-        "title": "Contralor DPC",
-        "name": "Edgar Beltrán",
-        "email": "",
-        "unitId": 1,
-        "parentId": "1755886095132"
-      },
-      {
-        "id": "1755888236645",
-        "title": "Director Canal Tradicional",
-        "name": "Leobardo Carriedo",
-        "email": "",
-        "unitId": 1,
-        "parentId": "1755886095132"
-      },
-      {
-        "id": "1755888309281",
-        "title": "Gerente Almacenes y T2",
-        "name": "Marco Ortuño",
-        "email": "",
-        "unitId": 1,
-        "parentId": "1755886095132"
-      },
-      {
-        "id": "1755888359986",
-        "title": "Director Cuenta Clave",
-        "name": "Rodolfo Garza",
-        "email": "",
-        "unitId": 1,
-        "parentId": "1755886095132"
-      },
-      {
-        "id": "1755888406398",
-        "title": "Project Manajer",
-        "name": "Guillermo Baeza",
-        "email": "",
-        "unitId": 1,
-        "parentId": "1755886095132"
-      },
-      {
-        "id": "1755888503290",
-        "title": "Coordinador de Seguridad DPC",
-        "name": "Manuel de Jesús Castillo",
-        "email": "",
-        "unitId": 1,
-        "parentId": "1755886095132"
-      },
-      {
-        "id": "1755888538495",
-        "title": "Ejecutivo Dirección DPC",
-        "name": "Luisa Fernanda Almeida",
-        "email": "",
-        "unitId": 1,
-        "parentId": "1755886095132"
-      }
-    ],
-    "3": [
-      {
-        "id": "1755888695974",
-        "title": "Director Bafar Alimentos",
-        "name": "Jorge Baeza",
-        "email": "",
-        "unitId": 3,
-        "parentId": null
-      },
-      {
-        "id": "1755888730146",
-        "title": "Director de Expansión",
-        "name": "Josue Aguilar",
-        "email": "",
-        "unitId": 3,
-        "parentId": "1755888695974"
-      },
-      {
-        "id": "1755888790302",
-        "title": "Director Comercial",
-        "name": "Raúl Gallardo",
-        "email": "",
-        "unitId": 3,
-        "parentId": "1755888695974"
       }
     ]
   }
