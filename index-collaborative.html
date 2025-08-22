@@ -1119,29 +1119,37 @@
             // Initialize sync status
             document.getElementById('syncStatusText').textContent = 'Conectando...';
 
-            // Try to load from GitHub first, then local
+            // First load local data if available
+            const hasLocalData = loadFromLocal();
+            
+            // Then try to sync with GitHub (but respect local newer data)
             window.bafarHub.loadFromGitHub().then(success => {
                 console.log('GitHub load result:', success);
                 if (success) {
                     appData = window.bafarHub.appData;
                     const now = new Date();
                     window.bafarHub.lastSync = now;
-                    document.getElementById('syncStatusText').textContent = '✅ Conectado a GitHub - Datos actualizados';
+                    
+                    // Update sync status based on what happened
+                    const status = window.bafarHub.updateSyncStatus;
+                    if (status === 'local-newer') {
+                        document.getElementById('syncStatusText').textContent = '💾 Usando tus datos locales (más recientes)';
+                    } else {
+                        document.getElementById('syncStatusText').textContent = '✅ Conectado a GitHub - Datos actualizados';
+                    }
                     document.getElementById('lastSyncTime').textContent = now.toLocaleTimeString();
                 } else {
-                    console.log('GitHub failed, loading local data');
-                    loadFromLocal();
+                    console.log('GitHub failed, using local data');
                     document.getElementById('syncStatusText').textContent = '⚠️ Modo Local - Sin conexión a GitHub';
-                    document.getElementById('lastSyncTime').textContent = 'Nunca';
+                    document.getElementById('lastSyncTime').textContent = 'Local';
                 }
                 updateUI();
-                // Start auto-sync
-                window.bafarHub.startAutoSync();
+                // Don't auto-sync to avoid overwriting local changes
+                // window.bafarHub.startAutoSync();
             }).catch(error => {
-                console.error('Error initializing:', error);
-                loadFromLocal();
-                document.getElementById('syncStatusText').textContent = '❌ Error de conexión - Usando datos locales';
-                document.getElementById('lastSyncTime').textContent = 'Error';
+                console.error('Error connecting to GitHub:', error);
+                document.getElementById('syncStatusText').textContent = '💾 Usando datos locales guardados';
+                document.getElementById('lastSyncTime').textContent = 'Local';
                 updateUI();
             });
         }
@@ -1153,12 +1161,17 @@
                 try {
                     appData = JSON.parse(saved);
                     window.bafarHub.appData = appData;
+                    console.log('Local data loaded successfully');
+                    return true;
                 } catch (e) {
                     console.error('Error loading local data:', e);
                     initDefaultData();
+                    return false;
                 }
             } else {
+                console.log('No local data found, using defaults');
                 initDefaultData();
+                return false;
             }
         }
 

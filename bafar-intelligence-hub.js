@@ -78,6 +78,10 @@ class BafarIntelligenceHub {
     // Load data from GitHub
     async loadFromGitHub() {
         try {
+            // First check if we have local data that's more recent
+            const localData = localStorage.getItem('bafarHub');
+            const localTimestamp = localStorage.getItem('bafarHub_timestamp');
+            
             // Use GitHub Pages URL instead of raw GitHub
             const url = `https://daniel9romero.github.io/BafarIntelligence/${this.dataFile}?t=${Date.now()}`;
             console.log('Loading data from:', url);
@@ -91,16 +95,40 @@ class BafarIntelligenceHub {
             });
             
             if (response.ok) {
-                const data = await response.json();
-                console.log('Data loaded successfully from GitHub:', data);
-                this.appData = data;
+                const githubData = await response.json();
+                console.log('Data loaded from GitHub:', githubData);
+                
+                // Compare timestamps if we have local data
+                if (localData && localTimestamp) {
+                    const localDataParsed = JSON.parse(localData);
+                    const localDate = new Date(localTimestamp);
+                    const githubDate = new Date(githubData.lastUpdate || '2024-01-01');
+                    
+                    // Use local data if it's more recent
+                    if (localDate > githubDate) {
+                        console.log('Local data is more recent, using local data');
+                        this.appData = localDataParsed;
+                        this.updateSyncStatus('local-newer');
+                    } else {
+                        console.log('GitHub data is more recent, using GitHub data');
+                        this.appData = githubData;
+                        this.saveToLocal(); // Save GitHub data locally
+                        this.updateSyncStatus('connected');
+                    }
+                } else {
+                    // No local data, use GitHub data
+                    this.appData = githubData;
+                    this.saveToLocal();
+                    this.updateSyncStatus('connected');
+                }
+                
                 this.lastSync = new Date();
-                this.updateSyncStatus('connected');
                 this.updateAllUI();
                 return true;
             } else {
                 console.error('GitHub response not ok:', response.status, response.statusText);
                 this.updateSyncStatus('error');
+                this.loadFromLocal();
                 return false;
             }
         } catch (error) {
@@ -114,7 +142,14 @@ class BafarIntelligenceHub {
     // Save data locally
     saveToLocal() {
         try {
+            // Update timestamp
+            this.appData.lastUpdate = new Date().toISOString();
+            this.appData.lastEditor = this.user ? this.user.username : 'Usuario';
+            
+            // Save data and timestamp
             localStorage.setItem('bafarHub', JSON.stringify(this.appData));
+            localStorage.setItem('bafarHub_timestamp', new Date().toISOString());
+            
             this.showNotification('Datos guardados localmente', 'success');
             return true;
         } catch (error) {
@@ -147,24 +182,34 @@ class BafarIntelligenceHub {
         const syncDot = document.getElementById('syncDot');
         const syncText = document.getElementById('syncText');
         const lastSyncEl = document.getElementById('lastSync');
+        const syncStatusText = document.getElementById('syncStatusText');
         
         if (syncDot && syncText) {
             switch (status) {
                 case 'connected':
                     syncDot.className = 'sync-dot';
                     syncText.textContent = 'Conectado a GitHub';
+                    if (syncStatusText) syncStatusText.textContent = '✅ Sincronizado con GitHub';
                     break;
                 case 'local':
                     syncDot.className = 'sync-dot sync-local';
                     syncText.textContent = 'Modo Local';
+                    if (syncStatusText) syncStatusText.textContent = '💾 Usando datos locales';
+                    break;
+                case 'local-newer':
+                    syncDot.className = 'sync-dot sync-local';
+                    syncText.textContent = 'Datos Locales Actualizados';
+                    if (syncStatusText) syncStatusText.textContent = '💾 Tus cambios locales están guardados';
                     break;
                 case 'error':
                     syncDot.className = 'sync-dot sync-error';
                     syncText.textContent = 'Error de Conexión';
+                    if (syncStatusText) syncStatusText.textContent = '❌ Sin conexión - Datos locales activos';
                     break;
                 case 'syncing':
                     syncDot.className = 'sync-dot';
                     syncText.textContent = 'Sincronizando...';
+                    if (syncStatusText) syncStatusText.textContent = '🔄 Sincronizando datos...';
                     break;
             }
         }
