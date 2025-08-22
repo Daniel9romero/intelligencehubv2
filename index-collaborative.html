@@ -1979,6 +1979,13 @@
 
         // Initialize the application
         function initApp() {
+            // Ensure bafarHub is loaded
+            if (!window.bafarHub) {
+                console.error('BafarIntelligenceHub not loaded - retrying in 1 second');
+                setTimeout(initApp, 1000);
+                return;
+            }
+            
             // Check user session first
             if (!window.bafarHub.checkUserSession()) {
                 window.location.href = 'index.html';
@@ -1992,7 +1999,7 @@
             document.getElementById('currentUserName').textContent = currentUser;
 
             // Initialize sync status
-            document.getElementById('syncStatusText').textContent = 'Conectando...';
+            document.getElementById('syncStatusText').textContent = 'Inicializando sistema...';
 
             // First load local data if available
             const hasLocalData = loadFromLocal();
