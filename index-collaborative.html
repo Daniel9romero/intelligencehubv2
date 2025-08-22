@@ -1932,7 +1932,7 @@
             }
 
             // Initialize user indicator
-            document.getElementById('currentUserName').textContent = currentUser;
+            document.getElementById('currentUserName').textContent = currentUserDisplay;
 
             // Initialize sync status
             document.getElementById('syncStatusText').textContent = 'Conectando...';
@@ -2691,10 +2691,38 @@
         
         // Collaborative editing state
         let editingLocks = {};
-        let currentUser = localStorage.getItem('bafarHub_currentUser') || 'Usuario-' + Math.random().toString(36).substring(2, 8);
         
-        // Save current user
-        localStorage.setItem('bafarHub_currentUser', currentUser);
+        // Generate unique session ID for this browser tab
+        const sessionId = Math.random().toString(36).substring(2, 8);
+        
+        // Get or create user identifier
+        let currentUser = localStorage.getItem('bafarHub_currentUser');
+        
+        if (!currentUser) {
+            // First time user - ask for name
+            const userName = prompt(
+                '👤 Por favor ingresa tu nombre para identificarte en el sistema colaborativo:\n\n' +
+                'Esto ayudará a evitar conflictos cuando múltiples personas editen al mismo tiempo.\n\n' +
+                'Ejemplo: Daniel, Jose, Melissa, etc.'
+            );
+            
+            if (userName && userName.trim()) {
+                currentUser = userName.trim();
+            } else {
+                // If no name provided, use logged username + random ID
+                const loggedUser = window.bafarHub?.user?.username || 'Usuario';
+                currentUser = loggedUser;
+            }
+            
+            localStorage.setItem('bafarHub_currentUser', currentUser);
+        }
+        
+        // Add session ID to make each browser tab unique
+        const uniqueUserId = `${currentUser}-${sessionId}`;
+        
+        // Use uniqueUserId for all editing locks
+        let currentUserDisplay = currentUser; // For display purposes
+        currentUser = uniqueUserId; // For lock identification
         
         // Start auto-refresh to detect changes from other users
         function startAutoRefresh() {
@@ -2858,8 +2886,10 @@
                 
                 // If lock is less than 5 minutes old and not by current user
                 if (minutesAgo < 5 && lockInfo.user !== currentUser) {
+                    // Extract display name from user ID (format: "Name-sessionId")
+                    const displayName = lockInfo.user.split('-').slice(0, -1).join('-') || lockInfo.user;
                     const confirm = window.confirm(
-                        `⚠️ ATENCIÓN: Esta unidad está siendo editada por "${lockInfo.user}"\n\n` +
+                        `⚠️ ATENCIÓN: Esta unidad está siendo editada por "${displayName}"\n\n` +
                         `Editado hace ${Math.round(minutesAgo)} minutos.\n\n` +
                         `Si continúas, podrías sobrescribir sus cambios.\n\n` +
                         `¿Quieres continuar de todos modos?`
@@ -3322,9 +3352,10 @@
                             // Add editing indicator in the last cell
                             const lastCell = row.cells[row.cells.length - 1];
                             if (lastCell) {
+                                const displayName = lockInfo.user.split('-').slice(0, -1).join('-') || lockInfo.user;
                                 const editingIndicator = lockInfo.user === currentUser ? 
                                     `<span style="color: #4caf50; font-size: 12px;">✏️ Editando</span>` :
-                                    `<span style="color: #ff9800; font-size: 12px;">⚠️ ${lockInfo.user}</span>`;
+                                    `<span style="color: #ff9800; font-size: 12px;">⚠️ ${displayName}</span>`;
                                 lastCell.innerHTML = editingIndicator + '<br>' + lastCell.innerHTML;
                             }
                         }
