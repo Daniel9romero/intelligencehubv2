@@ -844,6 +844,29 @@
             overflow: hidden;
         }
         
+        .unit-tab-button {
+            background: none;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .unit-tab-button:hover {
+            color: #1e3a5f;
+            background: rgba(30, 58, 95, 0.1);
+        }
+        
+        .unit-tab-button.active {
+            color: #1e3a5f;
+            border-bottom-color: #c41e3a;
+            background: rgba(196, 30, 58, 0.1);
+        }
+        
         .unit-tab {
             padding: 15px 25px;
             cursor: pointer;
@@ -1352,9 +1375,9 @@
                     
                     <div class="unit-modal-body">
                         <div class="unit-tabs">
-                            <button class="unit-tab active" onclick="switchUnitTab('general')">📋 Información General</button>
-                            <button class="unit-tab" onclick="switchUnitTab('organigrama')">👥 Organigrama</button>
-                            <button class="unit-tab" onclick="switchUnitTab('metrics')">📊 Métricas</button>
+                            <button id="generalBtn" class="unit-tab-button active" onclick="switchUnitTab('generalTab')">📋 Información General</button>
+                            <button id="organigramaBtn" class="unit-tab-button" onclick="switchUnitTab('organigramaTab')">👥 Organigrama</button>
+                            <button id="metricsBtn" class="unit-tab-button" onclick="switchUnitTab('metricsTab')">📊 Métricas</button>
                         </div>
                         
                         <!-- General Tab -->
@@ -2591,11 +2614,22 @@
             });
             
             // Show selected tab
-            document.getElementById(tabId).classList.add('active');
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
             
             // Add active class to corresponding button
             const buttonId = tabId.replace('Tab', 'Btn');
-            document.getElementById(buttonId).classList.add('active');
+            const targetBtn = document.getElementById(buttonId);
+            if (targetBtn) {
+                targetBtn.classList.add('active');
+            }
+            
+            // If switching to organigrama tab, refresh it
+            if (tabId === 'organigramaTab' && window.currentUnitId) {
+                loadOrgChart(window.currentUnitId);
+            }
         }
         
         function saveUnitDetails() {
@@ -2698,12 +2732,37 @@
                 appData.organizational[window.currentUnitId] = [];
             }
             
+            // Ask for supervisor if there are existing positions
+            let parentId = null;
+            const existingPositions = appData.organizational[window.currentUnitId];
+            
+            if (existingPositions.length > 0) {
+                const supervisorChoice = confirm('¿Esta posición tiene un supervisor directo?\n\nOK = Sí, seleccionar supervisor\nCancelar = No, es posición de nivel superior');
+                
+                if (supervisorChoice) {
+                    // Show list of potential supervisors
+                    let supervisorOptions = 'Selecciona el supervisor directo:\n\n';
+                    existingPositions.forEach((pos, index) => {
+                        supervisorOptions += `${index + 1}. ${pos.title}${pos.name ? ' - ' + pos.name : ''}\n`;
+                    });
+                    supervisorOptions += '\nIngresa el número del supervisor:';
+                    
+                    const supervisorIndex = prompt(supervisorOptions);
+                    if (supervisorIndex && !isNaN(supervisorIndex)) {
+                        const index = parseInt(supervisorIndex) - 1;
+                        if (index >= 0 && index < existingPositions.length) {
+                            parentId = existingPositions[index].id;
+                        }
+                    }
+                }
+            }
+            
             const newPosition = {
                 id: Date.now().toString(),
                 title: title,
                 name: name,
                 unitId: window.currentUnitId,
-                parentId: null // Will be updated if adding as child
+                parentId: parentId
             };
             
             appData.organizational[window.currentUnitId].push(newPosition);
@@ -2713,6 +2772,8 @@
             
             // Save data
             saveAllData();
+            
+            showNotification(`✅ Posición "${title}" agregada`, 'success');
         }
         
         function editOrgPosition(positionId) {
@@ -2724,14 +2785,56 @@
             const newTitle = prompt('Título del puesto:', position.title);
             if (newTitle === null) return;
             
-            const newName = prompt('Nombre de la persona:', position.name);
+            const newName = prompt('Nombre de la persona:', position.name || '');
             if (newName === null) return;
+            
+            // Ask if they want to change supervisor
+            const changeSupervisor = confirm('¿Quieres cambiar el supervisor de esta posición?');
+            
+            if (changeSupervisor) {
+                // Get potential supervisors (exclude self and children)
+                const potentialSupervisors = orgData.filter(pos => 
+                    pos.id !== positionId && !isDescendant(pos.id, positionId, orgData)
+                );
+                
+                if (potentialSupervisors.length > 0) {
+                    let supervisorOptions = 'Selecciona el nuevo supervisor:\n\n0. Sin supervisor (nivel superior)\n';
+                    potentialSupervisors.forEach((pos, index) => {
+                        supervisorOptions += `${index + 1}. ${pos.title}${pos.name ? ' - ' + pos.name : ''}\n`;
+                    });
+                    supervisorOptions += '\nIngresa el número:';
+                    
+                    const supervisorIndex = prompt(supervisorOptions);
+                    if (supervisorIndex !== null && !isNaN(supervisorIndex)) {
+                        const index = parseInt(supervisorIndex);
+                        if (index === 0) {
+                            position.parentId = null;
+                        } else if (index > 0 && index <= potentialSupervisors.length) {
+                            position.parentId = potentialSupervisors[index - 1].id;
+                        }
+                    }
+                } else {
+                    alert('No hay otros cargos disponibles como supervisores');
+                }
+            }
             
             position.title = newTitle;
             position.name = newName;
             
             loadOrgChart(window.currentUnitId);
             saveAllData();
+            
+            showNotification(`✅ Posición "${newTitle}" actualizada`, 'success');
+        }
+        
+        // Helper function to check if position is descendant of another
+        function isDescendant(positionId, ancestorId, orgData) {
+            const position = orgData.find(pos => pos.id === positionId);
+            if (!position || !position.parentId) return false;
+            
+            if (position.parentId === ancestorId) return true;
+            
+            return isDescendant(position.parentId, ancestorId, orgData);
         }
         
         function deleteOrgPosition(positionId) {
