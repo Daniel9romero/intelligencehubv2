@@ -1,7 +1,7 @@
 {
   "project": "BAFAR Intelligence Hub",
   "version": "1.0",
-  "lastUpdate": "2025-08-22T19:36:50.604Z",
+  "lastUpdate": "2025-08-22T19:49:26.092Z",
   "lastEditor": "Administrador",
   "units": [
     {
@@ -731,6 +731,96 @@
         "email": "",
         "unitId": 4,
         "parentId": "1755889966381"
+      }
+    ],
+    "5": [
+      {
+        "id": "1755891647180",
+        "title": "Director Bafar Alimentos",
+        "name": "Jorge Baeza",
+        "email": "",
+        "unitId": 5,
+        "parentId": null
+      },
+      {
+        "id": "1755891677057",
+        "title": "Gerente Operación Nogalera",
+        "name": "Luis Angel Olivas",
+        "email": "",
+        "unitId": 5,
+        "parentId": "1755891647180"
+      },
+      {
+        "id": "1755891700837",
+        "title": "Gerente Nogalera",
+        "name": "Abel Trillo",
+        "email": "",
+        "unitId": 5,
+        "parentId": "1755891677057"
+      },
+      {
+        "id": "1755891742397",
+        "title": "Jefe Innovación Nogalera",
+        "name": "Cindy Anaí Chávez",
+        "email": "",
+        "unitId": 5,
+        "parentId": "1755891677057"
+      },
+      {
+        "id": "1755891801411",
+        "title": "Coordinador Operación Agroindustria",
+        "name": "David García",
+        "email": "",
+        "unitId": 5,
+        "parentId": "1755891677057"
+      },
+      {
+        "id": "1755891832167",
+        "title": "Supervisor Riego Agroindustria",
+        "name": "Iram Quintana",
+        "email": "",
+        "unitId": 5,
+        "parentId": "1755891677057"
+      },
+      {
+        "id": "1755891984098",
+        "title": "Jefe Hidráulico Agroindustria",
+        "name": "Adrian Eduardo Romero",
+        "email": "",
+        "unitId": 5,
+        "parentId": "1755891677057"
+      },
+      {
+        "id": "1755892055838",
+        "title": "Coordinador Operación Agroindustria",
+        "name": "Cruz Arturo Baeza",
+        "email": "",
+        "unitId": 5,
+        "parentId": "1755891677057"
+      },
+      {
+        "id": "1755892079942",
+        "title": "Supervisor Fertilización",
+        "name": "Fernando Rosas",
+        "email": "",
+        "unitId": 5,
+        "parentId": "1755891677057"
+      },
+      {
+        "id": "1755892119986",
+        "title": "Supervisor Pisos Agroindustria",
+        "name": "Karina Corona",
+        "email": "",
+        "unitId": 5,
+        "parentId": "1755891677057"
+      },
+      {
+        "id": "1755892153860",
+        "title": "Supervisor Pisos Agroindustria",
+        "name": "Erik Reyes",
+        "email": "",
+        "unitId": 5,
+        "parentId": "1755891677057"
       }
     ]
   }
