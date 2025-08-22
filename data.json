@@ -1,13 +1,13 @@
 {
   "project": "BAFAR Intelligence Hub",
   "version": "1.0",
-  "lastUpdate": "2025-08-22T18:16:20.421Z",
+  "lastUpdate": "2025-08-22T18:35:02.242Z",
   "lastEditor": "Administrador",
   "units": [
     {
       "id": 1,
-      "name": "DPC Carnes Frías",
-      "responsible": "",
+      "name": "DPC",
+      "responsible": "Gabriela Mariñelarena",
       "email": "",
       "frequency": "Semanal",
       "status": "Pendiente",
@@ -19,52 +19,256 @@
       "kpis": ""
     },
     {
-      "id": 2,
-      "name": "Food Service",
-      "responsible": "",
-      "email": "",
-      "frequency": "Diaria",
-      "status": "Pendiente"
-    },
-    {
       "id": 3,
       "name": "Retail",
-      "responsible": "",
+      "responsible": "David Valdez",
       "email": "",
       "frequency": "Semanal",
-      "status": "Pendiente"
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
     },
     {
       "id": 4,
-      "name": "Exportación",
-      "responsible": "",
+      "name": "Cadena de suministro",
+      "responsible": "Sergio López",
       "email": "",
       "frequency": "Diaria",
-      "status": "Pendiente"
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
     },
     {
       "id": 5,
-      "name": "Agroindustrial",
-      "responsible": "",
+      "name": "Agroindustria",
+      "responsible": "Gabriela Mariñelarena",
       "email": "",
       "frequency": "Semanal",
-      "status": "Pendiente"
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
     },
     {
       "id": 6,
-      "name": "PISOT",
-      "responsible": "",
+      "name": "Innovación",
+      "responsible": "Sergio López",
       "email": "",
       "frequency": "Semanal",
-      "status": "Pendiente"
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
     },
     {
       "id": 7,
       "name": "Vextor",
-      "responsible": "",
+      "responsible": "Melisa Nevarez",
       "email": "",
       "frequency": "Semanal",
-      "status": "Pendiente"
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
+    },
+    {
+      "id": 8,
+      "name": "Longhorn",
+      "responsible": "Sergio López",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
+    },
+    {
+      "id": 9,
+      "name": "Inmobiliaria",
+      "responsible": "Sergio López",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
+    },
+    {
+      "id": 10,
+      "name": "B-Seguros",
+      "responsible": "Melisa Nevarez",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
+    },
+    {
+      "id": 11,
+      "name": "Fundación",
+      "responsible": "Melisa Nevarez",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
+    },
+    {
+      "id": 12,
+      "name": "Modelo de Gestión",
+      "responsible": "Melisa Nevarez",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
+    },
+    {
+      "id": 13,
+      "name": "Finanzas",
+      "responsible": "Melisa Nevarez",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
+    },
+    {
+      "id": 14,
+      "name": "Seguridad",
+      "responsible": "Melisa Nevarez",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
+    },
+    {
+      "id": 15,
+      "name": "Auditoría",
+      "responsible": "Melisa Nevarez",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
+    },
+    {
+      "id": 16,
+      "name": "Proyectos especiales",
+      "responsible": "Gabriela Mariñelarena",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
+    },
+    {
+      "id": 17,
+      "name": "Universidad Bafar",
+      "responsible": "Melisa Nevarez",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
+    },
+    {
+      "id": 18,
+      "name": "ICSA/Internacional",
+      "responsible": "David Valdez",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
+    },
+    {
+      "id": 19,
+      "name": "Fibra Nova",
+      "responsible": "Sergio López",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
+    },
+    {
+      "id": 20,
+      "name": "Lion Atlanta",
+      "responsible": "David Valdez",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
     }
   ],
   "needs": {
@@ -74,13 +278,6 @@
       "regulations": "Cambios en NOM-051, regulaciones de sodio, etiquetado frontal",
       "market": "Tendencias de consumo saludable, productos plant-based, mercado premium",
       "technology": "Nuevas tecnologías de conservación, empaquetado inteligente, trazabilidad"
-    },
-    "2": {
-      "critical": "Análisis de licitaciones gubernamentales y contratos institucionales",
-      "competitors": "Monitoreo de Sigma Alimentos, Bachoco, Pilgrim's Pride en canal institucional",
-      "regulations": "Requisitos sanitarios COFEPRIS, normas de calidad institucional",
-      "market": "Crecimiento del canal HoReCa post-COVID, tendencias gastronómicas",
-      "technology": "Soluciones de food service, equipos de cocción, logística B2B"
     },
     "3": {
       "critical": "Performance en cadenas retail: Walmart, Soriana, Chedraui, Oxxo",
@@ -116,6 +313,97 @@
       "regulations": "",
       "market": "",
       "technology": ""
+    },
+    "8": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
+    },
+    "9": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
+    },
+    "10": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
+    },
+    "11": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
+    },
+    "12": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
+    },
+    "13": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
+    },
+    "14": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
+    },
+    "15": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
+    },
+    "16": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
+    },
+    "17": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
+    },
+    "18": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
+    },
+    "19": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
+    },
+    "20": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
     }
   },
   "research": {
@@ -133,17 +421,6 @@
           "frequency": "Quincenal",
           "nextDate": "2024-01-08",
           "responsible": "Área Regulatoria",
-          "priority": "Alta"
-        }
-      ]
-    },
-    "2": {
-      "topics": [
-        {
-          "topic": "Licitaciones gubernamentales activas",
-          "frequency": "Semanal",
-          "nextDate": "2024-01-05",
-          "responsible": "Área Comercial",
           "priority": "Alta"
         }
       ]
@@ -185,6 +462,45 @@
       "topics": []
     },
     "7": {
+      "topics": []
+    },
+    "8": {
+      "topics": []
+    },
+    "9": {
+      "topics": []
+    },
+    "10": {
+      "topics": []
+    },
+    "11": {
+      "topics": []
+    },
+    "12": {
+      "topics": []
+    },
+    "13": {
+      "topics": []
+    },
+    "14": {
+      "topics": []
+    },
+    "15": {
+      "topics": []
+    },
+    "16": {
+      "topics": []
+    },
+    "17": {
+      "topics": []
+    },
+    "18": {
+      "topics": []
+    },
+    "19": {
+      "topics": []
+    },
+    "20": {
       "topics": []
     }
   },
