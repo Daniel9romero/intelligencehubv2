@@ -1,7 +1,7 @@
 {
   "project": "BAFAR Intelligence Hub",
   "version": "1.0",
-  "lastUpdate": "2025-08-22T17:52:58.914Z",
+  "lastUpdate": "2025-08-22T18:14:02.490Z",
   "lastEditor": "Administrador",
   "units": [
     {
@@ -10,7 +10,13 @@
       "responsible": "",
       "email": "",
       "frequency": "Semanal",
-      "status": "Pendiente"
+      "status": "Pendiente",
+      "location": "",
+      "budget": "",
+      "employees": "",
+      "revenue": "",
+      "goals": "",
+      "kpis": ""
     },
     {
       "id": 2,
@@ -195,5 +201,23 @@
     "dataUrl": "./data.json",
     "autoRefresh": 300000,
     "allowEdits": false
+  },
+  "organizational": {
+    "1": [
+      {
+        "id": "1755886095132",
+        "title": "DIRECTOR",
+        "name": "juan",
+        "unitId": 1,
+        "parentId": null
+      },
+      {
+        "id": "1755886113897",
+        "title": "pisto",
+        "name": "juan",
+        "unitId": 1,
+        "parentId": "1755886095132"
+      }
+    ]
   }
 }
