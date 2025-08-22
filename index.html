@@ -319,84 +319,139 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 400px;
-            height: 150px;
+            width: 100%;
+            max-width: 350px;
+            height: auto;
             display: none;
             z-index: 2000;
         }
         
-        .digital-logo {
+        .pixelated-logo {
             width: 100%;
-            height: 100%;
+            height: auto;
             position: relative;
-            overflow: hidden;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            filter: 
+                brightness(0) 
+                saturate(100%) 
+                invert(48%) 
+                sepia(100%) 
+                saturate(2000%) 
+                hue-rotate(176deg) 
+                brightness(1.5)
+                drop-shadow(0 0 2px #0088ff);
+            opacity: 0;
+            animation: pixelReveal 2.5s ease-out forwards;
         }
         
-        .digital-particles {
+        @keyframes pixelReveal {
+            0% {
+                opacity: 0;
+                filter: 
+                    brightness(0) 
+                    saturate(100%) 
+                    invert(48%) 
+                    sepia(100%) 
+                    saturate(2000%) 
+                    hue-rotate(176deg) 
+                    brightness(3)
+                    drop-shadow(0 0 20px #00ffff)
+                    blur(10px);
+                transform: scale(1.5);
+            }
+            20% {
+                opacity: 0.3;
+                filter: 
+                    brightness(0) 
+                    saturate(100%) 
+                    invert(48%) 
+                    sepia(100%) 
+                    saturate(2000%) 
+                    hue-rotate(176deg) 
+                    brightness(2.5)
+                    drop-shadow(0 0 15px #0088ff)
+                    blur(5px);
+                transform: scale(1.3);
+            }
+            40% {
+                opacity: 0.6;
+                filter: 
+                    brightness(0) 
+                    saturate(100%) 
+                    invert(48%) 
+                    sepia(100%) 
+                    saturate(2000%) 
+                    hue-rotate(176deg) 
+                    brightness(2)
+                    drop-shadow(0 0 10px #0088ff)
+                    blur(2px);
+                transform: scale(1.15);
+            }
+            60% {
+                opacity: 0.8;
+                filter: 
+                    brightness(0) 
+                    saturate(100%) 
+                    invert(48%) 
+                    sepia(100%) 
+                    saturate(2000%) 
+                    hue-rotate(176deg) 
+                    brightness(1.8)
+                    drop-shadow(0 0 8px #0088ff)
+                    blur(1px);
+                transform: scale(1.05);
+            }
+            80% {
+                opacity: 0.9;
+                filter: 
+                    brightness(0) 
+                    saturate(100%) 
+                    invert(48%) 
+                    sepia(100%) 
+                    saturate(2000%) 
+                    hue-rotate(176deg) 
+                    brightness(1.6)
+                    drop-shadow(0 0 5px #0088ff)
+                    blur(0.5px);
+                transform: scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                filter: 
+                    brightness(0) 
+                    saturate(100%) 
+                    invert(48%) 
+                    sepia(100%) 
+                    saturate(2000%) 
+                    hue-rotate(176deg) 
+                    brightness(1.5)
+                    drop-shadow(0 0 15px #0088ff)
+                    drop-shadow(0 0 30px rgba(0, 136, 255, 0.5));
+                transform: scale(1);
+            }
+        }
+        
+        .scan-line {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 100%;
-            display: grid;
-            grid-template-columns: repeat(40, 1fr);
-            grid-template-rows: repeat(15, 1fr);
-            gap: 1px;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                #00ffff 20%, 
+                #0088ff 50%, 
+                #00ffff 80%, 
+                transparent);
+            animation: scanAnimation 2s linear infinite;
+            opacity: 0.8;
         }
         
-        .particle {
-            font-size: 8px;
-            color: #0088ff;
-            text-align: center;
-            opacity: 0;
-            animation: digitalize 0.05s ease-in forwards;
-            text-shadow: 0 0 5px #0088ff;
-            font-family: 'Courier New', monospace;
-        }
-        
-        @keyframes digitalize {
-            0% {
-                opacity: 0;
-                transform: scale(0) rotate(180deg);
-                color: #0088ff;
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.5) rotate(90deg);
-                color: #00ffff;
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) rotate(0deg);
-                color: #fff;
-            }
-        }
-        
-        .logo-reveal {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0;
-            animation: logoAppear 1s ease-in forwards;
-            animation-delay: 1.5s;
-            filter: drop-shadow(0 0 30px #0088ff);
-        }
-        
-        @keyframes logoAppear {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.8);
-                filter: brightness(3) drop-shadow(0 0 50px #0088ff);
-            }
-            50% {
-                opacity: 0.5;
-                transform: translate(-50%, -50%) scale(1.1);
-                filter: brightness(2) drop-shadow(0 0 40px #00ffff);
-            }
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-                filter: brightness(1.5) drop-shadow(0 0 30px #0088ff);
-            }
+        @keyframes scanAnimation {
+            0% { top: -2px; }
+            100% { top: 100%; }
         }
 
         .access-granted {
@@ -613,10 +668,8 @@
     
     <!-- Digital Logo Animation -->
     <div class="digital-logo-container" id="digitalLogoContainer">
-        <div class="digital-logo">
-            <div class="digital-particles" id="digitalParticles"></div>
-            <img src="bafar-logo.png" alt="Grupo BAFAR" class="logo-reveal" id="logoReveal">
-        </div>
+        <img src="bafar-logo.png" alt="Grupo BAFAR" class="pixelated-logo" id="pixelatedLogo">
+        <div class="scan-line"></div>
     </div>
 
     <script>
@@ -730,82 +783,85 @@
             const accessGranted = document.getElementById('accessGranted');
             const loginContainer = document.getElementById('loginContainer');
             const digitalLogoContainer = document.getElementById('digitalLogoContainer');
-            const digitalParticles = document.getElementById('digitalParticles');
+            const matrixBg = document.getElementById('matrix-bg');
             
-            // Hide login container
-            loginContainer.style.display = 'none';
-            
-            // Show ACCESS GRANTED briefly
-            accessGranted.style.display = 'block';
+            // Hide login container with fade out
+            loginContainer.style.transition = 'opacity 0.5s ease-out';
+            loginContainer.style.opacity = '0';
             
             setTimeout(() => {
-                accessGranted.style.display = 'none';
+                loginContainer.style.display = 'none';
                 
-                // Show digital logo animation
-                digitalLogoContainer.style.display = 'block';
+                // Show ACCESS GRANTED
+                accessGranted.style.display = 'block';
                 
-                // Create digital particles effect
-                createDigitalEffect();
+                // Start matrix convergence effect
+                createMatrixConvergence();
                 
-                // Store user session
-                sessionStorage.setItem('user', JSON.stringify({
-                    username: user.name,
-                    role: user.role
-                }));
-                
-                // Redirect after animation
                 setTimeout(() => {
-                    if (user.role === 'editor') {
-                        window.location.href = 'index-collaborative.html';
-                    } else {
-                        window.location.href = 'index-shared.html';
-                    }
-                }, 3000);
-            }, 1000);
+                    accessGranted.style.display = 'none';
+                    
+                    // Show digital logo with pixelated reveal
+                    digitalLogoContainer.style.display = 'block';
+                    
+                    // Add glitch effect during reveal
+                    addGlitchEffect();
+                    
+                    // Store user session
+                    sessionStorage.setItem('user', JSON.stringify({
+                        username: user.name,
+                        role: user.role
+                    }));
+                    
+                    // Redirect after animation
+                    setTimeout(() => {
+                        if (user.role === 'editor') {
+                            window.location.href = 'index-collaborative.html';
+                        } else {
+                            window.location.href = 'index-shared.html';
+                        }
+                    }, 3000);
+                }, 1500);
+            }, 500);
         }
         
-        // Create digital effect for logo
-        function createDigitalEffect() {
-            const digitalParticles = document.getElementById('digitalParticles');
-            const particles = 600; // 40x15 grid
-            
-            // Clear any existing particles
-            digitalParticles.innerHTML = '';
-            
-            // Create particles that form the logo shape
-            for (let i = 0; i < particles; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                // Random delay for wave effect
-                const row = Math.floor(i / 40);
-                const col = i % 40;
-                const distance = Math.sqrt(Math.pow(col - 20, 2) + Math.pow(row - 7.5, 2));
-                particle.style.animationDelay = (distance * 20) + 'ms';
-                
-                // Random number or binary
-                const chars = '0101010101234567890';
-                particle.textContent = chars[Math.floor(Math.random() * chars.length)];
-                
-                digitalParticles.appendChild(particle);
-            }
-            
-            // Matrix rain effect converging to center
-            createConvergingMatrix();
-        }
-        
-        // Create converging matrix effect
-        function createConvergingMatrix() {
+        // Create matrix convergence effect
+        function createMatrixConvergence() {
             const matrixBg = document.getElementById('matrix-bg');
             const columns = matrixBg.querySelectorAll('.matrix-column');
             
             columns.forEach((column, index) => {
                 setTimeout(() => {
-                    column.style.transition = 'all 1s ease-in';
-                    column.style.transform = 'translateX(' + (window.innerWidth/2 - parseInt(column.style.left)) + 'px) scale(0)';
+                    column.style.transition = 'all 1.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                    const centerX = window.innerWidth / 2;
+                    const columnX = parseInt(column.style.left);
+                    const distance = centerX - columnX;
+                    
+                    column.style.transform = `translateX(${distance}px) scale(0.1)`;
                     column.style.opacity = '0';
-                }, index * 10);
+                }, index * 15);
             });
+        }
+        
+        // Add glitch effect to logo
+        function addGlitchEffect() {
+            const logo = document.getElementById('pixelatedLogo');
+            let glitchCount = 0;
+            
+            const glitchInterval = setInterval(() => {
+                if (glitchCount >= 3) {
+                    clearInterval(glitchInterval);
+                    return;
+                }
+                
+                logo.style.transform = `scale(1) translate(${Math.random() * 4 - 2}px, ${Math.random() * 4 - 2}px)`;
+                
+                setTimeout(() => {
+                    logo.style.transform = 'scale(1) translate(0, 0)';
+                }, 50);
+                
+                glitchCount++;
+            }, 500);
         }
 
         // Show Access Denied
