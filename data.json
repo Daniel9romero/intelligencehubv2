@@ -1,7 +1,7 @@
 {
   "project": "BAFAR Intelligence Hub",
   "version": "1.0",
-  "lastUpdate": "2025-08-22T19:12:05.183Z",
+  "lastUpdate": "2025-08-22T19:15:16.227Z",
   "lastEditor": "Administrador",
   "units": [
     {
@@ -641,6 +641,56 @@
         "email": "",
         "unitId": 3,
         "parentId": "1755888695974"
+      }
+    ],
+    "4": [
+      {
+        "id": "1755889966381",
+        "title": "Director Cadena de Suministro",
+        "name": "Oscar Baeza",
+        "email": "",
+        "unitId": 4,
+        "parentId": null
+      },
+      {
+        "id": "1755890010791",
+        "title": "Director Proyectos",
+        "name": "Cristian Angulo",
+        "email": "",
+        "unitId": 4,
+        "parentId": "1755889966381"
+      },
+      {
+        "id": "1755890046675",
+        "title": "Gerente Sr Logística",
+        "name": "Hilda Contreras",
+        "email": "",
+        "unitId": 4,
+        "parentId": "1755889966381"
+      },
+      {
+        "id": "1755890070926",
+        "title": "Gerente Compras",
+        "name": "Violeta Castillo",
+        "email": "",
+        "unitId": 4,
+        "parentId": "1755889966381"
+      },
+      {
+        "id": "1755890091263",
+        "title": "Director Manufactura",
+        "name": "Miguel Chacón",
+        "email": "",
+        "unitId": 4,
+        "parentId": "1755889966381"
+      },
+      {
+        "id": "1755890112040",
+        "title": "Gerente Cedis",
+        "name": "Adan Cornejo",
+        "email": "",
+        "unitId": 4,
+        "parentId": "1755889966381"
       }
     ]
   }
