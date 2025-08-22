@@ -3,21 +3,27 @@
 
 class GitHubAutoSync {
     constructor() {
-        this.repo = 'Daniel9romero/BafarIntelligence';
+        // IMPORTANTE: Ahora usamos un repositorio PRIVADO para los datos
+        this.repo = 'Daniel9romero/BafarIntelligence-Data'; // Repo PRIVADO
+        this.publicRepo = 'Daniel9romero/BafarIntelligence'; // Repo PÚBLICO (solo código)
         this.branch = 'main';
         this.filePath = 'data.json';
         
         // Try to load token from localStorage first
-        this.token = localStorage.getItem('github_token') || 'GITHUB_TOKEN_AQUI';
+        // NOTA: Este token DEBE tener permisos para el repo privado
+        this.token = localStorage.getItem('github_private_token') || localStorage.getItem('github_token') || '';
         
         this.apiUrl = 'https://api.github.com';
         this.currentSHA = null;
         
+        // Mode: 'private' or 'public'
+        this.mode = 'private'; // Cambiar a 'public' para usar el repo público
+        
         // Log token status (without showing the actual token)
-        if (this.token && this.token !== 'GITHUB_TOKEN_AQUI') {
-            console.log('GitHub token loaded from localStorage');
+        if (this.token && this.token !== '') {
+            console.log('🔐 GitHub token loaded for private repository');
         } else {
-            console.log('GitHub token not configured - will prompt user');
+            console.log('⚠️ GitHub token not configured - will prompt user');
         }
     }
 

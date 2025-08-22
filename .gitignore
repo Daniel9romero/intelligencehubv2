@@ -72,6 +72,28 @@ development/
 config/secrets.js
 config/database.js
 
+# IMPORTANTE - Datos sensibles BAFAR
+data.json
+data-*.json
+*.backup.json
+backup/
+backups/
+data-backup-*.json
+
+# Configuración privada
+config-private.js
+README-PRIVATE.md
+*-PRIVATE.*
+*-CONFIDENTIAL.*
+SENSITIVE-*
+
+# Tokens y credenciales
+tokens.json
+credentials.json
+secrets.json
+*.token
+github-token.txt
+
 # Server files
 server/uploads/
 server/temp/
