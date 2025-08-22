@@ -1,7 +1,7 @@
 {
   "project": "BAFAR Intelligence Hub",
   "version": "1.0",
-  "lastUpdate": "2025-08-22T21:39:05.350Z",
+  "lastUpdate": "2025-08-22T21:56:08.943Z",
   "lastEditor": "Administrador",
   "units": [
     {
@@ -895,6 +895,64 @@
         "email": "",
         "unitId": 6,
         "parentId": "1755892456243"
+      }
+    ],
+    "7": [
+      {
+        "id": "1755899034630",
+        "title": "Director de Servicios Financieros",
+        "name": "Francisco Corral",
+        "email": "",
+        "unitId": 7,
+        "parentId": null
+      },
+      {
+        "id": "1755899085779",
+        "title": "Jefe de Riesgos Crediticios",
+        "name": "Leon Felipe Gurrea",
+        "email": "",
+        "unitId": 7,
+        "parentId": "1755899034630"
+      },
+      {
+        "id": "1755899138858",
+        "title": "Gerente de Vextor",
+        "name": "Erika Horn",
+        "email": "",
+        "unitId": 7,
+        "parentId": "1755899034630"
+      },
+      {
+        "id": "1755899164779",
+        "title": "Gerente Integración de Sistemas",
+        "name": "Ruben Meza",
+        "email": "",
+        "unitId": 7,
+        "parentId": "1755899034630"
+      },
+      {
+        "id": "1755899186247",
+        "title": "Jefe Factoraje",
+        "name": "Esmeralda Ruiz",
+        "email": "",
+        "unitId": 7,
+        "parentId": "1755899034630"
+      },
+      {
+        "id": "1755899217329",
+        "title": "Jefe Cuenta Empresarial",
+        "name": "Iris Citlali Sedano",
+        "email": "",
+        "unitId": 7,
+        "parentId": "1755899034630"
+      },
+      {
+        "id": "1755899765583",
+        "title": "B-Cash Product Leader",
+        "name": "Alfredo Angulo",
+        "email": "",
+        "unitId": 7,
+        "parentId": "1755899034630"
       }
     ]
   }
