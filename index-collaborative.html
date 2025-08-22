@@ -1456,6 +1456,7 @@
                     <div class="sync-actions">
                         <button class="btn btn-primary btn-small" onclick="refreshData()" id="refreshBtn">🔄 Actualizar Datos</button>
                         <button class="btn btn-success btn-small" onclick="saveToGitHub()" id="saveGitHubBtn">💾 Sincronizar Cambios</button>
+                        <button class="btn btn-secondary btn-small" onclick="openPrivateRepoSetup()" style="font-size: 11px;">🔐 Config Repo</button>
                     </div>
                     <div style="margin-top: 10px; font-size: 12px; color: #666;">
                         💡 Los cambios se guardan automáticamente. Usa "Sincronizar" para compartir con el equipo.
@@ -2603,14 +2604,29 @@
             } catch (error) {
                 console.error('Error saving to GitHub:', error);
                 
-                if (error.message.includes('token') || error.message.includes('GITHUB_TOKEN_AQUI')) {
-                    showGitHubTokenDialog();
+                if (error.message.includes('token') || error.message.includes('GITHUB_TOKEN_AQUI') || error.message.includes('no configurado')) {
+                    // Need to setup private repository
+                    const setupNow = confirm(
+                        '🔐 Es necesario configurar el repositorio privado para guardar datos.\\n\\n' +
+                        '¿Deseas abrir la página de configuración ahora?\\n\\n' +
+                        '(Los datos se guardarán localmente mientras tanto)'
+                    );
+                    
+                    if (setupNow) {
+                        window.open('setup-private-repo.html', '_blank');
+                    }
                 } else {
                     alert(`Error al guardar en GitHub: ${error.message}\\n\\nGuardando localmente como respaldo.`);
-                    // Fallback to local save
-                    window.bafarHub.appData = appData;
-                    window.bafarHub.saveToLocal();
                 }
+                
+                // Always save locally as fallback
+                appData.lastUpdate = new Date().toISOString();
+                appData.lastEditor = window.bafarHub.user ? window.bafarHub.user.username : 'Usuario';
+                window.bafarHub.appData = appData;
+                window.bafarHub.saveToLocal();
+                
+                // Update status
+                document.getElementById('syncStatusText').textContent = '💾 Guardado localmente - Sin conexión GitHub';
             } finally {
                 if (saveBtn) {
                     saveBtn.disabled = false;
@@ -3619,6 +3635,11 @@
         }
         
         // =================== END USER MANAGEMENT FUNCTIONS ===================
+        
+        // Open private repository setup page
+        function openPrivateRepoSetup() {
+            window.open('setup-private-repo.html', '_blank');
+        }
 
         // Initialize when page loads
         window.addEventListener('DOMContentLoaded', initApp);

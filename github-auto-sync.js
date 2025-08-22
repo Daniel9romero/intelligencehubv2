@@ -61,8 +61,12 @@ class GitHubAutoSync {
     // Commit and push data to GitHub
     async saveToGitHub(data, commitMessage = null) {
         try {
-            if (!this.token || this.token === 'GITHUB_TOKEN_AQUI') {
-                throw new Error('GitHub token not configured');
+            if (!this.token || this.token === 'GITHUB_TOKEN_AQUI' || this.token === '') {
+                return {
+                    success: false,
+                    error: 'Token de GitHub no configurado. Por favor configura el repositorio privado.',
+                    needsSetup: true
+                };
             }
 
             // Update metadata
