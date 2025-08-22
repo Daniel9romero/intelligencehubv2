@@ -1681,7 +1681,12 @@
             // Initialize GitHub auto-sync if not done
             if (!gitHubAutoSync) {
                 gitHubAutoSync = new GitHubAutoSync();
+                console.log('GitHub auto-sync initialized');
             }
+            
+            // Debug: Check if token is configured
+            const token = localStorage.getItem('github_token');
+            console.log('GitHub token status:', token ? 'Configured' : 'Not configured');
             
             const saveBtn = document.getElementById('saveGitHubBtn');
             if (saveBtn) {
@@ -1698,7 +1703,16 @@
                 const result = await gitHubAutoSync.saveToGitHub(appData);
                 
                 if (result.success) {
-                    showSaveIndicator();
+                    // Show save indicator (safe call)
+                    try {
+                        const indicator = document.getElementById('saveIndicator');
+                        if (indicator) {
+                            indicator.style.display = 'block';
+                            indicator.style.opacity = '1';
+                            setTimeout(() => indicator.style.display = 'none', 2000);
+                        }
+                    } catch (e) { console.log('Save indicator not found'); }
+                    
                     document.getElementById('syncStatusText').textContent = `✅ Guardado en GitHub - ${new Date().toLocaleTimeString()}`;
                     
                     // Also save locally as backup
@@ -1706,11 +1720,7 @@
                     window.bafarHub.saveToLocal();
                     
                     // Show success notification
-                    if (window.bafarHub && window.bafarHub.showNotification) {
-                        window.bafarHub.showNotification('✅ Cambios guardados en GitHub automáticamente', 'success');
-                    } else {
-                        alert('✅ Cambios guardados en GitHub automáticamente');
-                    }
+                    alert('✅ Datos guardados en GitHub correctamente!\\n\\nCommit: ' + result.sha || 'unknown');
                 } else {
                     throw new Error(result.error);
                 }
