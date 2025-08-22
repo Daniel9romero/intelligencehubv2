@@ -1132,13 +1132,7 @@
                     const now = new Date();
                     window.bafarHub.lastSync = now;
                     
-                    // Update sync status based on what happened
-                    const status = window.bafarHub.updateSyncStatus;
-                    if (status === 'local-newer') {
-                        document.getElementById('syncStatusText').textContent = '💾 Usando tus datos locales (más recientes)';
-                    } else {
-                        document.getElementById('syncStatusText').textContent = '✅ Conectado a GitHub - Datos actualizados';
-                    }
+                    document.getElementById('syncStatusText').textContent = '✅ Conectado a GitHub - Datos actualizados';
                     document.getElementById('lastSyncTime').textContent = now.toLocaleTimeString();
                 } else {
                     console.log('GitHub failed, using local data');
@@ -1146,8 +1140,9 @@
                     document.getElementById('lastSyncTime').textContent = 'Local';
                 }
                 updateUI();
-                // Don't auto-sync to avoid overwriting local changes
-                // window.bafarHub.startAutoSync();
+                
+                // Start auto-sync every 30 seconds to detect changes from other users
+                startAutoRefresh();
             }).catch(error => {
                 console.error('Error connecting to GitHub:', error);
                 document.getElementById('syncStatusText').textContent = '💾 Usando datos locales guardados';
@@ -1873,6 +1868,56 @@
             }
         }
 
+        // Auto-refresh interval
+        let autoRefreshInterval = null;
+        let lastKnownUpdate = null;
+        
+        // Start auto-refresh to detect changes from other users
+        function startAutoRefresh() {
+            // Clear any existing interval
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            
+            // Set current lastUpdate as baseline
+            lastKnownUpdate = appData.lastUpdate;
+            
+            // Check for updates every 30 seconds
+            autoRefreshInterval = setInterval(async () => {
+                try {
+                    console.log('🔄 Checking for updates from other users...');
+                    
+                    // Load latest data from GitHub
+                    const success = await window.bafarHub.loadFromGitHub();
+                    if (success) {
+                        const newData = window.bafarHub.appData;
+                        
+                        // Check if data was updated by someone else
+                        if (newData.lastUpdate && newData.lastUpdate !== lastKnownUpdate) {
+                            console.log('🆕 New changes detected from other user:', newData.lastEditor);
+                            
+                            // Update our data
+                            appData = newData;
+                            lastKnownUpdate = newData.lastUpdate;
+                            
+                            // Update UI
+                            updateUI();
+                            
+                            // Show notification
+                            showNotification(`🔄 Datos actualizados por ${newData.lastEditor || 'otro usuario'}`, 'info');
+                            
+                            // Update sync status
+                            document.getElementById('syncStatusText').textContent = `🔄 Actualizado por ${newData.lastEditor} - ${new Date().toLocaleTimeString()}`;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Auto-refresh error:', error);
+                }
+            }, 30000); // 30 seconds
+            
+            console.log('🔄 Auto-refresh started (checking every 30 seconds)');
+        }
+        
         // Función unificada para actualizar datos
         function refreshData() {
             document.getElementById('syncStatusText').textContent = '🔄 Actualizando desde GitHub...';
@@ -1882,15 +1927,16 @@
             window.bafarHub.loadFromGitHub().then(success => {
                 if (success) {
                     appData = window.bafarHub.appData;
+                    lastKnownUpdate = appData.lastUpdate; // Update baseline for auto-refresh
                     updateUI();
                     const now = new Date();
                     window.bafarHub.lastSync = now;
                     document.getElementById('syncStatusText').textContent = '✅ Conectado a GitHub - Datos actualizados';
                     document.getElementById('lastSyncTime').textContent = now.toLocaleTimeString();
-                    window.bafarHub.showNotification('Datos actualizados desde GitHub', 'success');
+                    showNotification('✅ Datos actualizados manualmente', 'success');
                 } else {
                     document.getElementById('syncStatusText').textContent = '⚠️ Sin conexión - Usando datos locales';
-                    window.bafarHub.showNotification('No se pudo conectar a GitHub', 'warning');
+                    showNotification('❌ Error al actualizar desde GitHub', 'error');
                 }
                 
                 document.getElementById('refreshBtn').disabled = false;
