@@ -1,7 +1,7 @@
 {
   "project": "BAFAR Intelligence Hub",
   "version": "1.0",
-  "lastUpdate": "2025-08-22T17:35:38.115Z",
+  "lastUpdate": "2025-08-22T17:41:22.235Z",
   "lastEditor": "Administrador",
   "units": [
     {
@@ -51,6 +51,14 @@
       "email": "",
       "frequency": "Semanal",
       "status": "Pendiente"
+    },
+    {
+      "id": 7,
+      "name": "Vextor",
+      "responsible": "",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente"
     }
   ],
   "needs": {
@@ -90,6 +98,13 @@
       "technology": "Agricultura de precisión, feed alternativo, bioseguridad"
     },
     "6": {
+      "critical": "",
+      "competitors": "",
+      "regulations": "",
+      "market": "",
+      "technology": ""
+    },
+    "7": {
       "critical": "",
       "competitors": "",
       "regulations": "",
@@ -161,6 +176,9 @@
       ]
     },
     "6": {
+      "topics": []
+    },
+    "7": {
       "topics": []
     }
   },
