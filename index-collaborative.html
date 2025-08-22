@@ -2894,11 +2894,21 @@
         
         // Función unificada para actualizar datos
         function refreshData() {
+            console.log('🔄 RefreshData iniciado');
+            
+            if (!window.bafarHub) {
+                console.error('❌ window.bafarHub no está disponible');
+                alert('Error: Sistema no inicializado correctamente');
+                return;
+            }
+            
             document.getElementById('syncStatusText').textContent = '🔄 Actualizando desde GitHub...';
             document.getElementById('refreshBtn').disabled = true;
             document.getElementById('refreshBtn').textContent = '🔄 Actualizando...';
             
+            console.log('🔄 Llamando a window.bafarHub.loadFromGitHub()');
             window.bafarHub.loadFromGitHub().then(success => {
+                console.log('🔄 LoadFromGitHub resultado:', success);
                 if (success) {
                     appData = window.bafarHub.appData;
                     lastKnownUpdate = appData.lastUpdate; // Update baseline for auto-refresh
@@ -2909,10 +2919,15 @@
                     document.getElementById('lastSyncTime').textContent = now.toLocaleTimeString();
                     showNotification('✅ Datos actualizados manualmente', 'success');
                 } else {
+                    console.log('❌ LoadFromGitHub failed');
                     document.getElementById('syncStatusText').textContent = '⚠️ Sin conexión - Usando datos locales';
                     showNotification('❌ Error al actualizar desde GitHub', 'error');
                 }
-                
+            }).catch(error => {
+                console.error('❌ Error en refreshData:', error);
+                document.getElementById('syncStatusText').textContent = '❌ Error de conexión';
+                showNotification('❌ Error: ' + error.message, 'error');
+            }).finally(() => {
                 document.getElementById('refreshBtn').disabled = false;
                 document.getElementById('refreshBtn').textContent = '🔄 Actualizar Datos';
             });
