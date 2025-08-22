@@ -155,14 +155,16 @@
         </div>
         
         <div class="step">
-            <h3>Paso 2: Configuración del Repositorio</h3>
-            <p>Define el nombre del repositorio privado donde se guardarán los datos:</p>
+            <h3>Paso 2: Configuración Automática</h3>
+            <p>El sistema ya conoce la configuración necesaria:</p>
             
-            <label>Nombre del repositorio privado:</label>
-            <input type="text" id="repoName" value="BafarIntelligence-Data" />
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                <p style="margin: 5px 0;"><strong>Usuario:</strong> Daniel9romero</p>
+                <p style="margin: 5px 0;"><strong>Repositorio:</strong> BafarIntelligence-Data</p>
+                <p style="margin: 5px 0;"><strong>Tipo:</strong> Repositorio Privado</p>
+            </div>
             
-            <label>Tu usuario de GitHub:</label>
-            <input type="text" id="githubUser" placeholder="ej: Daniel9romero" />
+            <p style="color: #666;">Solo necesitas proporcionar el token de acceso arriba.</p>
         </div>
         
         <div class="step">
@@ -201,11 +203,11 @@ localStorage.getItem('github_private_token');
     <script>
         async function createPrivateRepo() {
             const token = document.getElementById('githubToken').value.trim();
-            const repoName = document.getElementById('repoName').value.trim();
-            const username = document.getElementById('githubUser').value.trim();
+            const repoName = 'BafarIntelligence-Data'; // Valor fijo
+            const username = 'Daniel9romero'; // Valor fijo
             
-            if (!token || !repoName || !username) {
-                showError('Por favor completa todos los campos');
+            if (!token) {
+                showError('Por favor ingresa tu token de GitHub');
                 return;
             }
             
@@ -281,7 +283,6 @@ localStorage.getItem('github_private_token');
                 if (response.ok) {
                     const user = await response.json();
                     showSuccess(`✅ Conexión exitosa! Usuario: ${user.login} (${user.name})`);
-                    document.getElementById('githubUser').value = user.login;
                 } else {
                     showError('Token inválido o sin permisos');
                 }
@@ -292,11 +293,11 @@ localStorage.getItem('github_private_token');
         
         async function uploadData() {
             const token = localStorage.getItem('github_private_token');
-            const repoName = document.getElementById('repoName').value.trim();
-            const username = document.getElementById('githubUser').value.trim();
+            const repoName = 'BafarIntelligence-Data'; // Valor fijo
+            const username = 'Daniel9romero'; // Valor fijo
             
-            if (!token || !repoName || !username) {
-                showError('Primero debes crear el repositorio privado');
+            if (!token) {
+                showError('Primero debes crear el repositorio privado y configurar el token');
                 return;
             }
             
@@ -337,18 +338,12 @@ localStorage.getItem('github_private_token');
         // Auto-cargar configuración si existe
         window.addEventListener('DOMContentLoaded', () => {
             const savedToken = localStorage.getItem('github_private_token');
-            const savedRepo = localStorage.getItem('github_private_repo');
-            const savedUser = localStorage.getItem('github_username');
-            
-            if (savedRepo) {
-                document.getElementById('repoName').value = savedRepo;
-            }
-            if (savedUser) {
-                document.getElementById('githubUser').value = savedUser;
-            }
             
             if (savedToken) {
-                showStatus('Token encontrado en localStorage. Puedes probar la conexión.');
+                showStatus('Token encontrado. El sistema está configurado para usar Daniel9romero/BafarIntelligence-Data');
+                showSuccess('✅ Configuración encontrada. Puedes cerrar esta ventana y usar el sistema normalmente.');
+            } else {
+                showStatus('Ingresa tu token de GitHub para configurar el repositorio privado automáticamente.');
             }
         });
     </script>
