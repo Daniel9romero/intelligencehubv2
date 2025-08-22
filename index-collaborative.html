@@ -768,6 +768,366 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Unit Details Modal */
+        .unit-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .unit-modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 10px;
+            width: 95%;
+            max-width: 1200px;
+            height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .unit-modal-header {
+            background: linear-gradient(135deg, #1e3a5f, #2c5282);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #c41e3a;
+        }
+        
+        .unit-modal-header h2 {
+            margin: 0;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .unit-modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+        
+        .unit-modal-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .unit-modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+        
+        .unit-tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+        }
+        
+        .unit-tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .unit-tab.active {
+            background: white;
+            color: #1e3a5f;
+            border-bottom: 3px solid #c41e3a;
+            font-weight: 600;
+        }
+        
+        .unit-tab:hover:not(.active) {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        .unit-tab-content {
+            display: none;
+        }
+        
+        .unit-tab-content.active {
+            display: block;
+        }
+        
+        /* Organigrama Styles */
+        .orgchart-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .org-node {
+            background: white;
+            border: 2px solid #1e3a5f;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px;
+            display: inline-block;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .org-node:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-color: #c41e3a;
+        }
+        
+        .org-node.director {
+            background: linear-gradient(135deg, #1e3a5f, #2c5282);
+            color: white;
+            border-color: #c41e3a;
+        }
+        
+        .org-node.manager {
+            background: linear-gradient(135deg, #c41e3a, #dc3545);
+            color: white;
+        }
+        
+        .org-node.coordinator {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+        
+        .org-node-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .org-node-name {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .org-node-email {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .org-level {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .org-connector {
+            width: 2px;
+            height: 30px;
+            background: #1e3a5f;
+            margin: 0 auto;
+        }
+        
+        /* Org Chart Structure */
+        .org-chart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .org-position {
+            margin: 10px;
+            text-align: center;
+        }
+        
+        .org-card {
+            background: white;
+            border: 2px solid #1e3a5f;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 5px;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .org-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-color: #c41e3a;
+        }
+        
+        .org-card .org-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #1e3a5f;
+        }
+        
+        .org-card .org-name {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .org-card .org-actions {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .org-children {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .org-children::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background: #ccc;
+            transform: translateX(-50%);
+        }
+        
+        .level-0 .org-card {
+            background: linear-gradient(135deg, #1e3a5f, #2c5282);
+            color: white;
+        }
+        
+        .level-1 .org-card {
+            background: linear-gradient(135deg, #c41e3a, #e53e3e);
+            color: white;
+        }
+        
+        .level-2 .org-card {
+            background: #f8f9fa;
+            border-color: #007bff;
+        }
+        
+        .btn-small {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 0 2px;
+        }
+        
+        .btn-small:hover {
+            background: #0056b3;
+        }
+        
+        /* Form Styles in Modal */
+        .detail-form-group {
+            margin-bottom: 20px;
+        }
+        
+        .detail-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1e3a5f;
+        }
+        
+        .detail-form-group input,
+        .detail-form-group textarea,
+        .detail-form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .detail-form-group input:focus,
+        .detail-form-group textarea:focus,
+        .detail-form-group select:focus {
+            outline: none;
+            border-color: #1e3a5f;
+            box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+        }
+        
+        .detail-form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .unit-modal-content {
+                width: 98%;
+                height: 95vh;
+                margin: 1% auto;
+            }
+            
+            .unit-tabs {
+                flex-direction: column;
+            }
+        }
+        
+        /* Clickable row effect */
+        .data-table tbody tr {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: #f0f8ff;
+        }
+        
+        .data-table tbody tr:hover .unit-name {
+            color: #1e3a5f;
+            font-weight: 600;
+        }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -969,11 +1329,145 @@
                         </tbody>
                     </table>
                     
+                    <div style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 4px; border-left: 4px solid #2196f3;">
+                        <small><strong>💡 Tip:</strong> Haz click en cualquier unidad de negocio para ver y editar detalles completos, incluyendo descripción y organigrama.</small>
+                    </div>
+                    
                     <div style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 4px;">
                         <small><strong>Nota:</strong> Los cambios se guardan automáticamente en tu navegador. Usa "Cargar Datos Compartidos" para obtener la versión más reciente del administrador.</small>
                     </div>
                 </div>
             </section>
+
+            <!-- Unit Details Modal -->
+            <div id="unitModal" class="unit-modal">
+                <div class="unit-modal-content">
+                    <div class="unit-modal-header">
+                        <h2>
+                            <span id="modalUnitIcon">🏢</span>
+                            <span id="modalUnitName">Detalles de Unidad</span>
+                        </h2>
+                        <button class="unit-modal-close" onclick="closeUnitModal()">&times;</button>
+                    </div>
+                    
+                    <div class="unit-modal-body">
+                        <div class="unit-tabs">
+                            <button class="unit-tab active" onclick="switchUnitTab('general')">📋 Información General</button>
+                            <button class="unit-tab" onclick="switchUnitTab('organigrama')">👥 Organigrama</button>
+                            <button class="unit-tab" onclick="switchUnitTab('metrics')">📊 Métricas</button>
+                        </div>
+                        
+                        <!-- General Tab -->
+                        <div id="generalTab" class="unit-tab-content active">
+                            <form id="unitDetailsForm">
+                                <div class="form-row">
+                                    <div class="detail-form-group">
+                                        <label for="unitName">Nombre de la Unidad</label>
+                                        <input type="text" id="unitName" placeholder="Ej: DPC Carnes Frías">
+                                    </div>
+                                    <div class="detail-form-group">
+                                        <label for="unitCode">Código</label>
+                                        <input type="text" id="unitCode" placeholder="Ej: DPC-CF">
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-form-group">
+                                    <label for="unitDescription">Descripción</label>
+                                    <textarea id="unitDescription" placeholder="Describe la función y objetivos de esta unidad de negocio..."></textarea>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="detail-form-group">
+                                        <label for="unitResponsible">Responsable Principal</label>
+                                        <input type="text" id="unitResponsible" placeholder="Nombre del responsable">
+                                    </div>
+                                    <div class="detail-form-group">
+                                        <label for="unitEmail">Email</label>
+                                        <input type="email" id="unitEmail" placeholder="email@grupobafar.com">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="detail-form-group">
+                                        <label for="unitFrequency">Frecuencia de Reportes</label>
+                                        <select id="unitFrequency">
+                                            <option value="Diaria">Diaria</option>
+                                            <option value="Semanal">Semanal</option>
+                                            <option value="Quincenal">Quincenal</option>
+                                            <option value="Mensual">Mensual</option>
+                                        </select>
+                                    </div>
+                                    <div class="detail-form-group">
+                                        <label for="unitStatus">Estado</label>
+                                        <select id="unitStatus">
+                                            <option value="Pendiente">Pendiente</option>
+                                            <option value="En Proceso">En Proceso</option>
+                                            <option value="Activo">Activo</option>
+                                            <option value="Inactivo">Inactivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="detail-form-group">
+                                        <label for="unitLocation">Ubicación</label>
+                                        <input type="text" id="unitLocation" placeholder="Ej: Oficinas Corporativas, Planta Hermosillo">
+                                    </div>
+                                    <div class="detail-form-group">
+                                        <label for="unitBudget">Presupuesto Anual</label>
+                                        <input type="text" id="unitBudget" placeholder="Ej: $2,500,000 MXN">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Organigrama Tab -->
+                        <div id="organigramaTab" class="unit-tab-content">
+                            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px;">
+                                <h3>Estructura Organizacional</h3>
+                                <button class="btn btn-primary" onclick="addOrgPosition()">+ Agregar Posición</button>
+                            </div>
+                            
+                            <div class="orgchart-container" id="orgChartContainer">
+                                <!-- Organigrama se genera dinámicamente -->
+                            </div>
+                        </div>
+                        
+                        <!-- Metrics Tab -->
+                        <div id="metricsTab" class="unit-tab-content">
+                            <h3>Métricas de la Unidad</h3>
+                            <div class="form-row">
+                                <div class="detail-form-group">
+                                    <label for="unitEmployees">Número de Empleados</label>
+                                    <input type="number" id="unitEmployees" placeholder="0">
+                                </div>
+                                <div class="detail-form-group">
+                                    <label for="unitRevenue">Ingresos Anuales</label>
+                                    <input type="text" id="unitRevenue" placeholder="$0 MXN">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="detail-form-group">
+                                    <label for="unitGoals">Objetivos Anuales</label>
+                                    <textarea id="unitGoals" placeholder="Lista los objetivos principales para este año..."></textarea>
+                                </div>
+                                <div class="detail-form-group">
+                                    <label for="unitKPIs">KPIs Principales</label>
+                                    <textarea id="unitKPIs" placeholder="Lista los KPIs que se monitorean..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Save Button -->
+                        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
+                            <button class="btn btn-primary" onclick="saveUnitDetails()" style="padding: 12px 30px; font-size: 16px;">
+                                💾 Guardar Cambios
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- INTELLIGENCE NEEDS SECTION -->
             <section id="needs" class="section">
@@ -1268,6 +1762,7 @@
             updateNeedsSection();
             updateResearchMatrix();
             updateMetrics();
+            makeUnitsClickable();
         }
 
         // Update dashboard
@@ -2046,6 +2541,227 @@
                 });
                 button.classList.add('active');
             }
+        }
+
+        // Modal functions for unit details
+        function openUnitModal(unitId) {
+            const unit = appData.units.find(u => u.id === unitId);
+            if (!unit) return;
+            
+            // Fill form with current data
+            document.getElementById('unitName').value = unit.name;
+            document.getElementById('unitResponsible').value = unit.responsible || '';
+            document.getElementById('unitEmail').value = unit.email || '';
+            document.getElementById('unitFrequency').value = unit.frequency || 'Semanal';
+            document.getElementById('unitStatus').value = unit.status || 'Pendiente';
+            document.getElementById('unitLocation').value = unit.location || '';
+            document.getElementById('unitBudget').value = unit.budget || '';
+            document.getElementById('unitEmployees').value = unit.employees || '';
+            document.getElementById('unitRevenue').value = unit.revenue || '';
+            document.getElementById('unitGoals').value = unit.goals || '';
+            document.getElementById('unitKPIs').value = unit.kpis || '';
+            
+            // Store current unit ID
+            window.currentUnitId = unitId;
+            
+            // Show modal
+            document.getElementById('unitModal').style.display = 'flex';
+            
+            // Switch to first tab
+            switchUnitTab('generalTab');
+            
+            // Load organigrama if exists
+            loadOrgChart(unitId);
+        }
+        
+        function closeUnitModal() {
+            document.getElementById('unitModal').style.display = 'none';
+            window.currentUnitId = null;
+        }
+        
+        function switchUnitTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.unit-tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.unit-tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to corresponding button
+            const buttonId = tabId.replace('Tab', 'Btn');
+            document.getElementById(buttonId).classList.add('active');
+        }
+        
+        function saveUnitDetails() {
+            if (!window.currentUnitId) return;
+            
+            const unitId = window.currentUnitId;
+            const unitIndex = appData.units.findIndex(u => u.id === unitId);
+            
+            if (unitIndex === -1) return;
+            
+            // Update unit data
+            const unit = appData.units[unitIndex];
+            unit.name = document.getElementById('unitName').value;
+            unit.responsible = document.getElementById('unitResponsible').value;
+            unit.email = document.getElementById('unitEmail').value;
+            unit.frequency = document.getElementById('unitFrequency').value;
+            unit.status = document.getElementById('unitStatus').value;
+            unit.location = document.getElementById('unitLocation').value;
+            unit.budget = document.getElementById('unitBudget').value;
+            unit.employees = document.getElementById('unitEmployees').value;
+            unit.revenue = document.getElementById('unitRevenue').value;
+            unit.goals = document.getElementById('unitGoals').value;
+            unit.kpis = document.getElementById('unitKPIs').value;
+            
+            // Save to storage and sync
+            saveAllData();
+            
+            // Update UI
+            updateUI();
+            
+            // Close modal
+            closeUnitModal();
+            
+            showNotification('✅ Detalles de unidad guardados', 'success');
+        }
+        
+        function loadOrgChart(unitId) {
+            const container = document.getElementById('orgChartContainer');
+            
+            // Get organizational data for this unit
+            const orgData = appData.organizational?.[unitId] || [];
+            
+            if (orgData.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No hay estructura organizacional definida. Haz click en "Agregar Posición" para comenzar.</p>';
+                return;
+            }
+            
+            // Generate org chart HTML
+            let html = '<div class="org-chart">';
+            
+            // Find root positions (no parent)
+            const roots = orgData.filter(pos => !pos.parentId);
+            
+            roots.forEach(root => {
+                html += renderOrgPosition(root, orgData, 0);
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        function renderOrgPosition(position, allPositions, level) {
+            const children = allPositions.filter(pos => pos.parentId === position.id);
+            
+            let html = `
+                <div class="org-position level-${level}">
+                    <div class="org-card">
+                        <div class="org-title">${position.title}</div>
+                        <div class="org-name">${position.name || 'Sin asignar'}</div>
+                        <div class="org-actions">
+                            <button onclick="editOrgPosition('${position.id}')" class="btn-small">✏️</button>
+                            <button onclick="deleteOrgPosition('${position.id}')" class="btn-small">🗑️</button>
+                        </div>
+                    </div>
+            `;
+            
+            if (children.length > 0) {
+                html += '<div class="org-children">';
+                children.forEach(child => {
+                    html += renderOrgPosition(child, allPositions, level + 1);
+                });
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            return html;
+        }
+        
+        function addOrgPosition() {
+            const title = prompt('Título del puesto:');
+            if (!title) return;
+            
+            const name = prompt('Nombre de la persona (opcional):') || '';
+            
+            if (!appData.organizational) {
+                appData.organizational = {};
+            }
+            
+            if (!appData.organizational[window.currentUnitId]) {
+                appData.organizational[window.currentUnitId] = [];
+            }
+            
+            const newPosition = {
+                id: Date.now().toString(),
+                title: title,
+                name: name,
+                unitId: window.currentUnitId,
+                parentId: null // Will be updated if adding as child
+            };
+            
+            appData.organizational[window.currentUnitId].push(newPosition);
+            
+            // Reload org chart
+            loadOrgChart(window.currentUnitId);
+            
+            // Save data
+            saveAllData();
+        }
+        
+        function editOrgPosition(positionId) {
+            const orgData = appData.organizational[window.currentUnitId];
+            const position = orgData.find(pos => pos.id === positionId);
+            
+            if (!position) return;
+            
+            const newTitle = prompt('Título del puesto:', position.title);
+            if (newTitle === null) return;
+            
+            const newName = prompt('Nombre de la persona:', position.name);
+            if (newName === null) return;
+            
+            position.title = newTitle;
+            position.name = newName;
+            
+            loadOrgChart(window.currentUnitId);
+            saveAllData();
+        }
+        
+        function deleteOrgPosition(positionId) {
+            if (!confirm('¿Eliminar esta posición?')) return;
+            
+            const orgData = appData.organizational[window.currentUnitId];
+            const index = orgData.findIndex(pos => pos.id === positionId);
+            
+            if (index !== -1) {
+                orgData.splice(index, 1);
+                loadOrgChart(window.currentUnitId);
+                saveAllData();
+            }
+        }
+        
+        // Add click handlers to business units table
+        function makeUnitsClickable() {
+            // Add click handlers when units table is rendered
+            setTimeout(() => {
+                const rows = document.querySelectorAll('#unitsTableBody tr');
+                rows.forEach((row, index) => {
+                    row.style.cursor = 'pointer';
+                    row.onclick = () => {
+                        const unitId = appData.units[index]?.id;
+                        if (unitId) {
+                            openUnitModal(unitId);
+                        }
+                    };
+                });
+            }, 100);
         }
 
         // Initialize when page loads
