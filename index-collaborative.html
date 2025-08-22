@@ -1706,7 +1706,11 @@
                     window.bafarHub.saveToLocal();
                     
                     // Show success notification
-                    showNotification('✅ Cambios guardados en GitHub automáticamente', 'success');
+                    if (window.bafarHub && window.bafarHub.showNotification) {
+                        window.bafarHub.showNotification('✅ Cambios guardados en GitHub automáticamente', 'success');
+                    } else {
+                        alert('✅ Cambios guardados en GitHub automáticamente');
+                    }
                 } else {
                     throw new Error(result.error);
                 }
@@ -1803,6 +1807,59 @@
             if (window.githubTokenModal) {
                 document.body.removeChild(window.githubTokenModal);
                 window.githubTokenModal = null;
+            }
+        }
+        
+        // Show save indicator
+        function showSaveIndicator() {
+            const indicator = document.getElementById('saveIndicator');
+            if (indicator) {
+                indicator.style.display = 'block';
+                indicator.style.opacity = '1';
+                
+                // Hide after 2 seconds
+                setTimeout(() => {
+                    indicator.style.opacity = '0';
+                    setTimeout(() => {
+                        indicator.style.display = 'none';
+                    }, 300);
+                }, 2000);
+            }
+        }
+        
+        // Show notification (fallback if bafarHub not available)
+        function showNotification(message, type = 'info') {
+            if (window.bafarHub && window.bafarHub.showNotification) {
+                window.bafarHub.showNotification(message, type);
+            } else {
+                // Simple fallback notification
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 15px 20px;
+                    background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#007bff'};
+                    color: white;
+                    border-radius: 5px;
+                    z-index: 9999;
+                    font-family: Arial, sans-serif;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                    animation: slideIn 0.3s ease-out;
+                `;
+                
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease-in';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
             }
         }
 
