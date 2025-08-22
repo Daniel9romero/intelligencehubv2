@@ -120,11 +120,15 @@
             }
         }
 
+        /* Status indicators container */
+        .status-indicators {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
         /* Sync status indicator */
         .sync-status {
-            position: absolute;
-            top: 20px;
-            right: 20px;
             background: rgba(255,255,255,0.1);
             padding: 8px 12px;
             border-radius: 20px;
@@ -153,11 +157,9 @@
 
         /* Mode indicator */
         .mode-indicator {
-            position: absolute;
-            top: 60px;
-            right: 20px;
-            background: rgba(255,255,255,0.2);
-            padding: 4px 8px;
+            background: #007bff;
+            color: white;
+            padding: 8px 15px;
             border-radius: 12px;
             font-size: 11px;
             font-weight: 500;
@@ -1417,16 +1419,18 @@
                 <p>Centro de Inteligencia Competitiva - Modo Colaborativo</p>
             </div>
             
-            <!-- Status Indicators -->
-            <div class="sync-status" id="syncStatus">
-                <div class="sync-dot" id="syncDot"></div>
-                <span id="syncText">Inicializando...</span>
-            </div>
-            <button class="mode-indicator" id="modeIndicator" onclick="toggleViewMode()" style="cursor: pointer; border: none; background: #007bff; color: white; padding: 8px 15px; border-radius: 15px; font-size: 12px;">
-                👁️ <span id="currentViewMode">Editor</span>
-            </button>
-            <div class="user-indicator" style="background: #28a745; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px; margin-left: 10px;">
-                👤 <span id="currentUserName"></span>
+            <!-- Status Indicators Container -->
+            <div class="status-indicators">
+                <div class="sync-status" id="syncStatus">
+                    <div class="sync-dot" id="syncDot"></div>
+                    <span id="syncText">Inicializando...</span>
+                </div>
+                <button class="mode-indicator" id="modeIndicator" onclick="toggleViewMode()" style="cursor: pointer; border: none;">
+                    👁️ <span id="currentViewMode">Editor</span>
+                </button>
+                <div class="user-indicator" style="background: #28a745; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px;">
+                    👤 <span id="currentUserName"></span>
+                </div>
             </div>
         </div>
 
@@ -2607,6 +2611,9 @@
                     // Safely update UI elements
                     const syncStatusEl = document.getElementById('syncStatusText');
                     if (syncStatusEl) syncStatusEl.textContent = `✅ Conectado al equipo - Sincronizado ${new Date().toLocaleTimeString()}`;
+                    
+                    const lastSyncTimeEl = document.getElementById('lastSyncTime');
+                    if (lastSyncTimeEl) lastSyncTimeEl.textContent = new Date().toLocaleTimeString();
                     
                     const viewModeEl = document.getElementById('currentViewMode');
                     if (viewModeEl) viewModeEl.textContent = 'Editor';
