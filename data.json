@@ -1,7 +1,7 @@
 {
   "project": "BAFAR Intelligence Hub",
   "version": "1.0",
-  "lastUpdate": "2025-08-22T21:29:04.869Z",
+  "lastUpdate": "2025-08-22T21:38:36.606Z",
   "lastEditor": "Administrador",
   "units": [
     {
@@ -860,6 +860,38 @@
         "id": "1755892723118",
         "title": "Gerente Investigación y Desarrollo",
         "name": "Alfonso Macías",
+        "email": "",
+        "unitId": 6,
+        "parentId": "1755892456243"
+      },
+      {
+        "id": "1755898490380",
+        "title": "Jefe Vinculación y Proyectos",
+        "name": "María Fernanda Melchor",
+        "email": "",
+        "unitId": 6,
+        "parentId": "1755892456243"
+      },
+      {
+        "id": "1755898527158",
+        "title": "Analista Innovación",
+        "name": "Cynthia Elizabeth Ornelas",
+        "email": "",
+        "unitId": 6,
+        "parentId": "1755892456243"
+      },
+      {
+        "id": "1755898558942",
+        "title": "Jefe Calidad CDS",
+        "name": "Rodrigo Perez",
+        "email": "",
+        "unitId": 6,
+        "parentId": "1755892456243"
+      },
+      {
+        "id": "1755898713534",
+        "title": "Gerente de Implementación y MC",
+        "name": "Carlos Yepiz",
         "email": "",
         "unitId": 6,
         "parentId": "1755892456243"
