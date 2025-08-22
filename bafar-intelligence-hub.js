@@ -78,25 +78,39 @@ class BafarIntelligenceHub {
     // Load data from GitHub
     async loadFromGitHub() {
         try {
+            // Check if we have private repository token
+            const privateToken = localStorage.getItem('github_private_token');
+            
+            if (!privateToken) {
+                console.log('No private token found, using local data only');
+                this.updateSyncStatus('error');
+                return false;
+            }
+            
             // First check if we have local data that's more recent
             const localData = localStorage.getItem('bafarHub');
             const localTimestamp = localStorage.getItem('bafarHub_timestamp');
             
-            // Use GitHub Pages URL instead of raw GitHub
-            const url = `https://daniel9romero.github.io/BafarIntelligence/${this.dataFile}?t=${Date.now()}`;
-            console.log('Loading data from:', url);
+            // Use GitHub API to access private repository
+            const url = `https://api.github.com/repos/Daniel9romero/BafarIntelligence-Data/contents/${this.dataFile}`;
+            console.log('Loading data from private repo:', url);
             
             const response = await fetch(url, {
-                cache: 'no-cache',
                 headers: {
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
+                    'Authorization': `token ${privateToken}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Cache-Control': 'no-cache'
                 }
             });
             
             if (response.ok) {
-                const githubData = await response.json();
-                console.log('Data loaded from GitHub:', githubData);
+                const fileInfo = await response.json();
+                
+                // Decode base64 content from GitHub API
+                const content = atob(fileInfo.content);
+                const githubData = JSON.parse(content);
+                
+                console.log('Data loaded from private GitHub repo:', githubData);
                 
                 // Compare timestamps if we have local data
                 if (localData && localTimestamp) {
@@ -110,7 +124,7 @@ class BafarIntelligenceHub {
                         this.appData = localDataParsed;
                         this.updateSyncStatus('local-newer');
                     } else {
-                        console.log('GitHub data is more recent, using GitHub data');
+                        console.log('Private repo data is more recent, using GitHub data');
                         this.appData = githubData;
                         this.saveToLocal(); // Save GitHub data locally
                         this.updateSyncStatus('connected');
