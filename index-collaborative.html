@@ -2014,14 +2014,25 @@
                     const now = new Date();
                     window.bafarHub.lastSync = now;
                     
-                    document.getElementById('syncStatusText').textContent = '✅ Conectado al equipo - Datos sincronizados';
-                    document.getElementById('lastSyncTime').textContent = now.toLocaleTimeString();
-                    document.getElementById('currentViewMode').textContent = 'Editor';
-                    document.getElementById('lastSync').textContent = 'Conectado';
+                    // Safely update UI elements
+                    const syncStatusEl2 = document.getElementById('syncStatusText');
+                    if (syncStatusEl2) syncStatusEl2.textContent = '✅ Conectado al equipo - Datos sincronizados';
+                    
+                    const lastSyncTimeEl = document.getElementById('lastSyncTime');
+                    if (lastSyncTimeEl) lastSyncTimeEl.textContent = now.toLocaleTimeString();
+                    
+                    const viewModeEl2 = document.getElementById('currentViewMode');
+                    if (viewModeEl2) viewModeEl2.textContent = 'Editor';
+                    
+                    const lastSyncEl2 = document.getElementById('lastSync');
+                    if (lastSyncEl2) lastSyncEl2.textContent = 'Conectado';
                 } else {
                     console.log('GitHub failed, using local data');
-                    document.getElementById('syncStatusText').textContent = '⚠️ Sin conexión - Configure repositorio privado';
-                    document.getElementById('lastSyncTime').textContent = 'No conectado';
+                    const syncStatusEl3 = document.getElementById('syncStatusText');
+                    if (syncStatusEl3) syncStatusEl3.textContent = '⚠️ Sin conexión - Configure repositorio privado';
+                    
+                    const lastSyncTimeEl2 = document.getElementById('lastSyncTime');
+                    if (lastSyncTimeEl2) lastSyncTimeEl2.textContent = 'No conectado';
                 }
                 updateUI();
                 
@@ -2593,9 +2604,15 @@
                         }
                     } catch (e) { console.log('Save indicator not found'); }
                     
-                    document.getElementById('syncStatusText').textContent = `✅ Conectado al equipo - Sincronizado ${new Date().toLocaleTimeString()}`;
-                    document.getElementById('modeIndicator').querySelector('#currentViewMode').textContent = 'Editor';
-                    document.getElementById('lastSync').textContent = 'Sincronizado';
+                    // Safely update UI elements
+                    const syncStatusEl = document.getElementById('syncStatusText');
+                    if (syncStatusEl) syncStatusEl.textContent = `✅ Conectado al equipo - Sincronizado ${new Date().toLocaleTimeString()}`;
+                    
+                    const viewModeEl = document.getElementById('currentViewMode');
+                    if (viewModeEl) viewModeEl.textContent = 'Editor';
+                    
+                    const lastSyncEl = document.getElementById('lastSync');
+                    if (lastSyncEl) lastSyncEl.textContent = 'Sincronizado';
                     
                     // Also save locally as backup
                     window.bafarHub.appData = appData;
@@ -3665,37 +3682,57 @@
         // Toggle between Editor and Reader mode
         let isReaderMode = false;
         function toggleViewMode() {
+            console.log('🔄 Cambiando modo de vista...');
             isReaderMode = !isReaderMode;
             
             const viewModeSpan = document.getElementById('currentViewMode');
             const modeButton = document.getElementById('modeIndicator');
+            
+            if (!viewModeSpan || !modeButton) {
+                console.error('❌ Elementos de modo no encontrados');
+                return;
+            }
             
             if (isReaderMode) {
                 // Switch to Reader mode
                 viewModeSpan.textContent = 'Lector';
                 modeButton.style.background = '#6c757d';
                 
-                // Disable all inputs and buttons
-                document.querySelectorAll('input, textarea, button, select').forEach(element => {
-                    if (!element.id || !['modeIndicator', 'currentViewMode'].includes(element.id)) {
+                // Disable all inputs and buttons except the mode toggle
+                document.querySelectorAll('input, textarea, select').forEach(element => {
+                    element.style.pointerEvents = 'none';
+                    element.style.opacity = '0.6';
+                    element.disabled = true;
+                });
+                
+                document.querySelectorAll('button').forEach(element => {
+                    if (element.id !== 'modeIndicator') {
                         element.style.pointerEvents = 'none';
                         element.style.opacity = '0.6';
+                        element.disabled = true;
                     }
                 });
                 
-                showNotification('Modo Lector activado - Solo visualización', 'info');
+                showNotification('👁️ Modo Lector activado - Solo visualización', 'info');
             } else {
                 // Switch to Editor mode
                 viewModeSpan.textContent = 'Editor';
                 modeButton.style.background = '#007bff';
                 
                 // Enable all inputs and buttons
-                document.querySelectorAll('input, textarea, button, select').forEach(element => {
+                document.querySelectorAll('input, textarea, select').forEach(element => {
                     element.style.pointerEvents = 'auto';
                     element.style.opacity = '1';
+                    element.disabled = false;
                 });
                 
-                showNotification('Modo Editor activado - Puede editar', 'success');
+                document.querySelectorAll('button').forEach(element => {
+                    element.style.pointerEvents = 'auto';
+                    element.style.opacity = '1';
+                    element.disabled = false;
+                });
+                
+                showNotification('✏️ Modo Editor activado - Puede editar', 'success');
             }
         }
 
