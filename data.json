@@ -1,7 +1,7 @@
 {
   "project": "BAFAR Intelligence Hub",
   "version": "1.0",
-  "lastUpdate": "2025-08-22T19:49:31.379Z",
+  "lastUpdate": "2025-08-22T19:59:22.684Z",
   "lastEditor": "Administrador",
   "units": [
     {
@@ -821,6 +821,48 @@
         "email": "",
         "unitId": 5,
         "parentId": "1755891677057"
+      }
+    ],
+    "6": [
+      {
+        "id": "1755892456243",
+        "title": "Directora Innovación",
+        "name": "Guadalupe Cardenas",
+        "email": "",
+        "unitId": 6,
+        "parentId": null
+      },
+      {
+        "id": "1755892491297",
+        "title": "Gerente Sr Calidad",
+        "name": "Karla Bailon",
+        "email": "",
+        "unitId": 6,
+        "parentId": "1755892456243"
+      },
+      {
+        "id": "1755892540378",
+        "title": "Gerente Empacotecnia",
+        "name": "Nancy Cotoñeto",
+        "email": "",
+        "unitId": 6,
+        "parentId": "1755892456243"
+      },
+      {
+        "id": "1755892700095",
+        "title": "Gerente Investigación y Desarrollo",
+        "name": "Ricardo Esparza",
+        "email": "",
+        "unitId": 6,
+        "parentId": "1755892456243"
+      },
+      {
+        "id": "1755892723118",
+        "title": "Gerente Investigación y Desarrollo",
+        "name": "Alfonso Macías",
+        "email": "",
+        "unitId": 6,
+        "parentId": "1755892456243"
       }
     ]
   }
