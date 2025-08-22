@@ -1422,7 +1422,7 @@
                 <div class="sync-dot" id="syncDot"></div>
                 <span id="syncText">Inicializando...</span>
             </div>
-            <div class="mode-indicator" id="modeIndicator">Modo Local</div>
+            <div class="mode-indicator" id="modeIndicator">Conectando...</div>
             <div class="user-indicator" style="background: #28a745; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px; margin-left: 10px;">
                 👤 <span id="currentUserName"></span>
             </div>
@@ -1452,7 +1452,7 @@
                 <div class="sync-panel">
                     <h4>🔄 Estado de Sincronización</h4>
                     <p><strong>Estado:</strong> <span id="syncStatusText">Conectando...</span></p>
-                    <p><strong>Última actualización:</strong> <span id="lastSyncTime">Nunca</span></p>
+                    <p><strong>Última actualización:</strong> <span id="lastSyncTime">Iniciando...</span></p>
                     <div class="sync-actions">
                         <button class="btn btn-success btn-small" onclick="saveToGitHub()" id="saveGitHubBtn">💾 Guardar y Sincronizar</button>
                         <button class="btn btn-secondary btn-small" onclick="openPrivateRepoSetup()" style="font-size: 11px;">🔐 Config Repo</button>
@@ -1484,9 +1484,9 @@
                         <div class="stat-label">Fase: Configuración</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Última Sincronización</div>
-                        <div class="stat-number" id="lastSync">Nunca</div>
-                        <div class="stat-label">Modo: <span id="currentMode">Local</span></div>
+                        <div class="stat-label">Estado del Sistema</div>
+                        <div class="stat-number" id="lastSync">Iniciando...</div>
+                        <div class="stat-label">Rol: <span id="currentMode">Editor</span></div>
                     </div>
                 </div>
 
@@ -2012,12 +2012,14 @@
                     const now = new Date();
                     window.bafarHub.lastSync = now;
                     
-                    document.getElementById('syncStatusText').textContent = '✅ Conectado a GitHub - Datos actualizados';
+                    document.getElementById('syncStatusText').textContent = '✅ Conectado al equipo - Datos sincronizados';
                     document.getElementById('lastSyncTime').textContent = now.toLocaleTimeString();
+                    document.getElementById('modeIndicator').textContent = 'Modo Colaborativo';
+                    document.getElementById('lastSync').textContent = 'Conectado';
                 } else {
                     console.log('GitHub failed, using local data');
-                    document.getElementById('syncStatusText').textContent = '⚠️ Modo Local - Sin conexión a GitHub';
-                    document.getElementById('lastSyncTime').textContent = 'Local';
+                    document.getElementById('syncStatusText').textContent = '⚠️ Sin conexión - Configure repositorio privado';
+                    document.getElementById('lastSyncTime').textContent = 'No conectado';
                 }
                 updateUI();
                 
@@ -2129,7 +2131,7 @@
             if (progressEl) progressEl.textContent = appData.progress + '%';
             
             // Update last sync time in multiple places
-            const timeAgo = window.bafarHub?.lastSync ? window.bafarHub.getTimeAgo(window.bafarHub.lastSync) : 'Nunca';
+            const timeAgo = window.bafarHub?.lastSync ? window.bafarHub.getTimeAgo(window.bafarHub.lastSync) : 'Sin conectar';
             if (lastSyncEl) lastSyncEl.textContent = timeAgo;
             
             const lastSyncTimeEl = document.getElementById('lastSyncTime');
