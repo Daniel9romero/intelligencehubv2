@@ -312,6 +312,92 @@
             z-index: 1000;
             display: none;
         }
+        
+        /* Digital Logo Animation */
+        .digital-logo-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 150px;
+            display: none;
+            z-index: 2000;
+        }
+        
+        .digital-logo {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .digital-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(40, 1fr);
+            grid-template-rows: repeat(15, 1fr);
+            gap: 1px;
+        }
+        
+        .particle {
+            font-size: 8px;
+            color: #0088ff;
+            text-align: center;
+            opacity: 0;
+            animation: digitalize 0.05s ease-in forwards;
+            text-shadow: 0 0 5px #0088ff;
+            font-family: 'Courier New', monospace;
+        }
+        
+        @keyframes digitalize {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(180deg);
+                color: #0088ff;
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.5) rotate(90deg);
+                color: #00ffff;
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+                color: #fff;
+            }
+        }
+        
+        .logo-reveal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            animation: logoAppear 1s ease-in forwards;
+            animation-delay: 1.5s;
+            filter: drop-shadow(0 0 30px #0088ff);
+        }
+        
+        @keyframes logoAppear {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+                filter: brightness(3) drop-shadow(0 0 50px #0088ff);
+            }
+            50% {
+                opacity: 0.5;
+                transform: translate(-50%, -50%) scale(1.1);
+                filter: brightness(2) drop-shadow(0 0 40px #00ffff);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+                filter: brightness(1.5) drop-shadow(0 0 30px #0088ff);
+            }
+        }
 
         .access-granted {
             color: #0088ff;
@@ -524,6 +610,14 @@
     <div class="access-message access-denied" id="accessDenied">
         ACCESS DENIED
     </div>
+    
+    <!-- Digital Logo Animation -->
+    <div class="digital-logo-container" id="digitalLogoContainer">
+        <div class="digital-logo">
+            <div class="digital-particles" id="digitalParticles"></div>
+            <img src="bafar-logo.png" alt="Grupo BAFAR" class="logo-reveal" id="logoReveal">
+        </div>
+    </div>
 
     <script>
         // User Database (in production, this should be server-side)
@@ -635,26 +729,83 @@
         function showAccessGranted(user) {
             const accessGranted = document.getElementById('accessGranted');
             const loginContainer = document.getElementById('loginContainer');
+            const digitalLogoContainer = document.getElementById('digitalLogoContainer');
+            const digitalParticles = document.getElementById('digitalParticles');
             
-            accessGranted.style.display = 'block';
+            // Hide login container
             loginContainer.style.display = 'none';
             
-            // Store user session
-            sessionStorage.setItem('user', JSON.stringify({
-                username: user.name,
-                role: user.role
-            }));
+            // Show ACCESS GRANTED briefly
+            accessGranted.style.display = 'block';
             
-            // Redirect based on role
             setTimeout(() => {
-                if (user.role === 'editor') {
-                    // Redirect to editor mode
-                    window.location.href = 'index-collaborative.html';
-                } else {
-                    // Redirect to viewer mode
-                    window.location.href = 'index-shared.html';
-                }
-            }, 2000);
+                accessGranted.style.display = 'none';
+                
+                // Show digital logo animation
+                digitalLogoContainer.style.display = 'block';
+                
+                // Create digital particles effect
+                createDigitalEffect();
+                
+                // Store user session
+                sessionStorage.setItem('user', JSON.stringify({
+                    username: user.name,
+                    role: user.role
+                }));
+                
+                // Redirect after animation
+                setTimeout(() => {
+                    if (user.role === 'editor') {
+                        window.location.href = 'index-collaborative.html';
+                    } else {
+                        window.location.href = 'index-shared.html';
+                    }
+                }, 3000);
+            }, 1000);
+        }
+        
+        // Create digital effect for logo
+        function createDigitalEffect() {
+            const digitalParticles = document.getElementById('digitalParticles');
+            const particles = 600; // 40x15 grid
+            
+            // Clear any existing particles
+            digitalParticles.innerHTML = '';
+            
+            // Create particles that form the logo shape
+            for (let i = 0; i < particles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random delay for wave effect
+                const row = Math.floor(i / 40);
+                const col = i % 40;
+                const distance = Math.sqrt(Math.pow(col - 20, 2) + Math.pow(row - 7.5, 2));
+                particle.style.animationDelay = (distance * 20) + 'ms';
+                
+                // Random number or binary
+                const chars = '0101010101234567890';
+                particle.textContent = chars[Math.floor(Math.random() * chars.length)];
+                
+                digitalParticles.appendChild(particle);
+            }
+            
+            // Matrix rain effect converging to center
+            createConvergingMatrix();
+        }
+        
+        // Create converging matrix effect
+        function createConvergingMatrix() {
+            const matrixBg = document.getElementById('matrix-bg');
+            const columns = matrixBg.querySelectorAll('.matrix-column');
+            
+            columns.forEach((column, index) => {
+                setTimeout(() => {
+                    column.style.transition = 'all 1s ease-in';
+                    column.style.transform = 'translateX(' + (window.innerWidth/2 - parseInt(column.style.left)) + 'px) scale(0)';
+                    column.style.opacity = '0';
+                }, index * 10);
+            });
         }
 
         // Show Access Denied
