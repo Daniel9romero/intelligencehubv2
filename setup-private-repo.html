@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Configurar Repositorio Privado - BAFAR Intelligence</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .step h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        
+        .code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        #results {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Configuración de Repositorio Privado</h1>
+        <p class="subtitle">BAFAR Intelligence Hub - Separación de Datos Sensibles</p>
+        
+        <div class="warning">
+            <strong>⚠️ Importante:</strong> Este proceso creará un repositorio PRIVADO en GitHub para almacenar los datos sensibles (data.json) separado del código público.
+        </div>
+        
+        <div class="step">
+            <h3>Paso 1: Crear Token de GitHub</h3>
+            <p>Necesitas un Personal Access Token con permisos para crear y gestionar repositorios privados.</p>
+            <ol>
+                <li>Ve a: <a href="https://github.com/settings/tokens" target="_blank">https://github.com/settings/tokens</a></li>
+                <li>Click en "Generate new token (classic)"</li>
+                <li>Configuración:
+                    <ul>
+                        <li><strong>Note:</strong> BAFAR Intelligence Private Data</li>
+                        <li><strong>Expiration:</strong> 90 days (recomendado)</li>
+                        <li><strong>Scopes:</strong> ✅ repo (Full control)</li>
+                    </ul>
+                </li>
+                <li>Click "Generate token"</li>
+                <li><strong>COPIA EL TOKEN</strong> (solo se muestra una vez)</li>
+            </ol>
+            
+            <input type="password" id="githubToken" placeholder="Pega tu token aquí (ghp_...)" />
+        </div>
+        
+        <div class="step">
+            <h3>Paso 2: Configuración del Repositorio</h3>
+            <p>Define el nombre del repositorio privado donde se guardarán los datos:</p>
+            
+            <label>Nombre del repositorio privado:</label>
+            <input type="text" id="repoName" value="BafarIntelligence-Data" />
+            
+            <label>Tu usuario de GitHub:</label>
+            <input type="text" id="githubUser" placeholder="ej: Daniel9romero" />
+        </div>
+        
+        <div class="step">
+            <h3>Paso 3: Crear y Configurar</h3>
+            <button onclick="createPrivateRepo()">🚀 Crear Repositorio Privado</button>
+            <button onclick="testConnection()">🔍 Probar Conexión</button>
+            <button onclick="uploadData()">📤 Subir data.json</button>
+        </div>
+        
+        <div id="results">
+            <div id="successMsg" class="success"></div>
+            <div id="errorMsg" class="error"></div>
+            <div id="statusMsg" class="status" style="display: none;"></div>
+        </div>
+        
+        <div class="step">
+            <h3>Configuración Final</h3>
+            <p>Una vez creado el repositorio privado, la aplicación automáticamente:</p>
+            <ul>
+                <li>✅ Leerá los datos desde el repositorio privado</li>
+                <li>✅ Guardará los cambios en el repositorio privado</li>
+                <li>✅ Mantendrá el código público sin datos sensibles</li>
+                <li>✅ Sincronizará automáticamente cada 30 segundos</li>
+            </ul>
+            
+            <div class="code">
+// El token se guardará en tu navegador:
+localStorage.setItem('github_private_token', 'tu_token');
+
+// Para verificar:
+localStorage.getItem('github_private_token');
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        async function createPrivateRepo() {
+            const token = document.getElementById('githubToken').value.trim();
+            const repoName = document.getElementById('repoName').value.trim();
+            const username = document.getElementById('githubUser').value.trim();
+            
+            if (!token || !repoName || !username) {
+                showError('Por favor completa todos los campos');
+                return;
+            }
+            
+            showStatus('Creando repositorio privado...');
+            
+            try {
+                // Crear repositorio
+                const response = await fetch('https://api.github.com/user/repos', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: repoName,
+                        description: 'Datos privados del BAFAR Intelligence Hub - CONFIDENCIAL',
+                        private: true,
+                        auto_init: true,
+                        gitignore_template: 'Node',
+                        license_template: null
+                    })
+                });
+                
+                if (response.ok) {
+                    const repo = await response.json();
+                    
+                    // Guardar configuración
+                    localStorage.setItem('github_private_token', token);
+                    localStorage.setItem('github_private_repo', repoName);
+                    localStorage.setItem('github_username', username);
+                    
+                    showSuccess(`
+                        ✅ Repositorio privado creado exitosamente!<br><br>
+                        <strong>URL:</strong> ${repo.html_url}<br>
+                        <strong>Clone:</strong> ${repo.clone_url}<br><br>
+                        El token ha sido guardado en tu navegador.
+                    `);
+                    
+                    showStatus('Repositorio creado y configurado');
+                    
+                } else if (response.status === 422) {
+                    showError('El repositorio ya existe. Puedes continuar con la configuración.');
+                    localStorage.setItem('github_private_token', token);
+                } else {
+                    const error = await response.json();
+                    showError(`Error: ${error.message || 'No se pudo crear el repositorio'}`);
+                }
+                
+            } catch (error) {
+                showError(`Error de conexión: ${error.message}`);
+            }
+        }
+        
+        async function testConnection() {
+            const token = document.getElementById('githubToken').value.trim() || localStorage.getItem('github_private_token');
+            
+            if (!token) {
+                showError('Por favor ingresa un token primero');
+                return;
+            }
+            
+            showStatus('Probando conexión...');
+            
+            try {
+                const response = await fetch('https://api.github.com/user', {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const user = await response.json();
+                    showSuccess(`✅ Conexión exitosa! Usuario: ${user.login} (${user.name})`);
+                    document.getElementById('githubUser').value = user.login;
+                } else {
+                    showError('Token inválido o sin permisos');
+                }
+            } catch (error) {
+                showError(`Error de conexión: ${error.message}`);
+            }
+        }
+        
+        async function uploadData() {
+            const token = localStorage.getItem('github_private_token');
+            const repoName = document.getElementById('repoName').value.trim();
+            const username = document.getElementById('githubUser').value.trim();
+            
+            if (!token || !repoName || !username) {
+                showError('Primero debes crear el repositorio privado');
+                return;
+            }
+            
+            showStatus('Preparando para subir data.json...');
+            
+            // Aquí normalmente leerías el archivo data.json local
+            // Por ahora mostramos instrucciones
+            
+            showSuccess(`
+                Para subir tu data.json actual:<br><br>
+                1. Abre la aplicación principal<br>
+                2. Los datos se sincronizarán automáticamente<br>
+                3. O usa el botón "💾 Sincronizar Cambios"<br><br>
+                <strong>Repositorio configurado:</strong> ${username}/${repoName}
+            `);
+        }
+        
+        function showSuccess(message) {
+            const elem = document.getElementById('successMsg');
+            elem.innerHTML = message;
+            elem.style.display = 'block';
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+        
+        function showError(message) {
+            const elem = document.getElementById('errorMsg');
+            elem.innerHTML = message;
+            elem.style.display = 'block';
+            document.getElementById('successMsg').style.display = 'none';
+        }
+        
+        function showStatus(message) {
+            const elem = document.getElementById('statusMsg');
+            elem.innerHTML = '⏳ ' + message;
+            elem.style.display = 'block';
+        }
+        
+        // Auto-cargar configuración si existe
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedToken = localStorage.getItem('github_private_token');
+            const savedRepo = localStorage.getItem('github_private_repo');
+            const savedUser = localStorage.getItem('github_username');
+            
+            if (savedRepo) {
+                document.getElementById('repoName').value = savedRepo;
+            }
+            if (savedUser) {
+                document.getElementById('githubUser').value = savedUser;
+            }
+            
+            if (savedToken) {
+                showStatus('Token encontrado en localStorage. Puedes probar la conexión.');
+            }
+        });
+    </script>
+</body>
+</html>

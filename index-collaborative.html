@@ -1436,6 +1436,7 @@
             <button onclick="showSection('research', this)">Matriz de Investigación</button>
             <button onclick="showSection('timeline', this)">Cronograma</button>
             <button onclick="showSection('metrics', this)">Métricas</button>
+            <button id="adminUserMgmtBtn" onclick="showSection('usermanagement', this)" style="display: none;">⚙️ Usuarios</button>
         </nav>
 
         <div class="content">
@@ -1902,6 +1903,58 @@
                     <button class="btn btn-primary" onclick="saveToGitHub()">💾 Guardar en GitHub Métricas</button>
                 </div>
             </section>
+
+            <!-- USER MANAGEMENT SECTION (Admin Only) -->
+            <section id="usermanagement" class="section">
+                <h2>👥 Gestión de Usuarios</h2>
+                
+                <div class="alert alert-info">
+                    <strong>🔐 Área de Administración:</strong> Solo usuarios administradores pueden gestionar usuarios del sistema.
+                </div>
+                
+                <!-- Add User Form -->
+                <div class="data-container">
+                    <h3>➕ Agregar Nuevo Usuario</h3>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                        <div class="form-row">
+                            <div class="detail-form-group">
+                                <label for="newUserUsername">Nombre de Usuario</label>
+                                <input type="text" id="newUserUsername" placeholder="ej: carlos.rodriguez">
+                            </div>
+                            <div class="detail-form-group">
+                                <label for="newUserFullName">Nombre Completo</label>
+                                <input type="text" id="newUserFullName" placeholder="ej: Carlos Rodríguez">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="detail-form-group">
+                                <label for="newUserPassword">Contraseña</label>
+                                <input type="password" id="newUserPassword" placeholder="Contraseña inicial">
+                            </div>
+                            <div class="detail-form-group">
+                                <label for="newUserRole">Rol</label>
+                                <select id="newUserRole">
+                                    <option value="editor">Administrador (Lectura y Escritura)</option>
+                                    <option value="viewer">Solo Lectura</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="addNewUser()">💾 Agregar Usuario</button>
+                    </div>
+                    
+                    <!-- Users List -->
+                    <h3>📋 Usuarios Existentes</h3>
+                    <div id="systemUsersList" style="max-height: 400px; overflow-y: auto;">
+                        <!-- Users will be listed here -->
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(255, 165, 0, 0.1); border-radius: 5px; border: 1px solid #ffa500;">
+                        <p style="color: #ffa500; margin: 0; font-size: 14px;">
+                            ⚠️ <strong>Nota:</strong> Los cambios en usuarios se guardan localmente. Para sincronizar entre equipos, exporta/importa la configuración.
+                        </p>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 
@@ -1932,8 +1985,11 @@
                 return;
             }
 
+            // Initialize current user from login session
+            initializeCurrentUser();
+            
             // Initialize user indicator
-            document.getElementById('currentUserName').textContent = currentUserDisplay;
+            document.getElementById('currentUserName').textContent = currentUser;
 
             // Initialize sync status
             document.getElementById('syncStatusText').textContent = 'Conectando...';
@@ -2696,26 +2752,47 @@
         // Generate unique session ID for this browser tab
         const sessionId = Math.random().toString(36).substring(2, 8);
         
-        // Get or create user identifier
-        let currentUser = localStorage.getItem('bafarHub_currentUser');
+        // Get user identifier from session (will be set after login)
+        let currentUser = 'Usuario'; // Default fallback
         
-        if (!currentUser) {
-            // First time user - ask for name
-            const userName = prompt(
-                '👤 Por favor ingresa tu nombre para identificarte en el sistema colaborativo:\n\n' +
-                'Esto ayudará a evitar conflictos cuando múltiples personas editen al mismo tiempo.\n\n' +
-                'Ejemplo: Daniel, Jose, Melissa, etc.'
-            );
-            
-            if (userName && userName.trim()) {
-                currentUser = userName.trim();
-            } else {
-                // If no name provided, use logged username + random ID
-                const loggedUser = window.bafarHub?.user?.username || 'Usuario';
-                currentUser = loggedUser;
+        // Function to initialize current user from login session
+        function initializeCurrentUser() {
+            try {
+                // Get user info from sessionStorage (set by login page)
+                const userData = sessionStorage.getItem('user');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    currentUser = user.username || 'Usuario';
+                    
+                    // Store for later use
+                    localStorage.setItem('bafarHub_currentUser', currentUser);
+                    
+                    // Update display
+                    const userNameElement = document.getElementById('currentUserName');
+                    if (userNameElement) {
+                        userNameElement.textContent = currentUser;
+                    }
+                    
+                    // Store user role for admin checks
+                    localStorage.setItem('bafarHub_userRole', user.role || 'viewer');
+                    
+                    console.log('✅ Usuario inicializado:', currentUser, 'Rol:', user.role);
+                    
+                    // Show admin functions if user is admin/editor
+                    if (user.role === 'editor') {
+                        const adminBtn = document.getElementById('adminUserMgmtBtn');
+                        if (adminBtn) {
+                            adminBtn.style.display = 'inline-block';
+                        }
+                    }
+                } else {
+                    console.log('⚠️ No se encontró información de usuario en sessionStorage');
+                    currentUser = 'Usuario';
+                }
+            } catch (error) {
+                console.error('Error al inicializar usuario:', error);
+                currentUser = 'Usuario';
             }
-            
-            localStorage.setItem('bafarHub_currentUser', currentUser);
         }
         
         // Add session ID to make each browser tab unique
@@ -2870,6 +2947,11 @@
                     btn.classList.remove('active');
                 });
                 button.classList.add('active');
+            }
+            
+            // Load users list when user management section is shown
+            if (sectionId === 'usermanagement') {
+                loadSystemUsersList();
             }
         }
 
@@ -3371,6 +3453,165 @@
                 });
             }, 100);
         }
+
+        // =================== USER MANAGEMENT FUNCTIONS ===================
+        
+        // Add new user to the system
+        function addNewUser() {
+            const username = document.getElementById('newUserUsername').value.trim();
+            const fullName = document.getElementById('newUserFullName').value.trim();
+            const password = document.getElementById('newUserPassword').value.trim();
+            const role = document.getElementById('newUserRole').value;
+            
+            if (!username || !fullName || !password) {
+                alert('Por favor completa todos los campos requeridos');
+                return;
+            }
+            
+            try {
+                // Get current users from localStorage
+                let users = JSON.parse(localStorage.getItem('bafarUsers') || '{}');
+                
+                // Check if user already exists
+                if (users[username.toLowerCase()]) {
+                    alert('El usuario ya existe. Usa un nombre diferente.');
+                    return;
+                }
+                
+                // Add new user
+                users[username.toLowerCase()] = {
+                    password: password,
+                    role: role,
+                    name: fullName
+                };
+                
+                // Save users
+                localStorage.setItem('bafarUsers', JSON.stringify(users));
+                
+                // Clear form
+                document.getElementById('newUserUsername').value = '';
+                document.getElementById('newUserFullName').value = '';
+                document.getElementById('newUserPassword').value = '';
+                document.getElementById('newUserRole').value = 'editor';
+                
+                // Reload users list
+                loadSystemUsersList();
+                
+                showNotification(`Usuario ${fullName} agregado exitosamente`, 'success');
+                
+            } catch (error) {
+                console.error('Error al agregar usuario:', error);
+                alert('Error al agregar usuario: ' + error.message);
+            }
+        }
+        
+        // Load and display system users list
+        function loadSystemUsersList() {
+            try {
+                const users = JSON.parse(localStorage.getItem('bafarUsers') || '{}');
+                const container = document.getElementById('systemUsersList');
+                
+                if (Object.keys(users).length === 0) {
+                    container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No hay usuarios registrados</p>';
+                    return;
+                }
+                
+                let html = '<div style="display: grid; gap: 15px;">';
+                
+                for (const [username, userData] of Object.entries(users)) {
+                    const roleText = userData.role === 'editor' ? 'Administrador' : 'Solo Lectura';
+                    const roleColor = userData.role === 'editor' ? '#4caf50' : '#ffa500';
+                    const isCurrentUser = currentUser && currentUser.toLowerCase() === userData.name.toLowerCase();
+                    
+                    html += `
+                        <div style="
+                            background: ${isCurrentUser ? 'rgba(0, 136, 255, 0.1)' : 'rgba(0, 136, 255, 0.05)'};
+                            padding: 15px;
+                            border-radius: 8px;
+                            border: ${isCurrentUser ? '2px solid #0088ff' : '1px solid #e0e0e0'};
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        ">
+                            <div>
+                                <div style="font-weight: bold; color: #333;">
+                                    ${userData.name} ${isCurrentUser ? '(Tú)' : ''}
+                                </div>
+                                <div style="font-size: 12px; color: #666;">
+                                    Usuario: ${username}
+                                </div>
+                                <div style="
+                                    display: inline-block;
+                                    background: ${roleColor};
+                                    color: white;
+                                    padding: 4px 8px;
+                                    border-radius: 4px;
+                                    font-size: 11px;
+                                    font-weight: bold;
+                                    margin-top: 8px;
+                                ">
+                                    ${roleText}
+                                </div>
+                            </div>
+                            <div>
+                                ${!isCurrentUser ? `
+                                    <button 
+                                        onclick="deleteSystemUser('${username}')" 
+                                        style="
+                                            background: #dc3545;
+                                            color: white;
+                                            border: none;
+                                            padding: 8px 12px;
+                                            border-radius: 4px;
+                                            cursor: pointer;
+                                            font-size: 12px;
+                                        "
+                                        onmouseover="this.style.background='#c82333'"
+                                        onmouseout="this.style.background='#dc3545'"
+                                    >
+                                        🗑️ Eliminar
+                                    </button>
+                                ` : '<span style="color: #28a745; font-size: 12px;">✅ Usuario Activo</span>'}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                html += '</div>';
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error al cargar lista de usuarios:', error);
+                document.getElementById('systemUsersList').innerHTML = 
+                    '<p style="color: #dc3545;">Error al cargar usuarios</p>';
+            }
+        }
+        
+        // Delete a system user
+        function deleteSystemUser(username) {
+            if (!confirm(`¿Estás seguro de que deseas eliminar al usuario "${username}"?`)) {
+                return;
+            }
+            
+            try {
+                let users = JSON.parse(localStorage.getItem('bafarUsers') || '{}');
+                
+                if (users[username]) {
+                    delete users[username];
+                    localStorage.setItem('bafarUsers', JSON.stringify(users));
+                    loadSystemUsersList();
+                    showNotification(`Usuario ${username} eliminado`, 'success');
+                } else {
+                    alert('Usuario no encontrado');
+                }
+                
+            } catch (error) {
+                console.error('Error al eliminar usuario:', error);
+                alert('Error al eliminar usuario: ' + error.message);
+            }
+        }
+        
+        // =================== END USER MANAGEMENT FUNCTIONS ===================
 
         // Initialize when page loads
         window.addEventListener('DOMContentLoaded', initApp);
