@@ -1,7 +1,7 @@
 {
   "project": "BAFAR Intelligence Hub",
   "version": "1.0",
-  "lastUpdate": "2025-08-22T18:49:45.963Z",
+  "lastUpdate": "2025-08-22T18:55:21.986Z",
   "lastEditor": "Administrador",
   "units": [
     {
@@ -599,6 +599,32 @@
         "email": "",
         "unitId": 1,
         "parentId": "1755886095132"
+      }
+    ],
+    "3": [
+      {
+        "id": "1755888695974",
+        "title": "Director Bafar Alimentos",
+        "name": "Jorge Baeza",
+        "email": "",
+        "unitId": 3,
+        "parentId": null
+      },
+      {
+        "id": "1755888730146",
+        "title": "Director de Expansión",
+        "name": "Josue Aguilar",
+        "email": "",
+        "unitId": 3,
+        "parentId": "1755888695974"
+      },
+      {
+        "id": "1755888790302",
+        "title": "Director Comercial",
+        "name": "Raúl Gallardo",
+        "email": "",
+        "unitId": 3,
+        "parentId": "1755888695974"
       }
     ]
   }
