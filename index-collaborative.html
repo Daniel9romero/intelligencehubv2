@@ -1098,6 +1098,7 @@
 
     <script src="bafar-intelligence-hub.js"></script>
     <script src="sharepoint-connector.js"></script>
+    <script src="github-auto-sync.js"></script>
     <script>
         // Global data structure
         let appData = {
@@ -1667,18 +1668,142 @@
             window.bafarHub.showNotification('Cambios guardados localmente', 'success', 1500);
         }
         
+        // GitHub auto-sync instance
+        let gitHubAutoSync = null;
+        
         // Manual save to GitHub (for explicit saves)
-        function saveToGitHub() {
+        async function saveToGitHub() {
             if (!window.bafarHub.isEditor) {
                 window.bafarHub.showNotification('Solo los editores pueden guardar cambios', 'warning');
                 return;
             }
             
-            // Update hub data
-            window.bafarHub.appData = appData;
+            // Initialize GitHub auto-sync if not done
+            if (!gitHubAutoSync) {
+                gitHubAutoSync = new GitHubAutoSync();
+            }
             
-            // Use the hub's GitHub save method
-            window.bafarHub.saveAllData();
+            const saveBtn = document.getElementById('saveGitHubBtn');
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.textContent = '🔄 Guardando en GitHub...';
+            }
+            
+            try {
+                // Update metadata
+                appData.lastUpdate = new Date().toISOString();
+                appData.lastEditor = window.bafarHub.user ? window.bafarHub.user.username : 'Usuario';
+                
+                // Auto-commit to GitHub
+                const result = await gitHubAutoSync.saveToGitHub(appData);
+                
+                if (result.success) {
+                    showSaveIndicator();
+                    document.getElementById('syncStatusText').textContent = `✅ Guardado en GitHub - ${new Date().toLocaleTimeString()}`;
+                    
+                    // Also save locally as backup
+                    window.bafarHub.appData = appData;
+                    window.bafarHub.saveToLocal();
+                    
+                    // Show success notification
+                    showNotification('✅ Cambios guardados en GitHub automáticamente', 'success');
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                console.error('Error saving to GitHub:', error);
+                
+                if (error.message.includes('token') || error.message.includes('GITHUB_TOKEN_AQUI')) {
+                    showGitHubTokenDialog();
+                } else {
+                    alert(`Error al guardar en GitHub: ${error.message}\\n\\nGuardando localmente como respaldo.`);
+                    // Fallback to local save
+                    window.bafarHub.appData = appData;
+                    window.bafarHub.saveToLocal();
+                }
+            } finally {
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = '💾 Sincronizar Cambios';
+                }
+            }
+        }
+        
+        // Show GitHub token setup dialog
+        function showGitHubTokenDialog() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.7); z-index: 10000;
+                display: flex; align-items: center; justify-content: center;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 10px; max-width: 600px; max-height: 80vh; overflow-y: auto;">
+                    <h3>🔑 Configurar GitHub Token</h3>
+                    <p>Para guardar automáticamente en GitHub, necesitas configurar un token:</p>
+                    
+                    <ol style="text-align: left; margin: 20px 0;">
+                        <li>Ve a <a href="https://github.com/settings/tokens" target="_blank">GitHub → Settings → Developer settings → Personal access tokens</a></li>
+                        <li>Click "Generate new token (classic)"</li>
+                        <li>Nombre: "BAFAR Intelligence Hub"</li>
+                        <li>Selecciona: <strong>repo</strong> (Full control)</li>
+                        <li>Click "Generate token"</li>
+                        <li>Copia el token (empieza con ghp_)</li>
+                    </ol>
+                    
+                    <div style="margin: 20px 0;">
+                        <label>Pega tu GitHub Token aquí:</label><br>
+                        <input type="password" id="githubTokenInput" placeholder="ghp_xxxxxxxxxxxxxxxx" style="width: 100%; padding: 10px; margin: 5px 0;">
+                        <small style="color: #666;">El token se guardará localmente en tu navegador</small>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button onclick="saveGitHubToken()" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin: 5px;">
+                            💾 Guardar Token
+                        </button>
+                        <button onclick="closeGitHubTokenDialog()" style="background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin: 5px;">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.githubTokenModal = modal;
+        }
+        
+        // Save GitHub token
+        function saveGitHubToken() {
+            const token = document.getElementById('githubTokenInput').value.trim();
+            if (!token) {
+                alert('Por favor ingresa un token válido');
+                return;
+            }
+            
+            if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
+                alert('El token debe empezar con "ghp_" o "github_pat_"');
+                return;
+            }
+            
+            // Save token locally
+            localStorage.setItem('github_token', token);
+            
+            // Update auto-sync instance
+            if (gitHubAutoSync) {
+                gitHubAutoSync.setToken(token);
+            }
+            
+            closeGitHubTokenDialog();
+            alert('✅ Token guardado correctamente. Ahora puedes guardar en GitHub automáticamente.');
+        }
+        
+        // Close token dialog
+        function closeGitHubTokenDialog() {
+            if (window.githubTokenModal) {
+                document.body.removeChild(window.githubTokenModal);
+                window.githubTokenModal = null;
+            }
         }
 
         // Función unificada para actualizar datos
