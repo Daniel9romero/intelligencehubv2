@@ -1422,7 +1422,9 @@
                 <div class="sync-dot" id="syncDot"></div>
                 <span id="syncText">Inicializando...</span>
             </div>
-            <div class="mode-indicator" id="modeIndicator">Conectando...</div>
+            <button class="mode-indicator" id="modeIndicator" onclick="toggleViewMode()" style="cursor: pointer; border: none; background: #007bff; color: white; padding: 8px 15px; border-radius: 15px; font-size: 12px;">
+                👁️ <span id="currentViewMode">Editor</span>
+            </button>
             <div class="user-indicator" style="background: #28a745; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px; margin-left: 10px;">
                 👤 <span id="currentUserName"></span>
             </div>
@@ -2014,7 +2016,7 @@
                     
                     document.getElementById('syncStatusText').textContent = '✅ Conectado al equipo - Datos sincronizados';
                     document.getElementById('lastSyncTime').textContent = now.toLocaleTimeString();
-                    document.getElementById('modeIndicator').textContent = 'Modo Colaborativo';
+                    document.getElementById('currentViewMode').textContent = 'Editor';
                     document.getElementById('lastSync').textContent = 'Conectado';
                 } else {
                     console.log('GitHub failed, using local data');
@@ -2591,24 +2593,17 @@
                         }
                     } catch (e) { console.log('Save indicator not found'); }
                     
-                    document.getElementById('syncStatusText').textContent = `✅ Guardado en GitHub - ${new Date().toLocaleTimeString()}`;
+                    document.getElementById('syncStatusText').textContent = `✅ Conectado al equipo - Sincronizado ${new Date().toLocaleTimeString()}`;
+                    document.getElementById('modeIndicator').querySelector('#currentViewMode').textContent = 'Editor';
+                    document.getElementById('lastSync').textContent = 'Sincronizado';
                     
                     // Also save locally as backup
                     window.bafarHub.appData = appData;
                     window.bafarHub.saveToLocal();
+                    window.bafarHub.lastSync = new Date();
                     
-                    // Show success notification and refresh data
+                    // Show success notification
                     showNotification('✅ Datos sincronizados con el equipo', 'success');
-                    
-                    // Refresh data to get any changes from other users
-                    setTimeout(() => {
-                        window.bafarHub.loadFromGitHub().then(success => {
-                            if (success) {
-                                appData = window.bafarHub.appData;
-                                updateUI();
-                            }
-                        });
-                    }, 1000);
                 } else {
                     throw new Error(result.error);
                 }
@@ -3665,6 +3660,43 @@
         // Open private repository setup page
         function openPrivateRepoSetup() {
             window.open('setup-private-repo.html', '_blank');
+        }
+        
+        // Toggle between Editor and Reader mode
+        let isReaderMode = false;
+        function toggleViewMode() {
+            isReaderMode = !isReaderMode;
+            
+            const viewModeSpan = document.getElementById('currentViewMode');
+            const modeButton = document.getElementById('modeIndicator');
+            
+            if (isReaderMode) {
+                // Switch to Reader mode
+                viewModeSpan.textContent = 'Lector';
+                modeButton.style.background = '#6c757d';
+                
+                // Disable all inputs and buttons
+                document.querySelectorAll('input, textarea, button, select').forEach(element => {
+                    if (!element.id || !['modeIndicator', 'currentViewMode'].includes(element.id)) {
+                        element.style.pointerEvents = 'none';
+                        element.style.opacity = '0.6';
+                    }
+                });
+                
+                showNotification('Modo Lector activado - Solo visualización', 'info');
+            } else {
+                // Switch to Editor mode
+                viewModeSpan.textContent = 'Editor';
+                modeButton.style.background = '#007bff';
+                
+                // Enable all inputs and buttons
+                document.querySelectorAll('input, textarea, button, select').forEach(element => {
+                    element.style.pointerEvents = 'auto';
+                    element.style.opacity = '1';
+                });
+                
+                showNotification('Modo Editor activado - Puede editar', 'success');
+            }
         }
 
         // Initialize when page loads
