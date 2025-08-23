@@ -83,6 +83,74 @@
             filter: brightness(1.4) drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
             transform: scale(1.05);
         }
+        
+        /* TV Retro Animation for Logo */
+        .tv-retro-animation {
+            animation: tvRetroEffect 3s ease-in-out;
+            position: relative;
+        }
+        
+        @keyframes tvRetroEffect {
+            0% {
+                opacity: 0;
+                transform: scaleY(0.1) scaleX(1);
+                filter: brightness(3) contrast(2);
+            }
+            10% {
+                opacity: 0.8;
+                transform: scaleY(0.15) scaleX(1);
+                filter: brightness(2.5) contrast(1.8);
+            }
+            20% {
+                opacity: 1;
+                transform: scaleY(0.3) scaleX(1);
+                filter: brightness(2) contrast(1.5);
+            }
+            40% {
+                opacity: 1;
+                transform: scaleY(0.6) scaleX(1);
+                filter: brightness(1.5) contrast(1.3);
+            }
+            60% {
+                opacity: 1;
+                transform: scaleY(0.8) scaleX(1);
+                filter: brightness(1.2) contrast(1.1);
+            }
+            80% {
+                opacity: 1;
+                transform: scaleY(0.95) scaleX(1);
+                filter: brightness(1.1) contrast(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: scaleY(1) scaleX(1);
+                filter: brightness(1) contrast(1);
+            }
+        }
+        
+        /* TV scan lines effect */
+        .tv-retro-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.1) 2px,
+                rgba(0, 0, 0, 0.1) 4px
+            );
+            pointer-events: none;
+            animation: scanLines 3s ease-out;
+        }
+        
+        @keyframes scanLines {
+            0% { opacity: 0.8; }
+            100% { opacity: 0; }
+        }
 
         .header-content {
             flex: 1;
@@ -1425,7 +1493,7 @@
                     <div class="sync-dot" id="syncDot"></div>
                     <span id="syncText">Inicializando...</span>
                 </div>
-                <button class="mode-indicator" id="modeIndicator" onclick="toggleViewMode()" style="cursor: pointer; border: none;">
+                <button class="mode-indicator" id="modeIndicator" onclick="console.log('Botón clickeado'); toggleViewMode();" style="cursor: pointer; border: none; background: #007bff; color: white; border-radius: 15px; font-size: 12px; padding: 8px 15px;">
                     👁️ <span id="currentViewMode">Editor</span>
                 </button>
                 <div class="user-indicator" style="background: #28a745; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px;">
@@ -3743,8 +3811,26 @@
             }
         }
 
+        // Activate TV Retro animation for logo
+        function activateTVRetroLogo() {
+            const logo = document.querySelector('.header-logo');
+            if (logo) {
+                logo.classList.add('tv-retro-animation');
+                
+                // Remove animation class after animation completes
+                setTimeout(() => {
+                    logo.classList.remove('tv-retro-animation');
+                }, 3000);
+            }
+        }
+
         // Initialize when page loads
-        window.addEventListener('DOMContentLoaded', initApp);
+        window.addEventListener('DOMContentLoaded', () => {
+            initApp();
+            
+            // Start TV retro logo animation after a brief delay
+            setTimeout(activateTVRetroLogo, 500);
+        });
         
         // Auto-save every 60 seconds
         setInterval(saveAllData, 60000);
