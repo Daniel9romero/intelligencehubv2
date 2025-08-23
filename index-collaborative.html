@@ -3782,7 +3782,7 @@
                     // Switch to Reader mode
                     viewModeSpan.textContent = 'Lector';
                     modeButton.style.background = '#6c757d';
-                    modeButton.innerHTML = '👁️ <span id="currentViewMode">Lector</span>';
+                    // NO recrear innerHTML para mantener el event listener
                     
                     // Disable all inputs and buttons except the mode toggle
                     const inputs = document.querySelectorAll('input, textarea, select');
@@ -3813,7 +3813,7 @@
                     // Switch to Editor mode
                     viewModeSpan.textContent = 'Editor';
                     modeButton.style.background = '#007bff';
-                    modeButton.innerHTML = '👁️ <span id="currentViewMode">Editor</span>';
+                    // NO recrear innerHTML para mantener el event listener
                     
                     // Enable all inputs and buttons
                     const inputs = document.querySelectorAll('input, textarea, select');

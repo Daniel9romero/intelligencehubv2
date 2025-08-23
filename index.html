@@ -324,7 +324,6 @@
             height: auto;
             display: none;
             z-index: 2000;
-            display: flex;
             align-items: center;
             justify-content: center;
         }
@@ -921,36 +920,30 @@
             setTimeout(() => {
                 loginContainer.style.display = 'none';
                 
-                // Show ACCESS GRANTED
-                accessGranted.style.display = 'block';
-                
+                // Skip ACCESS GRANTED - go directly to logo with TV effect
                 // Start matrix convergence effect
                 createMatrixConvergence();
                 
+                // Show digital logo directly with TV retro effect
+                digitalLogoContainer.style.display = 'flex';
+                
+                // Add glitch effect during reveal
+                addGlitchEffect();
+                
+                // Store user session
+                sessionStorage.setItem('user', JSON.stringify({
+                    username: user.name,
+                    role: user.role
+                }));
+                
+                // Redirect after animation completes (3.5 seconds for TV effect)
                 setTimeout(() => {
-                    accessGranted.style.display = 'none';
-                    
-                    // Show digital logo with pixelated reveal
-                    digitalLogoContainer.style.display = 'block';
-                    
-                    // Add glitch effect during reveal
-                    addGlitchEffect();
-                    
-                    // Store user session
-                    sessionStorage.setItem('user', JSON.stringify({
-                        username: user.name,
-                        role: user.role
-                    }));
-                    
-                    // Redirect after animation
-                    setTimeout(() => {
-                        if (user.role === 'editor') {
-                            window.location.href = 'index-collaborative.html';
-                        } else {
-                            window.location.href = 'index-shared.html';
-                        }
-                    }, 3000);
-                }, 1500);
+                    if (user.role === 'editor') {
+                        window.location.href = 'index-collaborative.html';
+                    } else {
+                        window.location.href = 'index-shared.html';
+                    }
+                }, 3500);
             }, 500);
         }
         
