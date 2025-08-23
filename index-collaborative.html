@@ -1493,7 +1493,7 @@
                     <div class="sync-dot" id="syncDot"></div>
                     <span id="syncText">Inicializando...</span>
                 </div>
-                <button class="mode-indicator" id="modeIndicator" onclick="console.log('Botón clickeado'); toggleViewMode();" style="cursor: pointer; border: none; background: #007bff; color: white; border-radius: 15px; font-size: 12px; padding: 8px 15px;">
+                <button class="mode-indicator" id="modeIndicator" style="cursor: pointer; border: none; background: #007bff; color: white; border-radius: 15px; font-size: 12px; padding: 8px 15px;">
                     👁️ <span id="currentViewMode">Editor</span>
                 </button>
                 <div class="user-indicator" style="background: #28a745; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px;">
@@ -3756,7 +3756,7 @@
         
         // Toggle between Editor and Reader mode
         let isReaderMode = false;
-        function toggleViewMode() {
+        window.toggleViewMode = function() {
             try {
                 console.log('🔄 Iniciando cambio de modo de vista...');
                 console.log('Estado actual isReaderMode:', isReaderMode);
@@ -3846,7 +3846,21 @@
         }
 
         // Initialize when page loads
-        window.addEventListener('DOMContentLoaded', initApp);
+        window.addEventListener('DOMContentLoaded', function() {
+            initApp();
+            
+            // Add click event listener to mode toggle button
+            const modeButton = document.getElementById('modeIndicator');
+            if (modeButton) {
+                console.log('✅ Añadiendo event listener al botón de modo');
+                modeButton.addEventListener('click', function() {
+                    console.log('🔘 Botón de modo clickeado');
+                    window.toggleViewMode();
+                });
+            } else {
+                console.error('❌ No se encontró el botón modeIndicator');
+            }
+        });
         
         // Auto-save every 60 seconds
         setInterval(saveAllData, 60000);
