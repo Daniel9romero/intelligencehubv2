@@ -3849,17 +3849,29 @@
         window.addEventListener('DOMContentLoaded', function() {
             initApp();
             
-            // Add click event listener to mode toggle button
-            const modeButton = document.getElementById('modeIndicator');
-            if (modeButton) {
-                console.log('✅ Añadiendo event listener al botón de modo');
-                modeButton.addEventListener('click', function() {
-                    console.log('🔘 Botón de modo clickeado');
-                    window.toggleViewMode();
-                });
-            } else {
-                console.error('❌ No se encontró el botón modeIndicator');
-            }
+            // Add click event listener to mode toggle button with delay to ensure DOM is ready
+            setTimeout(function() {
+                const modeButton = document.getElementById('modeIndicator');
+                if (modeButton) {
+                    console.log('✅ Añadiendo event listener al botón de modo');
+                    modeButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('🔘 Botón de modo clickeado');
+                        window.toggleViewMode();
+                    });
+                    
+                    // Also try direct onclick as backup
+                    modeButton.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('🔘 Botón clickeado via onclick');
+                        window.toggleViewMode();
+                    };
+                } else {
+                    console.error('❌ No se encontró el botón modeIndicator');
+                }
+            }, 2000); // Wait 2 seconds to ensure everything is loaded
         });
         
         // Auto-save every 60 seconds
