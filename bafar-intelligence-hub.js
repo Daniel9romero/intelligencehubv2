@@ -81,10 +81,23 @@ class BafarIntelligenceHub {
             // Check if we have private repository token
             const privateToken = localStorage.getItem('github_private_token');
             
-            if (!privateToken) {
+            // Check user role - readers don't need GitHub access
+            const userData = sessionStorage.getItem('user');
+            const user = userData ? JSON.parse(userData) : null;
+            const isReaderMode = user && user.role === 'reader';
+            
+            if (!privateToken && !isReaderMode) {
                 console.log('No private token found, using local data only');
-                this.updateSyncStatus('error');
+                this.updateSyncStatus('local-only');
+                this.loadFromLocal();
                 return false;
+            }
+            
+            if (isReaderMode && !privateToken) {
+                console.log('Reader mode - using local data without GitHub sync');
+                this.updateSyncStatus('local-only');
+                this.loadFromLocal();
+                return true;
             }
             
             // First check if we have local data that's more recent
@@ -185,10 +198,16 @@ class BafarIntelligenceHub {
             } catch (error) {
                 console.error('Error loading local data:', error);
                 this.appData = this.initDefaultData();
+                this.updateAllUI();
                 return false;
             }
+        } else {
+            // No local data, initialize with default data
+            console.log('No local data found, initializing with default data');
+            this.appData = this.initDefaultData();
+            this.updateAllUI();
+            return true;
         }
-        return false;
     }
 
     // Update sync status indicator
@@ -209,6 +228,11 @@ class BafarIntelligenceHub {
                     syncDot.className = 'sync-dot sync-local';
                     syncText.textContent = 'Modo Local';
                     if (syncStatusText) syncStatusText.textContent = '💾 Usando datos locales';
+                    break;
+                case 'local-only':
+                    syncDot.className = 'sync-dot sync-local';
+                    syncText.textContent = 'Modo Solo Lectura';
+                    if (syncStatusText) syncStatusText.textContent = '👁️ Visualizando datos - Modo lector activado';
                     break;
                 case 'local-newer':
                     syncDot.className = 'sync-dot sync-local';

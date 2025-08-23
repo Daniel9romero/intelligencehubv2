@@ -13,7 +13,11 @@
       "WebFetch(domain:github.com)",
       "Bash(curl:*)",
       "Bash(git commit:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "WebSearch",
+      "WebFetch(domain:aleclownes.com)",
+      "WebFetch(domain:codepen.io)",
+      "WebFetch(domain:dev.to)"
     ],
     "deny": [],
     "ask": [],
