@@ -3757,80 +3757,96 @@
         // Toggle between Editor and Reader mode
         let isReaderMode = false;
         function toggleViewMode() {
-            console.log('🔄 Cambiando modo de vista...');
-            isReaderMode = !isReaderMode;
-            
-            const viewModeSpan = document.getElementById('currentViewMode');
-            const modeButton = document.getElementById('modeIndicator');
-            
-            if (!viewModeSpan || !modeButton) {
-                console.error('❌ Elementos de modo no encontrados');
-                return;
-            }
-            
-            if (isReaderMode) {
-                // Switch to Reader mode
-                viewModeSpan.textContent = 'Lector';
-                modeButton.style.background = '#6c757d';
+            try {
+                console.log('🔄 Iniciando cambio de modo de vista...');
+                console.log('Estado actual isReaderMode:', isReaderMode);
                 
-                // Disable all inputs and buttons except the mode toggle
-                document.querySelectorAll('input, textarea, select').forEach(element => {
-                    element.style.pointerEvents = 'none';
-                    element.style.opacity = '0.6';
-                    element.disabled = true;
-                });
+                isReaderMode = !isReaderMode;
+                console.log('Nuevo estado isReaderMode:', isReaderMode);
                 
-                document.querySelectorAll('button').forEach(element => {
-                    if (element.id !== 'modeIndicator') {
+                const viewModeSpan = document.getElementById('currentViewMode');
+                const modeButton = document.getElementById('modeIndicator');
+                
+                console.log('viewModeSpan encontrado:', !!viewModeSpan);
+                console.log('modeButton encontrado:', !!modeButton);
+                
+                if (!viewModeSpan || !modeButton) {
+                    console.error('❌ Elementos de modo no encontrados');
+                    console.log('viewModeSpan:', viewModeSpan);
+                    console.log('modeButton:', modeButton);
+                    return;
+                }
+                
+                if (isReaderMode) {
+                    console.log('🔒 Activando modo lector...');
+                    // Switch to Reader mode
+                    viewModeSpan.textContent = 'Lector';
+                    modeButton.style.background = '#6c757d';
+                    modeButton.innerHTML = '👁️ <span id="currentViewMode">Lector</span>';
+                    
+                    // Disable all inputs and buttons except the mode toggle
+                    const inputs = document.querySelectorAll('input, textarea, select');
+                    console.log('Inputs encontrados:', inputs.length);
+                    inputs.forEach(element => {
                         element.style.pointerEvents = 'none';
                         element.style.opacity = '0.6';
                         element.disabled = true;
+                    });
+                    
+                    const buttons = document.querySelectorAll('button');
+                    console.log('Botones encontrados:', buttons.length);
+                    buttons.forEach(element => {
+                        if (element.id !== 'modeIndicator') {
+                            element.style.pointerEvents = 'none';
+                            element.style.opacity = '0.6';
+                            element.disabled = true;
+                        }
+                    });
+                    
+                    if (typeof showNotification === 'function') {
+                        showNotification('👁️ Modo Lector activado - Solo visualización', 'info');
+                    } else {
+                        console.log('👁️ Modo Lector activado - Solo visualización');
                     }
-                });
+                } else {
+                    console.log('✏️ Activando modo editor...');
+                    // Switch to Editor mode
+                    viewModeSpan.textContent = 'Editor';
+                    modeButton.style.background = '#007bff';
+                    modeButton.innerHTML = '👁️ <span id="currentViewMode">Editor</span>';
+                    
+                    // Enable all inputs and buttons
+                    const inputs = document.querySelectorAll('input, textarea, select');
+                    console.log('Habilitando inputs:', inputs.length);
+                    inputs.forEach(element => {
+                        element.style.pointerEvents = 'auto';
+                        element.style.opacity = '1';
+                        element.disabled = false;
+                    });
+                    
+                    const buttons = document.querySelectorAll('button');
+                    console.log('Habilitando botones:', buttons.length);
+                    buttons.forEach(element => {
+                        element.style.pointerEvents = 'auto';
+                        element.style.opacity = '1';
+                        element.disabled = false;
+                    });
+                    
+                    if (typeof showNotification === 'function') {
+                        showNotification('✏️ Modo Editor activado - Puede editar', 'success');
+                    } else {
+                        console.log('✏️ Modo Editor activado - Puede editar');
+                    }
+                }
                 
-                showNotification('👁️ Modo Lector activado - Solo visualización', 'info');
-            } else {
-                // Switch to Editor mode
-                viewModeSpan.textContent = 'Editor';
-                modeButton.style.background = '#007bff';
-                
-                // Enable all inputs and buttons
-                document.querySelectorAll('input, textarea, select').forEach(element => {
-                    element.style.pointerEvents = 'auto';
-                    element.style.opacity = '1';
-                    element.disabled = false;
-                });
-                
-                document.querySelectorAll('button').forEach(element => {
-                    element.style.pointerEvents = 'auto';
-                    element.style.opacity = '1';
-                    element.disabled = false;
-                });
-                
-                showNotification('✏️ Modo Editor activado - Puede editar', 'success');
-            }
-        }
-
-        // Activate TV Retro animation for logo
-        function activateTVRetroLogo() {
-            const logo = document.querySelector('.header-logo');
-            if (logo) {
-                logo.classList.add('tv-retro-animation');
-                
-                // Remove animation class after animation completes
-                setTimeout(() => {
-                    logo.classList.remove('tv-retro-animation');
-                }, 3000);
+                console.log('✅ Cambio de modo completado exitosamente');
+            } catch (error) {
+                console.error('❌ Error en toggleViewMode:', error);
             }
         }
 
         // Initialize when page loads
-        window.addEventListener('DOMContentLoaded', () => {
-            initApp();
-            
-            // Start TV retro logo animation after a brief delay
-            setTimeout(activateTVRetroLogo, 500);
-        });
+        window.addEventListener('DOMContentLoaded', initApp);
         
         // Auto-save every 60 seconds
         setInterval(saveAllData, 60000);
