@@ -2268,6 +2268,7 @@
                         </select>
                     </td>
                     <td>
+                        <button class="btn btn-primary btn-small" onclick="openUnitModal(${unit.id})">Ver Detalles</button>
                         <button class="btn btn-danger btn-small" onclick="removeUnit(${index})" ${!window.bafarHub.isEditor ? 'disabled' : ''}>Eliminar</button>
                     </td>
                 `;
@@ -3770,16 +3771,19 @@
                     return;
                 }
                 
-                // Buscar o crear el span dentro del botón
-                let viewModeSpan = modeButton.querySelector('#currentViewMode');
+                // Buscar el span dentro del botón - siempre buscar de nuevo
+                let viewModeSpan = document.querySelector('#currentViewMode');
                 if (!viewModeSpan) {
-                    viewModeSpan = modeButton.querySelector('span');
-                }
-                if (!viewModeSpan) {
-                    // Si no existe, crearlo
+                    // Si no existe, crearlo pero sin reemplazar innerHTML
                     viewModeSpan = document.createElement('span');
                     viewModeSpan.id = 'currentViewMode';
-                    modeButton.innerHTML = '👁️ ';
+                    viewModeSpan.textContent = 'Editor';
+                    
+                    // Limpiar el botón y agregar contenido sin perder event listeners
+                    while (modeButton.firstChild) {
+                        modeButton.removeChild(modeButton.firstChild);
+                    }
+                    modeButton.appendChild(document.createTextNode('👁️ '));
                     modeButton.appendChild(viewModeSpan);
                 }
                 
@@ -3820,7 +3824,11 @@
                 } else {
                     console.log('✏️ Activando modo editor...');
                     // Switch to Editor mode
-                    viewModeSpan.textContent = 'Editor';
+                    // Buscar el span de nuevo por si se perdió la referencia
+                    viewModeSpan = document.querySelector('#currentViewMode');
+                    if (viewModeSpan) {
+                        viewModeSpan.textContent = 'Editor';
+                    }
                     modeButton.style.background = '#007bff';
                     // NO recrear innerHTML para mantener el event listener
                     
