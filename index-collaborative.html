@@ -3771,49 +3771,44 @@
                     return;
                 }
                 
-                // Buscar el span dentro del botón - siempre buscar de nuevo
-                let viewModeSpan = document.querySelector('#currentViewMode');
-                if (!viewModeSpan) {
-                    // Si no existe, crearlo pero sin reemplazar innerHTML
-                    viewModeSpan = document.createElement('span');
-                    viewModeSpan.id = 'currentViewMode';
-                    viewModeSpan.textContent = 'Editor';
-                    
-                    // Limpiar el botón y agregar contenido sin perder event listeners
-                    while (modeButton.firstChild) {
-                        modeButton.removeChild(modeButton.firstChild);
-                    }
-                    modeButton.appendChild(document.createTextNode('👁️ '));
-                    modeButton.appendChild(viewModeSpan);
-                }
-                
-                console.log('viewModeSpan encontrado/creado:', !!viewModeSpan);
-                console.log('modeButton encontrado:', !!modeButton);
-                
                 if (isReaderMode) {
                     console.log('🔒 Activando modo lector...');
                     // Switch to Reader mode
-                    viewModeSpan.textContent = 'Lector';
+                    // Actualizar texto directamente sin buscar span
+                    modeButton.innerHTML = '👁️ <span id="currentViewMode">Lector</span>';
                     modeButton.style.background = '#6c757d';
-                    // NO recrear innerHTML para mantener el event listener
+                    
+                    // Volver a agregar el event listener porque se perdió al cambiar innerHTML
+                    modeButton.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.toggleViewMode();
+                    };
                     
                     // Disable all inputs and buttons except the mode toggle
                     const inputs = document.querySelectorAll('input, textarea, select');
                     console.log('Inputs encontrados:', inputs.length);
                     inputs.forEach(element => {
-                        element.style.pointerEvents = 'none';
-                        element.style.opacity = '0.6';
+                        element.readOnly = true;
                         element.disabled = true;
+                        element.style.backgroundColor = '#f5f5f5';
+                        element.style.cursor = 'not-allowed';
+                        element.style.opacity = '0.7';
                     });
                     
                     const buttons = document.querySelectorAll('button');
                     console.log('Botones encontrados:', buttons.length);
                     buttons.forEach(element => {
-                        if (element.id !== 'modeIndicator') {
-                            element.style.pointerEvents = 'none';
-                            element.style.opacity = '0.6';
+                        if (element.id !== 'modeIndicator' && !element.classList.contains('tab-btn')) {
                             element.disabled = true;
+                            element.style.opacity = '0.5';
+                            element.style.cursor = 'not-allowed';
                         }
+                    });
+                    
+                    // Ocultar botones de agregar/eliminar
+                    document.querySelectorAll('.btn-danger, .btn-add, .add-btn, [onclick*="add"], [onclick*="remove"], [onclick*="delete"]').forEach(el => {
+                        el.style.display = 'none';
                     });
                     
                     if (typeof showNotification === 'function') {
@@ -3824,29 +3819,39 @@
                 } else {
                     console.log('✏️ Activando modo editor...');
                     // Switch to Editor mode
-                    // Buscar el span de nuevo por si se perdió la referencia
-                    viewModeSpan = document.querySelector('#currentViewMode');
-                    if (viewModeSpan) {
-                        viewModeSpan.textContent = 'Editor';
-                    }
+                    // Actualizar texto directamente sin buscar span
+                    modeButton.innerHTML = '👁️ <span id="currentViewMode">Editor</span>';
                     modeButton.style.background = '#007bff';
-                    // NO recrear innerHTML para mantener el event listener
+                    
+                    // Volver a agregar el event listener porque se perdió al cambiar innerHTML
+                    modeButton.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.toggleViewMode();
+                    };
                     
                     // Enable all inputs and buttons
                     const inputs = document.querySelectorAll('input, textarea, select');
                     console.log('Habilitando inputs:', inputs.length);
                     inputs.forEach(element => {
-                        element.style.pointerEvents = 'auto';
-                        element.style.opacity = '1';
+                        element.readOnly = false;
                         element.disabled = false;
+                        element.style.backgroundColor = '';
+                        element.style.cursor = '';
+                        element.style.opacity = '1';
                     });
                     
                     const buttons = document.querySelectorAll('button');
                     console.log('Habilitando botones:', buttons.length);
                     buttons.forEach(element => {
-                        element.style.pointerEvents = 'auto';
-                        element.style.opacity = '1';
                         element.disabled = false;
+                        element.style.opacity = '1';
+                        element.style.cursor = '';
+                    });
+                    
+                    // Mostrar botones de agregar/eliminar
+                    document.querySelectorAll('.btn-danger, .btn-add, .add-btn, [onclick*="add"], [onclick*="remove"], [onclick*="delete"]').forEach(el => {
+                        el.style.display = '';
                     });
                     
                     if (typeof showNotification === 'function') {
