@@ -3764,18 +3764,27 @@
                 isReaderMode = !isReaderMode;
                 console.log('Nuevo estado isReaderMode:', isReaderMode);
                 
-                const viewModeSpan = document.getElementById('currentViewMode');
                 const modeButton = document.getElementById('modeIndicator');
-                
-                console.log('viewModeSpan encontrado:', !!viewModeSpan);
-                console.log('modeButton encontrado:', !!modeButton);
-                
-                if (!viewModeSpan || !modeButton) {
-                    console.error('❌ Elementos de modo no encontrados');
-                    console.log('viewModeSpan:', viewModeSpan);
-                    console.log('modeButton:', modeButton);
+                if (!modeButton) {
+                    console.error('❌ Botón modeIndicator no encontrado');
                     return;
                 }
+                
+                // Buscar o crear el span dentro del botón
+                let viewModeSpan = modeButton.querySelector('#currentViewMode');
+                if (!viewModeSpan) {
+                    viewModeSpan = modeButton.querySelector('span');
+                }
+                if (!viewModeSpan) {
+                    // Si no existe, crearlo
+                    viewModeSpan = document.createElement('span');
+                    viewModeSpan.id = 'currentViewMode';
+                    modeButton.innerHTML = '👁️ ';
+                    modeButton.appendChild(viewModeSpan);
+                }
+                
+                console.log('viewModeSpan encontrado/creado:', !!viewModeSpan);
+                console.log('modeButton encontrado:', !!modeButton);
                 
                 if (isReaderMode) {
                     console.log('🔒 Activando modo lector...');
