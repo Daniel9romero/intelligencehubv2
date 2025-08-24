@@ -111,8 +111,7 @@ class BafarIntelligenceHub {
             const response = await fetch(url, {
                 headers: {
                     'Authorization': `token ${privateToken}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Cache-Control': 'no-cache'
+                    'Accept': 'application/vnd.github.v3+json'
                 }
             });
             
