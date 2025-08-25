@@ -2729,7 +2729,11 @@
         // Manual save to GitHub (for explicit saves)
         async function saveToGitHub() {
             if (!window.bafarHub.isEditor) {
-                window.bafarHub.showNotification('Solo los editores pueden guardar cambios', 'warning');
+                // Para viewers: solo cargar/actualizar datos, no guardar
+                console.log('👁️ Usuario viewer actualizando datos...');
+                window.bafarHub.showNotification('Actualizando datos...', 'info');
+                await window.bafarHub.loadFromGitHub();
+                window.bafarHub.showNotification('✅ Datos actualizados', 'success');
                 return;
             }
             
