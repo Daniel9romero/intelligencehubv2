@@ -2074,21 +2074,53 @@
             if (userData) {
                 const user = JSON.parse(userData);
                 if (user.role === 'reader') {
-                    const modeButton = document.getElementById('modeIndicator');
-                    if (modeButton) {
-                        modeButton.style.display = 'none';
-                        modeButton.remove(); // FORCE REMOVE BUTTON
-                        console.log('🔒 BOTÓN ELIMINADO PARA READER - FORZADO');
+                    console.log('🔒 USUARIO READER DETECTADO - ELIMINANDO BOTÓN AGRESIVAMENTE');
+                    
+                    // MÉTODO SÚPER AGRESIVO - Múltiples enfoques
+                    function eliminarBotonModo() {
+                        // Por ID
+                        const btn1 = document.getElementById('modeIndicator');
+                        if (btn1) {
+                            btn1.remove();
+                            console.log('✅ Eliminado por ID');
+                        }
+                        
+                        // Por clase
+                        document.querySelectorAll('.mode-indicator').forEach(btn => {
+                            btn.remove();
+                            console.log('✅ Eliminado por clase');
+                        });
+                        
+                        // Por contenido
+                        document.querySelectorAll('button').forEach(btn => {
+                            if (btn.textContent.includes('Editor') || btn.textContent.includes('Lector')) {
+                                btn.remove();
+                                console.log('✅ Eliminado por contenido');
+                            }
+                        });
+                        
+                        // Por onclick que contenga toggleViewMode
+                        document.querySelectorAll('button').forEach(btn => {
+                            if (btn.onclick && btn.onclick.toString().includes('toggleViewMode')) {
+                                btn.remove();
+                                console.log('✅ Eliminado por onclick');
+                            }
+                        });
                     }
                     
-                    // Double check after DOM loads
-                    setTimeout(() => {
-                        const btn = document.getElementById('modeIndicator');
-                        if (btn) {
-                            btn.style.display = 'none';
-                            btn.remove();
-                        }
-                    }, 1000);
+                    // Ejecutar inmediatamente
+                    eliminarBotonModo();
+                    
+                    // Ejecutar múltiples veces con diferentes delays
+                    [100, 300, 500, 1000, 2000, 3000, 5000].forEach(delay => {
+                        setTimeout(eliminarBotonModo, delay);
+                    });
+                    
+                    // Observer para capturar cualquier intento de recrear el botón
+                    const observer = new MutationObserver(() => {
+                        eliminarBotonModo();
+                    });
+                    observer.observe(document.body, { childList: true, subtree: true });
                 }
             }
             
