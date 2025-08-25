@@ -292,12 +292,32 @@ class BafarIntelligenceHub {
                 case 'local-only':
                     syncDot.className = 'sync-dot sync-local';
                     syncText.textContent = 'Modo Solo Lectura';
-                    if (syncStatusText) syncStatusText.textContent = '👁️ Visualizando datos - Modo lector activado';
+                    if (syncStatusText) {
+                        // Para viewers: mostrar si están actualizados o no
+                        if (this.user && (this.user.role === 'reader' || this.user.role === 'viewer')) {
+                            // Verificar si tienen token configurado
+                            const hasToken = localStorage.getItem('privateRepoToken');
+                            if (hasToken) {
+                                syncStatusText.textContent = '📄 Sincronizado - Datos actuales';
+                            } else {
+                                syncStatusText.textContent = '⚠️ No actualizado - Configure token';
+                            }
+                        } else {
+                            syncStatusText.textContent = '👁️ Visualizando datos - Modo lector activado';
+                        }
+                    }
                     break;
                 case 'local-newer':
                     syncDot.className = 'sync-dot sync-local';
                     syncText.textContent = 'Datos Locales Actualizados';
-                    if (syncStatusText) syncStatusText.textContent = '💾 Tus cambios locales están guardados';
+                    if (syncStatusText) {
+                        // Diferenciar mensaje para viewers vs editors
+                        if (this.user && (this.user.role === 'reader' || this.user.role === 'viewer')) {
+                            syncStatusText.textContent = '📄 Sincronizado - Visualizando datos actuales';
+                        } else {
+                            syncStatusText.textContent = '💾 Tus cambios locales están guardados';
+                        }
+                    }
                     break;
                 case 'error':
                     syncDot.className = 'sync-dot sync-error';
