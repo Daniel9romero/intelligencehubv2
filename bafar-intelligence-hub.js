@@ -138,6 +138,39 @@ class BafarIntelligenceHub {
 
     // Load data from GitHub
     async loadFromGitHub() {
+        // SIEMPRE cargar TUS 19 UNIDADES desde data.json - NO localStorage
+        console.log('🔄 CARGANDO TUS 19 UNIDADES desde data.json');
+        await this.loadDataJson();
+        this.updateSyncStatus('local-only');
+        return true;
+    }
+    
+    // NUEVO método para cargar data.json
+    async loadDataJson() {
+        try {
+            const response = await fetch('./data.json');
+            if (response.ok) {
+                const jsonData = await response.json();
+                console.log('✅ TUS DATOS CARGADOS:', jsonData.units ? jsonData.units.length : 0, 'unidades');
+                this.appData = jsonData;
+                this.updateAllUI();
+                return true;
+            } else {
+                console.error('❌ No se pudo cargar data.json');
+                this.appData = this.initDefaultData();
+                this.updateAllUI();
+                return false;
+            }
+        } catch (error) {
+            console.error('❌ Error cargando data.json:', error);
+            this.appData = this.initDefaultData();
+            this.updateAllUI();
+            return false;
+        }
+    }
+    
+    // REEMPLAZAR loadFromGitHub original completamente
+    async loadFromGitHubOLD() {
         try {
             // Check if we have private repository token
             const privateToken = localStorage.getItem('github_private_token');
@@ -147,23 +180,11 @@ class BafarIntelligenceHub {
             const user = userData ? JSON.parse(userData) : null;
             const isReaderMode = user && user.role === 'reader';
             
-            if (!privateToken && !isReaderMode) {
-                console.log('No private token found, using local data only');
-                this.updateSyncStatus('local-only');
-                await this.loadFromLocal();
-                return false;
-            }
-            
-            if (isReaderMode && !privateToken) {
-                console.log('Reader mode - using local data without GitHub sync');
-                this.updateSyncStatus('local-only');
-                await this.loadFromLocal();
-                return true;
-            }
-            
-            // First check if we have local data that's more recent
-            const localData = localStorage.getItem('bafarHub');
-            const localTimestamp = localStorage.getItem('bafarHub_timestamp');
+            // SIEMPRE cargar TUS DATOS desde data.json - NUNCA localStorage
+            console.log('🔄 CARGANDO TUS 19 UNIDADES desde data.json');
+            await this.loadDataJson();
+            this.updateSyncStatus('local-only');
+            return true;
             
             // Use GitHub API to access private repository
             const url = `https://api.github.com/repos/Daniel9romero/BafarIntelligence-Data/contents/${this.dataFile}`;
@@ -246,42 +267,7 @@ class BafarIntelligenceHub {
         }
     }
 
-    // Load data from local storage
-    async loadFromLocal() {
-        const saved = localStorage.getItem('bafarHub');
-        if (saved) {
-            try {
-                this.appData = JSON.parse(saved);
-                console.log('✅ Datos cargados desde localStorage');
-                this.updateSyncStatus('local');
-                this.updateAllUI();
-                return true;
-            } catch (error) {
-                console.error('Error loading local data:', error);
-            }
-        }
-        
-        // Si no hay localStorage, intentar cargar desde data.json
-        try {
-            const response = await fetch('./data.json');
-            if (response.ok) {
-                const jsonData = await response.json();
-                console.log('✅ Cargando TUS DATOS desde data.json - Unidades:', jsonData.units ? jsonData.units.length : 0);
-                this.appData = jsonData;
-                this.updateSyncStatus('local');
-                this.updateAllUI();
-                return true;
-            }
-        } catch (error) {
-            console.log('No se pudo cargar data.json:', error.message);
-        }
-        
-        // Solo como último recurso usar datos por defecto
-        console.log('Usando datos por defecto como último recurso');
-        this.appData = this.initDefaultData();
-        this.updateAllUI();
-        return true;
-    }
+    // ELIMINADO - Ya no usamos localStorage
 
     // Update sync status indicator
     updateSyncStatus(status) {

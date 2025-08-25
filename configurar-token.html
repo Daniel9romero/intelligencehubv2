@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurar Token - BAFAR Intelligence Hub</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 100%;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 28px;
+        }
+        .logo p {
+            color: #7f8c8d;
+            margin: 5px 0 0 0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .help-text {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🔧 Configurar Token</h1>
+            <p>BAFAR Intelligence Hub</p>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <div class="form-group">
+            <label for="tokenInput">Token de GitHub (ghp_...)</label>
+            <input type="text" id="tokenInput" placeholder="Pega aquí tu token de respaldo" />
+            <div class="help-text">
+                Pega tu token de GitHub para acceder a los datos del repositorio privado
+            </div>
+        </div>
+
+        <button class="btn" onclick="configurarToken()">🔐 Configurar Token</button>
+        <button class="btn" onclick="probarConexion()" style="background: #28a745; margin-top: 10px;">
+            🧪 Probar Conexión
+        </button>
+        <button class="btn" onclick="subirRespaldo()" style="background: #ffc107; color: #000; margin-top: 10px;">
+            📤 Subir Respaldo de Datos
+        </button>
+
+        <div class="status" id="status">
+            <p>ℹ️ Configura tu token para cargar los datos</p>
+        </div>
+    </div>
+
+    <script>
+        function mostrarAlerta(mensaje, tipo) {
+            const alert = document.getElementById('alert');
+            alert.textContent = mensaje;
+            alert.className = `alert alert-${tipo}`;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        function configurarToken() {
+            const token = document.getElementById('tokenInput').value.trim();
+            if (!token) {
+                mostrarAlerta('Por favor ingresa tu token', 'error');
+                return;
+            }
+
+            if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
+                mostrarAlerta('⚠️ El token debe empezar con ghp_ o github_pat_', 'error');
+                return;
+            }
+
+            // Guardar token
+            localStorage.setItem('github_private_token', token);
+            mostrarAlerta('✅ Token configurado correctamente', 'success');
+            
+            document.getElementById('status').innerHTML = 
+                '<p>✅ Token configurado. <a href="index-collaborative.html">Ir a la aplicación</a></p>';
+        }
+
+        async function probarConexion() {
+            const token = localStorage.getItem('github_private_token');
+            if (!token) {
+                mostrarAlerta('Primero configura tu token', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('https://api.github.com/repos/Daniel9romero/BafarIntelligence-Data/contents/data.json', {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const content = JSON.parse(atob(data.content));
+                    const units = content.units ? content.units.length : 0;
+                    mostrarAlerta(`✅ Conexión exitosa! ${units} unidades encontradas`, 'success');
+                    
+                    document.getElementById('status').innerHTML = 
+                        `<p>✅ Conectado al repositorio<br>📊 ${units} unidades de negocio</p>`;
+                } else {
+                    mostrarAlerta('❌ No se pudo conectar al repositorio', 'error');
+                }
+            } catch (error) {
+                mostrarAlerta('❌ Error de conexión: ' + error.message, 'error');
+            }
+        }
+
+        async function subirRespaldo() {
+            const token = localStorage.getItem('github_private_token');
+            if (!token) {
+                mostrarAlerta('Primero configura tu token', 'error');
+                return;
+            }
+
+            try {
+                // Cargar data.json local
+                const response = await fetch('./data.json');
+                const localData = await response.json();
+                
+                const content = btoa(JSON.stringify(localData, null, 2));
+                
+                const uploadResponse = await fetch('https://api.github.com/repos/Daniel9romero/BafarIntelligence-Data/contents/data.json', {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Subir respaldo de datos con 19 unidades',
+                        content: content,
+                        branch: 'main'
+                    })
+                });
+
+                if (uploadResponse.ok) {
+                    mostrarAlerta('✅ Respaldo subido exitosamente!', 'success');
+                    document.getElementById('status').innerHTML = 
+                        '<p>✅ Respaldo subido. <a href="index-collaborative.html">Ir a la aplicación</a></p>';
+                } else {
+                    const error = await uploadResponse.json();
+                    mostrarAlerta('❌ Error al subir: ' + error.message, 'error');
+                }
+            } catch (error) {
+                mostrarAlerta('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        // Verificar si ya hay token configurado
+        window.onload = function() {
+            const token = localStorage.getItem('github_private_token');
+            if (token) {
+                document.getElementById('tokenInput').value = token.substring(0, 10) + '...';
+                document.getElementById('status').innerHTML = 
+                    '<p>✅ Token ya configurado. <button onclick="probarConexion()" style="background: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 5px;">🧪 Probar</button></p>';
+            }
+        };
+    </script>
+</body>
+</html>
