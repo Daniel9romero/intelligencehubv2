@@ -22,7 +22,8 @@
       "Bash(rm:*)",
       "WebFetch(domain:daniel9romero.github.io)",
       "Bash(git ls-tree:*)",
-      "Bash(gh api:*)"
+      "Bash(gh api:*)",
+      "Bash(sed:*)"
     ],
     "deny": [],
     "ask": [],
