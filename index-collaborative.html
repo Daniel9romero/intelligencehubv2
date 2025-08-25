@@ -2282,6 +2282,13 @@
 
         // Update dashboard
         function updateDashboard() {
+            // Asegurar que tenemos los datos más recientes
+            if (window.bafarHub && window.bafarHub.appData) {
+                appData = window.bafarHub.appData;
+            }
+            
+            console.log('🔄 Actualizando dashboard con fecha:', appData.startDate);
+            
             const start = new Date(appData.startDate);
             const today = new Date();
             const diff = Math.floor((today - start) / (1000 * 60 * 60 * 24));
@@ -2298,6 +2305,7 @@
             if (startDateInputEl) {
                 startDateInputEl.value = appData.startDate;
                 startDateInputEl.disabled = !window.bafarHub?.isEditor;
+                console.log('📅 Input fecha actualizado a:', appData.startDate);
             }
             
             const totalUnits = appData.units.length;
@@ -2732,8 +2740,16 @@
                 // Para viewers: solo cargar/actualizar datos, no guardar
                 console.log('👁️ Usuario viewer actualizando datos...');
                 window.bafarHub.showNotification('Actualizando datos...', 'info');
-                await window.bafarHub.loadFromGitHub();
-                window.bafarHub.showNotification('✅ Datos actualizados', 'success');
+                const success = await window.bafarHub.loadFromGitHub();
+                if (success) {
+                    // Sincronizar datos locales con los de GitHub
+                    appData = window.bafarHub.appData;
+                    console.log('📅 Fecha de inicio actualizada:', appData.startDate);
+                    updateUI(); // Forzar actualización del dashboard incluyendo fecha
+                    window.bafarHub.showNotification('✅ Datos actualizados', 'success');
+                } else {
+                    window.bafarHub.showNotification('❌ Error al actualizar', 'error');
+                }
                 return;
             }
             
