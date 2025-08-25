@@ -1528,8 +1528,8 @@
                     <p><strong>Estado:</strong> <span id="syncStatusText">Conectando...</span></p>
                     <p><strong>Última actualización:</strong> <span id="lastSyncTime">Iniciando...</span></p>
                     <div class="sync-actions">
-                        <button class="btn btn-success btn-small" onclick="saveToGitHub()" id="saveGitHubBtn">💾 Guardar y Sincronizar</button>
-                        <button class="btn btn-secondary btn-small" onclick="openPrivateRepoSetup()" style="font-size: 11px;">🔐 Config Repo</button>
+                        <button class="btn btn-success btn-small" onclick="saveToGitHub()" id="saveGitHubBtn"><span id="mainSyncText">💾 Guardar y Sincronizar</span></button>
+                        <button class="btn btn-secondary btn-small" onclick="openSimpleTokenSetup()" style="font-size: 11px;" id="configRepoBtn"><span id="configRepoText">🔐 Config Token</span></button>
                     </div>
                     <div style="margin-top: 10px; font-size: 12px; color: #666;">
                         💡 Los cambios se guardan automáticamente cada minuto. El botón sincroniza con el equipo al instante.
@@ -2114,6 +2114,22 @@
                     // Función para cambiar texto de botones
                     function cambiarTextoBotones() {
                         console.log('🔄 CAMBIANDO TEXTO DE BOTONES GUARDAR A ACTUALIZAR');
+                        
+                        // Cambiar botón principal de sincronización
+                        const mainSyncText = document.getElementById('mainSyncText');
+                        if (mainSyncText && mainSyncText.textContent.includes('Guardar')) {
+                            mainSyncText.textContent = '🔄 Actualizar';
+                            console.log('✅ Botón principal cambiado a: Actualizar');
+                        }
+                        
+                        // Cambiar botón config repo
+                        const configRepoText = document.getElementById('configRepoText');
+                        if (configRepoText) {
+                            configRepoText.textContent = '🔧 Config Token';
+                            console.log('✅ Botón config cambiado a: Config Token');
+                        }
+                        
+                        // Cambiar otros botones de guardar
                         document.querySelectorAll('.save-text').forEach(span => {
                             if (span.textContent.includes('Guardar')) {
                                 const oldText = span.textContent;
@@ -2123,7 +2139,7 @@
                         });
                         
                         document.querySelectorAll('button[onclick*="saveToGitHub"]').forEach(btn => {
-                            if (btn.textContent.includes('Guardar')) {
+                            if (btn.textContent.includes('Guardar') && !btn.id === 'saveGitHubBtn') {
                                 const oldText = btn.textContent;
                                 btn.innerHTML = btn.innerHTML.replace('Guardar en GitHub', 'Actualizar').replace('Guardar en GitHub Necesidades', 'Actualizar').replace('Guardar en GitHub Matriz de Investigación', 'Actualizar').replace('Guardar en GitHub Métricas', 'Actualizar');
                                 console.log('✅ Botón cambiado:', oldText, '→', btn.textContent);
@@ -3841,6 +3857,24 @@
             window.open('setup-private-repo.html', '_blank');
         }
         
+        // Función simple para configurar token
+        function openSimpleTokenSetup() {
+            const currentToken = localStorage.getItem('privateRepoToken') || '';
+            const newToken = prompt('Ingrese su token de acceso para el repositorio privado:', currentToken);
+            
+            if (newToken !== null && newToken.trim() !== '') {
+                localStorage.setItem('privateRepoToken', newToken.trim());
+                
+                // Reinicializar con el nuevo token
+                if (window.bafarHub) {
+                    window.bafarHub.privateToken = newToken.trim();
+                    window.bafarHub.loadFromGitHub();
+                }
+                
+                alert('✅ Token configurado correctamente. Actualizando datos...');
+            }
+        }
+        
         // Toggle between Editor and Reader mode
         let isReaderMode = false;
         window.toggleViewMode = function() {
@@ -3969,7 +4003,19 @@
                         element.style.cursor = '';
                     });
                     
-                    // Restaurar texto original de botones de guardar
+                    // Restaurar texto original de botones
+                    const mainSyncText = document.getElementById('mainSyncText');
+                    if (mainSyncText && mainSyncText.textContent.includes('Actualizar')) {
+                        mainSyncText.textContent = '💾 Guardar y Sincronizar';
+                        console.log('✅ Botón principal restaurado');
+                    }
+                    
+                    const configRepoText = document.getElementById('configRepoText');
+                    if (configRepoText && configRepoText.textContent.includes('Config Token')) {
+                        configRepoText.textContent = '🔐 Config Repo';
+                        console.log('✅ Botón config restaurado');
+                    }
+                    
                     document.querySelectorAll('.save-text').forEach(span => {
                         if (span.textContent.includes('Actualizar') && !span.textContent.includes('Guardar')) {
                             span.textContent = span.textContent.replace('Actualizar', 'Guardar en GitHub');
