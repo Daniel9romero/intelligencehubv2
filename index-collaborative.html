@@ -3817,10 +3817,43 @@
                         }
                     });
                     
-                    // Ocultar botones de agregar/eliminar
-                    document.querySelectorAll('.btn-danger, .btn-add, .add-btn, [onclick*="add"], [onclick*="remove"], [onclick*="delete"]').forEach(el => {
+                    // Ocultar TODOS los botones de edición/eliminar/guardar
+                    document.querySelectorAll('.btn-danger, .btn-add, .add-btn, [onclick*="add"], [onclick*="remove"], [onclick*="delete"], [onclick*="save"], [onclick*="Save"], [onclick*="eliminar"], [onclick*="Eliminar"]').forEach(el => {
                         el.style.display = 'none';
                     });
+                    
+                    // Ocultar botones con texto específico
+                    document.querySelectorAll('button').forEach(btn => {
+                        const text = btn.textContent.toLowerCase();
+                        if (text.includes('guardar') || text.includes('eliminar') || text.includes('agregar') || 
+                            text.includes('save') || text.includes('delete') || text.includes('add') ||
+                            text.includes('crear') || text.includes('nuevo')) {
+                            btn.style.display = 'none';
+                        }
+                        // Cambiar texto de botones de sincronización
+                        if (text.includes('sincronizar') || text.includes('actualizar datos')) {
+                            btn.textContent = '🔄 Actualizar';
+                            btn.disabled = false;
+                            btn.style.opacity = '1';
+                        }
+                    });
+                    
+                    // Ocultar configuración compleja y agregar botón simple
+                    const configSection = document.querySelector('[onclick*="openPrivateRepoSetup"]');
+                    if (configSection) {
+                        configSection.style.display = 'none';
+                        
+                        // Agregar botón simple para token si no existe
+                        if (!document.getElementById('simpleTokenBtn')) {
+                            const simpleBtn = document.createElement('button');
+                            simpleBtn.id = 'simpleTokenBtn';
+                            simpleBtn.className = 'btn btn-primary btn-small';
+                            simpleBtn.textContent = '🔑 Configurar Token';
+                            simpleBtn.style.marginLeft = '10px';
+                            simpleBtn.onclick = () => window.open('simple-token-setup.html', '_blank');
+                            configSection.parentElement.appendChild(simpleBtn);
+                        }
+                    }
                     
                     if (typeof showNotification === 'function') {
                         showNotification('👁️ Modo Lector activado - Solo visualización', 'info');
@@ -3860,10 +3893,38 @@
                         element.style.cursor = '';
                     });
                     
-                    // Mostrar botones de agregar/eliminar
-                    document.querySelectorAll('.btn-danger, .btn-add, .add-btn, [onclick*="add"], [onclick*="remove"], [onclick*="delete"]').forEach(el => {
+                    // Mostrar TODOS los botones nuevamente
+                    document.querySelectorAll('.btn-danger, .btn-add, .add-btn, [onclick*="add"], [onclick*="remove"], [onclick*="delete"], [onclick*="save"], [onclick*="Save"], [onclick*="eliminar"], [onclick*="Eliminar"]').forEach(el => {
                         el.style.display = '';
                     });
+                    
+                    // Restaurar botones ocultos
+                    document.querySelectorAll('button').forEach(btn => {
+                        if (btn.id !== 'modeIndicator') {
+                            btn.style.display = '';
+                        }
+                        // Restaurar texto original de botones si fueron cambiados
+                        if (btn.textContent === '🔄 Actualizar') {
+                            // Determinar el texto original basado en el onclick
+                            if (btn.onclick && btn.onclick.toString().includes('syncData')) {
+                                btn.textContent = '💾 Sincronizar Cambios';
+                            } else if (btn.onclick && btn.onclick.toString().includes('updateData')) {
+                                btn.textContent = '🔄 Actualizar Datos';
+                            }
+                        }
+                    });
+                    
+                    // Mostrar sección de configuración token y quitar botón simple
+                    const configSection = document.querySelector('[onclick*="openPrivateRepoSetup"]');
+                    if (configSection) {
+                        configSection.style.display = '';
+                    }
+                    
+                    // Quitar botón simple si existe
+                    const simpleTokenBtn = document.getElementById('simpleTokenBtn');
+                    if (simpleTokenBtn) {
+                        simpleTokenBtn.remove();
+                    }
                     
                     if (typeof showNotification === 'function') {
                         showNotification('✏️ Modo Editor activado - Puede editar', 'success');
