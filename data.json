@@ -1,0 +1,82 @@
+{
+  "units": [
+    {
+      "id": 1,
+      "name": "DPC Carnes Frías",
+      "responsible": "",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "orgChart": [
+        {"name": "Director DPC", "level": 0, "parentId": null},
+        {"name": "Gerente Producción", "level": 1, "parentId": 0},
+        {"name": "Gerente Calidad", "level": 1, "parentId": 0},
+        {"name": "Gerente Ventas", "level": 1, "parentId": 0}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Food Service",
+      "responsible": "",
+      "email": "",
+      "frequency": "Diaria",
+      "status": "Pendiente",
+      "orgChart": [
+        {"name": "Director Food Service", "level": 0, "parentId": null},
+        {"name": "Gerente Operaciones", "level": 1, "parentId": 0},
+        {"name": "Gerente Comercial", "level": 1, "parentId": 0}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Retail",
+      "responsible": "",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "orgChart": [
+        {"name": "Director Retail", "level": 0, "parentId": null},
+        {"name": "Gerente Tiendas", "level": 1, "parentId": 0},
+        {"name": "Gerente E-commerce", "level": 1, "parentId": 0}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Exportación",
+      "responsible": "",
+      "email": "",
+      "frequency": "Diaria",
+      "status": "Pendiente",
+      "orgChart": [
+        {"name": "Director Exportación", "level": 0, "parentId": null},
+        {"name": "Gerente Internacional", "level": 1, "parentId": 0},
+        {"name": "Gerente Logística", "level": 1, "parentId": 0}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Agroindustrial",
+      "responsible": "",
+      "email": "",
+      "frequency": "Semanal",
+      "status": "Pendiente",
+      "orgChart": [
+        {"name": "Director Agroindustrial", "level": 0, "parentId": null},
+        {"name": "Gerente Granja", "level": 1, "parentId": 0},
+        {"name": "Gerente Planta", "level": 1, "parentId": 0}
+      ]
+    }
+  ],
+  "needs": {},
+  "research": {},
+  "metrics": {
+    "decisions": 0,
+    "opportunities": 0,
+    "risks": 0,
+    "time": 0
+  },
+  "startDate": "2024-08-25",
+  "progress": 15,
+  "lastUpdate": "2024-08-25T15:00:00.000Z",
+  "lastEditor": "Sistema"
+}
