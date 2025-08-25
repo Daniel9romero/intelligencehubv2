@@ -805,6 +805,21 @@
                     role: 'editor',
                     name: 'Gabriela Mariñelarena'
                 },
+                'lector': {
+                    password: 'bafar2024',
+                    role: 'reader',
+                    name: 'Usuario Lector'
+                },
+                'viewer': {
+                    password: 'view2024',
+                    role: 'reader',
+                    name: 'Visualizador'
+                },
+                'consulta': {
+                    password: 'consulta2024',
+                    role: 'reader',
+                    name: 'Consulta'
+                },
                 'sergio': {
                     password: 'bafar2024',
                     role: 'editor',
@@ -939,11 +954,9 @@
                 
                 // Redirect after animation completes (3.5 seconds for TV effect)
                 setTimeout(() => {
-                    if (user.role === 'editor') {
-                        window.location.href = 'index-collaborative.html';
-                    } else {
-                        window.location.href = 'index-shared.html';
-                    }
+                    // Todos van a index-collaborative.html
+                    // El modo (editor/lector) se determina por el rol
+                    window.location.href = 'index-collaborative.html';
                 }, 3500);
             }, 500);
         }
