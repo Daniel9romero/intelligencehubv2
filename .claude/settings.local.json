@@ -19,7 +19,9 @@
       "WebFetch(domain:codepen.io)",
       "WebFetch(domain:dev.to)",
       "Bash(grep:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "WebFetch(domain:daniel9romero.github.io)",
+      "Bash(git ls-tree:*)"
     ],
     "deny": [],
     "ask": [],

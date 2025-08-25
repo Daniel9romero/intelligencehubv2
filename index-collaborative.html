@@ -2073,7 +2073,7 @@
             const userData = sessionStorage.getItem('user');
             if (userData) {
                 const user = JSON.parse(userData);
-                if (user.role === 'reader') {
+                if (user.role === 'reader' || user.role === 'viewer') {
                     console.log('🔒 USUARIO READER DETECTADO - ELIMINANDO BOTÓN AGRESIVAMENTE');
                     
                     // MÉTODO SÚPER AGRESIVO - Múltiples enfoques
@@ -2964,7 +2964,7 @@
                     }
                     
                     // Auto-activate reader mode for users with reader role
-                    if (user.role === 'reader') {
+                    if (user.role === 'reader' || user.role === 'viewer') {
                         console.log('👁️ Usuario con rol reader - activando modo lector automáticamente');
                         setTimeout(() => {
                             // Activar modo lector después de que la página cargue
