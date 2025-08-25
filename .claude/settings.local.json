@@ -18,7 +18,8 @@
       "WebFetch(domain:aleclownes.com)",
       "WebFetch(domain:codepen.io)",
       "WebFetch(domain:dev.to)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": [],
