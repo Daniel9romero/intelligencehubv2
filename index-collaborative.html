@@ -2069,6 +2069,19 @@
             // Initialize current user from login session
             initializeCurrentUser();
             
+            // SECURITY: Hide mode toggle for reader users immediately
+            const userData = sessionStorage.getItem('user');
+            if (userData) {
+                const user = JSON.parse(userData);
+                if (user.role === 'reader') {
+                    const modeButton = document.getElementById('modeIndicator');
+                    if (modeButton) {
+                        modeButton.style.display = 'none';
+                        console.log('🔒 Botón de modo oculto para usuario reader - SEGURIDAD');
+                    }
+                }
+            }
+            
             // Initialize user indicator
             document.getElementById('currentUserName').textContent = currentUser;
 
