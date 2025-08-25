@@ -150,14 +150,14 @@ class BafarIntelligenceHub {
             if (!privateToken && !isReaderMode) {
                 console.log('No private token found, using local data only');
                 this.updateSyncStatus('local-only');
-                this.loadFromLocal();
+                await this.loadFromLocal();
                 return false;
             }
             
             if (isReaderMode && !privateToken) {
                 console.log('Reader mode - using local data without GitHub sync');
                 this.updateSyncStatus('local-only');
-                this.loadFromLocal();
+                await this.loadFromLocal();
                 return true;
             }
             
@@ -215,7 +215,7 @@ class BafarIntelligenceHub {
             } else {
                 console.error('GitHub response not ok:', response.status, response.statusText);
                 this.updateSyncStatus('error');
-                this.loadFromLocal();
+                await this.loadFromLocal();
                 return false;
             }
         } catch (error) {
@@ -247,27 +247,40 @@ class BafarIntelligenceHub {
     }
 
     // Load data from local storage
-    loadFromLocal() {
+    async loadFromLocal() {
         const saved = localStorage.getItem('bafarHub');
         if (saved) {
             try {
                 this.appData = JSON.parse(saved);
+                console.log('✅ Datos cargados desde localStorage');
                 this.updateSyncStatus('local');
                 this.updateAllUI();
                 return true;
             } catch (error) {
                 console.error('Error loading local data:', error);
-                this.appData = this.initDefaultData();
-                this.updateAllUI();
-                return false;
             }
-        } else {
-            // No local data, initialize with default data
-            console.log('No local data found, initializing with default data');
-            this.appData = this.initDefaultData();
-            this.updateAllUI();
-            return true;
         }
+        
+        // Si no hay localStorage, intentar cargar desde data.json
+        try {
+            const response = await fetch('./data.json');
+            if (response.ok) {
+                const jsonData = await response.json();
+                console.log('✅ Cargando TUS DATOS desde data.json - Unidades:', jsonData.units ? jsonData.units.length : 0);
+                this.appData = jsonData;
+                this.updateSyncStatus('local');
+                this.updateAllUI();
+                return true;
+            }
+        } catch (error) {
+            console.log('No se pudo cargar data.json:', error.message);
+        }
+        
+        // Solo como último recurso usar datos por defecto
+        console.log('Usando datos por defecto como último recurso');
+        this.appData = this.initDefaultData();
+        this.updateAllUI();
+        return true;
     }
 
     // Update sync status indicator
