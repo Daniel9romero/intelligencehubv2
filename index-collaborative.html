@@ -2907,6 +2907,17 @@
                             adminBtn.style.display = 'inline-block';
                         }
                     }
+                    
+                    // Auto-activate reader mode for users with reader role
+                    if (user.role === 'reader') {
+                        console.log('👁️ Usuario con rol reader - activando modo lector automáticamente');
+                        setTimeout(() => {
+                            // Activar modo lector después de que la página cargue
+                            if (window.toggleViewMode && !isReaderMode) {
+                                window.toggleViewMode();
+                            }
+                        }, 3000);
+                    }
                 } else {
                     console.log('⚠️ No se encontró información de usuario en sessionStorage');
                     currentUser = 'Usuario';
