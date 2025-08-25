@@ -2131,19 +2131,16 @@
                         });
                     }
                     
-                    // Ejecutar múltiples veces con diferentes delays
+                    // Ejecutar cambio de texto inmediatamente 
                     cambiarTextoBotones();
-                    [100, 300, 500, 1000, 2000, 3000, 5000].forEach(delay => {
+                    
+                    // Ejecutar eliminación de botón modo múltiples veces
+                    [100, 300, 500, 1000, 2000].forEach(delay => {
                         setTimeout(eliminarBotonModo, delay);
-                        setTimeout(cambiarTextoBotones, delay + 50);
                     });
                     
-                    // Observer para capturar cualquier intento de recrear el botón
-                    const observer = new MutationObserver(() => {
-                        eliminarBotonModo();
-                        cambiarTextoBotones();
-                    });
-                    observer.observe(document.body, { childList: true, subtree: true });
+                    // Solo cambiar texto una vez más después de 2 segundos
+                    setTimeout(cambiarTextoBotones, 2500);
                 }
             }
             
