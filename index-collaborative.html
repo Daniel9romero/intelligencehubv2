@@ -1591,7 +1591,7 @@
                 <div class="action-buttons">
                     <button class="btn btn-secondary" onclick="fixDataStructure()">Reparar Estructura de Datos</button>
                     <button class="btn btn-danger" onclick="resetAllData()">Reiniciar Todo</button>
-                    <button class="btn btn-primary" onclick="saveToGitHub()">💾 Guardar en GitHub</button>
+                    <button class="btn btn-primary" onclick="saveToGitHub()" id="saveBtn1">💾 <span class="save-text">Guardar en GitHub</span></button>
                 </div>
             </section>
 
@@ -1603,7 +1603,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <h3>Registro de Unidades y Responsables</h3>
                         <div>
-                            <button class="btn btn-primary" onclick="saveToGitHub()">💾 Guardar en GitHub</button>
+                            <button class="btn btn-primary" onclick="saveToGitHub()" id="saveBtn2">💾 <span class="save-text">Guardar en GitHub</span></button>
                         </div>
                     </div>
 
@@ -1833,7 +1833,7 @@
 
                 <div class="action-buttons">
                     <button class="btn btn-secondary" onclick="exportData('needs')">Exportar Necesidades</button>
-                    <button class="btn btn-primary" onclick="saveToGitHub()">💾 Guardar en GitHub Necesidades</button>
+                    <button class="btn btn-primary" onclick="saveToGitHub()" id="saveBtn3">💾 <span class="save-text">Guardar en GitHub Necesidades</span></button>
                 </div>
             </section>
 
@@ -1852,7 +1852,7 @@
                 <div class="action-buttons">
                     <button class="btn btn-secondary" onclick="generateResearchReport()">Generar Reporte</button>
                     <button class="btn btn-secondary" onclick="exportData('research')">Exportar Matriz</button>
-                    <button class="btn btn-primary" onclick="saveToGitHub()">💾 Guardar en GitHub Matriz de Investigación</button>
+                    <button class="btn btn-primary" onclick="saveToGitHub()" id="saveBtn4">💾 <span class="save-text">Guardar en GitHub Matriz de Investigación</span></button>
                 </div>
             </section>
 
@@ -1974,7 +1974,7 @@
                 <div class="action-buttons">
                     <button class="btn btn-secondary" onclick="generateMetricsReport()">Generar Reporte de Métricas</button>
                     <button class="btn btn-secondary" onclick="exportData('metrics')">Exportar Datos</button>
-                    <button class="btn btn-primary" onclick="saveToGitHub()">💾 Guardar en GitHub Métricas</button>
+                    <button class="btn btn-primary" onclick="saveToGitHub()" id="saveBtn5">💾 <span class="save-text">Guardar en GitHub Métricas</span></button>
                 </div>
             </section>
 
@@ -3872,16 +3872,23 @@
                         }
                     });
                     
-                    // Ocultar TODOS los botones de edición/eliminar/guardar/agregar
-                    document.querySelectorAll('.btn-danger, .btn-add, .add-btn, [onclick*="add"], [onclick*="remove"], [onclick*="delete"], [onclick*="save"], [onclick*="Save"], [onclick*="eliminar"], [onclick*="Eliminar"], [onclick*="removeUnit"], [onclick*="addOrgPosition"]').forEach(el => {
+                    // Cambiar texto de botones de guardar a "Actualizar" para viewers
+                    document.querySelectorAll('.save-text').forEach(span => {
+                        if (span.textContent.includes('Guardar')) {
+                            span.textContent = span.textContent.replace('Guardar en GitHub', 'Actualizar').replace('Guardar en GitHub Necesidades', 'Actualizar').replace('Guardar en GitHub Matriz de Investigación', 'Actualizar').replace('Guardar en GitHub Métricas', 'Actualizar');
+                        }
+                    });
+                    
+                    // Ocultar TODOS los botones de edición/eliminar/agregar (excepto guardar/actualizar)
+                    document.querySelectorAll('.btn-danger, .btn-add, .add-btn, [onclick*="add"], [onclick*="remove"], [onclick*="delete"], [onclick*="eliminar"], [onclick*="Eliminar"], [onclick*="removeUnit"], [onclick*="addOrgPosition"]').forEach(el => {
                         el.style.display = 'none';
                     });
                     
-                    // Ocultar botones con texto específico
+                    // Ocultar botones con texto específico (excepto actualizar)
                     document.querySelectorAll('button').forEach(btn => {
                         const text = btn.textContent.toLowerCase();
-                        if (text.includes('guardar') || text.includes('eliminar') || text.includes('agregar') || 
-                            text.includes('save') || text.includes('delete') || text.includes('add') ||
+                        if (text.includes('eliminar') || text.includes('agregar') || 
+                            text.includes('delete') || text.includes('add') ||
                             text.includes('crear') || text.includes('nuevo')) {
                             btn.style.display = 'none';
                         }
@@ -3948,8 +3955,15 @@
                         element.style.cursor = '';
                     });
                     
+                    // Restaurar texto original de botones de guardar
+                    document.querySelectorAll('.save-text').forEach(span => {
+                        if (span.textContent.includes('Actualizar') && !span.textContent.includes('Guardar')) {
+                            span.textContent = span.textContent.replace('Actualizar', 'Guardar en GitHub');
+                        }
+                    });
+                    
                     // Mostrar TODOS los botones nuevamente
-                    document.querySelectorAll('.btn-danger, .btn-add, .add-btn, [onclick*="add"], [onclick*="remove"], [onclick*="delete"], [onclick*="save"], [onclick*="Save"], [onclick*="eliminar"], [onclick*="Eliminar"], [onclick*="removeUnit"], [onclick*="addOrgPosition"]').forEach(el => {
+                    document.querySelectorAll('.btn-danger, .btn-add, .add-btn, [onclick*="add"], [onclick*="remove"], [onclick*="delete"], [onclick*="eliminar"], [onclick*="Eliminar"], [onclick*="removeUnit"], [onclick*="addOrgPosition"]').forEach(el => {
                         el.style.display = '';
                     });
                     
