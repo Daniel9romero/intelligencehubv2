@@ -1658,6 +1658,8 @@
                             <button id="generalBtn" class="unit-tab-button active" onclick="switchUnitTab('generalTab')">📋 Información General</button>
                             <button id="organigramaBtn" class="unit-tab-button" onclick="switchUnitTab('organigramaTab')">👥 Organigrama</button>
                             <button id="metricsBtn" class="unit-tab-button" onclick="switchUnitTab('metricsTab')">📊 Métricas</button>
+                            <button id="needsBtn" class="unit-tab-button" onclick="switchUnitTab('needsTab')">🎯 Necesidades</button>
+                            <button id="researchBtn" class="unit-tab-button" onclick="switchUnitTab('researchTab')">🔍 Investigación</button>
                         </div>
                         
                         <!-- General Tab -->
@@ -1758,6 +1760,74 @@
                                 <div class="detail-form-group">
                                     <label for="unitKPIs">KPIs Principales</label>
                                     <textarea id="unitKPIs" placeholder="Lista los KPIs que se monitorean..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Needs Tab -->
+                        <div id="needsTab" class="unit-tab-content">
+                            <h3>🎯 Necesidades de Información</h3>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                <p><strong>Define las necesidades específicas de información para esta unidad.</strong></p>
+                            </div>
+                            
+                            <div class="needs-section">
+                                <div class="form-row">
+                                    <div class="detail-form-group" style="flex: 2;">
+                                        <label for="unitNeedDescription">Descripción de la Necesidad</label>
+                                        <input type="text" id="unitNeedDescription" placeholder="Ej: Análisis de mercado competitivo">
+                                    </div>
+                                    <div class="detail-form-group">
+                                        <label for="unitNeedPriority">Prioridad</label>
+                                        <select id="unitNeedPriority">
+                                            <option value="Alta">🔴 Alta</option>
+                                            <option value="Media">🟡 Media</option>
+                                            <option value="Baja">🟢 Baja</option>
+                                        </select>
+                                    </div>
+                                    <div class="detail-form-group">
+                                        <button type="button" class="btn btn-primary btn-small" onclick="addUnitNeed()" ${!window.bafarHub?.isEditor ? 'style="display:none"' : ''}>+ Agregar</button>
+                                    </div>
+                                </div>
+                                
+                                <div id="unitNeedsList" style="margin-top: 15px;">
+                                    <!-- Unit needs will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Research Tab -->
+                        <div id="researchTab" class="unit-tab-content">
+                            <h3>🔍 Matriz de Investigación</h3>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                <p><strong>Define los temas de investigación e inteligencia para esta unidad.</strong></p>
+                            </div>
+                            
+                            <div class="research-section">
+                                <div class="form-row">
+                                    <div class="detail-form-group" style="flex: 2;">
+                                        <label for="unitResearchTopic">Tema de Investigación</label>
+                                        <input type="text" id="unitResearchTopic" placeholder="Ej: Tendencias de consumo en carnes frías">
+                                    </div>
+                                    <div class="detail-form-group">
+                                        <label for="unitResearchStatus">Estado</label>
+                                        <select id="unitResearchStatus">
+                                            <option value="Pendiente">⏳ Pendiente</option>
+                                            <option value="En Proceso">🔄 En Proceso</option>
+                                            <option value="Completado">✅ Completado</option>
+                                        </select>
+                                    </div>
+                                    <div class="detail-form-group">
+                                        <label for="unitResearchDeadline">Fecha Límite</label>
+                                        <input type="date" id="unitResearchDeadline">
+                                    </div>
+                                    <div class="detail-form-group">
+                                        <button type="button" class="btn btn-primary btn-small" onclick="addUnitResearch()" ${!window.bafarHub?.isEditor ? 'style="display:none"' : ''}>+ Agregar</button>
+                                    </div>
+                                </div>
+                                
+                                <div id="unitResearchList" style="margin-top: 15px;">
+                                    <!-- Unit research will be populated here -->
                                 </div>
                             </div>
                         </div>
@@ -3260,6 +3330,10 @@
             // Store current unit ID
             window.currentUnitId = unitId;
             
+            // Initialize needs and research arrays if they don't exist
+            if (!unit.needs) unit.needs = [];
+            if (!unit.research) unit.research = [];
+            
             // Show modal with editing indicator
             document.getElementById('unitModal').style.display = 'flex';
             updateModalHeader(unit.name);
@@ -3269,6 +3343,10 @@
             
             // Load organigrama if exists
             loadOrgChart(unitId);
+            
+            // Load unit-specific needs and research
+            loadUnitNeeds();
+            loadUnitResearch();
             
             // Auto-refresh lock every 2 minutes while editing
             if (window.editingLockInterval) {
@@ -3295,6 +3373,162 @@
             
             document.getElementById('unitModal').style.display = 'none';
             window.currentUnitId = null;
+        }
+        
+        // Add need to current unit
+        function addUnitNeed() {
+            if (!window.bafarHub?.isEditor) return;
+            if (!window.currentUnitId) return;
+            
+            const description = document.getElementById('unitNeedDescription').value.trim();
+            const priority = document.getElementById('unitNeedPriority').value;
+            
+            if (!description) {
+                alert('Por favor ingrese una descripción para la necesidad');
+                return;
+            }
+            
+            const unit = appData.units.find(u => u.id === window.currentUnitId);
+            if (unit && !unit.needs) unit.needs = [];
+            
+            const need = {
+                id: Date.now(),
+                description: description,
+                priority: priority,
+                created: new Date().toISOString(),
+                status: 'Pendiente'
+            };
+            
+            unit.needs.push(need);
+            
+            // Clear form
+            document.getElementById('unitNeedDescription').value = '';
+            document.getElementById('unitNeedPriority').value = 'Alta';
+            
+            // Refresh needs list
+            loadUnitNeeds();
+            saveAllData();
+        }
+        
+        // Add research to current unit
+        function addUnitResearch() {
+            if (!window.bafarHub?.isEditor) return;
+            if (!window.currentUnitId) return;
+            
+            const topic = document.getElementById('unitResearchTopic').value.trim();
+            const status = document.getElementById('unitResearchStatus').value;
+            const deadline = document.getElementById('unitResearchDeadline').value;
+            
+            if (!topic) {
+                alert('Por favor ingrese un tema de investigación');
+                return;
+            }
+            
+            const unit = appData.units.find(u => u.id === window.currentUnitId);
+            if (unit && !unit.research) unit.research = [];
+            
+            const research = {
+                id: Date.now(),
+                topic: topic,
+                status: status,
+                deadline: deadline,
+                created: new Date().toISOString()
+            };
+            
+            unit.research.push(research);
+            
+            // Clear form
+            document.getElementById('unitResearchTopic').value = '';
+            document.getElementById('unitResearchStatus').value = 'Pendiente';
+            document.getElementById('unitResearchDeadline').value = '';
+            
+            // Refresh research list
+            loadUnitResearch();
+            saveAllData();
+        }
+        
+        // Load unit needs into the list
+        function loadUnitNeeds() {
+            if (!window.currentUnitId) return;
+            
+            const unit = appData.units.find(u => u.id === window.currentUnitId);
+            const needsList = document.getElementById('unitNeedsList');
+            
+            if (!unit || !unit.needs) {
+                needsList.innerHTML = '<p style="color: #666; text-align: center;">No hay necesidades definidas.</p>';
+                return;
+            }
+            
+            needsList.innerHTML = unit.needs.map((need, index) => `
+                <div class="need-item" style="background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid ${need.priority === 'Alta' ? '#dc3545' : need.priority === 'Media' ? '#ffc107' : '#28a745'};">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <h4 style="margin: 0 0 8px 0; color: #333;">${need.description}</h4>
+                            <div style="display: flex; gap: 15px; font-size: 12px; color: #666;">
+                                <span><strong>Prioridad:</strong> ${need.priority === 'Alta' ? '🔴' : need.priority === 'Media' ? '🟡' : '🟢'} ${need.priority}</span>
+                                <span><strong>Estado:</strong> ${need.status}</span>
+                                <span><strong>Creado:</strong> ${new Date(need.created).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-danger btn-small" onclick="removeUnitNeed(${need.id})" ${!window.bafarHub?.isEditor ? 'style="display:none"' : ''}>×</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Load unit research into the list
+        function loadUnitResearch() {
+            if (!window.currentUnitId) return;
+            
+            const unit = appData.units.find(u => u.id === window.currentUnitId);
+            const researchList = document.getElementById('unitResearchList');
+            
+            if (!unit || !unit.research) {
+                researchList.innerHTML = '<p style="color: #666; text-align: center;">No hay investigaciones definidas.</p>';
+                return;
+            }
+            
+            researchList.innerHTML = unit.research.map((research, index) => `
+                <div class="research-item" style="background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid ${research.status === 'Completado' ? '#28a745' : research.status === 'En Proceso' ? '#ffc107' : '#dc3545'};">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <h4 style="margin: 0 0 8px 0; color: #333;">${research.topic}</h4>
+                            <div style="display: flex; gap: 15px; font-size: 12px; color: #666;">
+                                <span><strong>Estado:</strong> ${research.status === 'Completado' ? '✅' : research.status === 'En Proceso' ? '🔄' : '⏳'} ${research.status}</span>
+                                ${research.deadline ? `<span><strong>Fecha límite:</strong> ${new Date(research.deadline).toLocaleDateString()}</span>` : ''}
+                                <span><strong>Creado:</strong> ${new Date(research.created).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-danger btn-small" onclick="removeUnitResearch(${research.id})" ${!window.bafarHub?.isEditor ? 'style="display:none"' : ''}>×</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Remove unit need
+        function removeUnitNeed(needId) {
+            if (!window.bafarHub?.isEditor) return;
+            if (!window.currentUnitId) return;
+            
+            const unit = appData.units.find(u => u.id === window.currentUnitId);
+            if (unit && unit.needs) {
+                unit.needs = unit.needs.filter(need => need.id !== needId);
+                loadUnitNeeds();
+                saveAllData();
+            }
+        }
+        
+        // Remove unit research
+        function removeUnitResearch(researchId) {
+            if (!window.bafarHub?.isEditor) return;
+            if (!window.currentUnitId) return;
+            
+            const unit = appData.units.find(u => u.id === window.currentUnitId);
+            if (unit && unit.research) {
+                unit.research = unit.research.filter(research => research.id !== researchId);
+                loadUnitResearch();
+                saveAllData();
+            }
         }
         
         // Editing lock functions

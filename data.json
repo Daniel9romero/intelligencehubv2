@@ -12,7 +12,9 @@
         {"name": "Gerente Producción", "level": 1, "parentId": 0},
         {"name": "Gerente Calidad", "level": 1, "parentId": 0},
         {"name": "Gerente Ventas", "level": 1, "parentId": 0}
-      ]
+      ],
+      "needs": [],
+      "research": []
     },
     {
       "id": 2,
@@ -25,7 +27,9 @@
         {"name": "Director Food Service", "level": 0, "parentId": null},
         {"name": "Gerente Operaciones", "level": 1, "parentId": 0},
         {"name": "Gerente Comercial", "level": 1, "parentId": 0}
-      ]
+      ],
+      "needs": [],
+      "research": []
     },
     {
       "id": 3,
@@ -38,7 +42,9 @@
         {"name": "Director Retail", "level": 0, "parentId": null},
         {"name": "Gerente Tiendas", "level": 1, "parentId": 0},
         {"name": "Gerente E-commerce", "level": 1, "parentId": 0}
-      ]
+      ],
+      "needs": [],
+      "research": []
     },
     {
       "id": 4,
@@ -51,7 +57,9 @@
         {"name": "Director Exportación", "level": 0, "parentId": null},
         {"name": "Gerente Internacional", "level": 1, "parentId": 0},
         {"name": "Gerente Logística", "level": 1, "parentId": 0}
-      ]
+      ],
+      "needs": [],
+      "research": []
     },
     {
       "id": 5,
@@ -64,7 +72,9 @@
         {"name": "Director Agroindustrial", "level": 0, "parentId": null},
         {"name": "Gerente Granja", "level": 1, "parentId": 0},
         {"name": "Gerente Planta", "level": 1, "parentId": 0}
-      ]
+      ],
+      "needs": [],
+      "research": []
     }
   ],
   "needs": {},
