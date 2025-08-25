@@ -2111,14 +2111,37 @@
                     // Ejecutar inmediatamente
                     eliminarBotonModo();
                     
+                    // Función para cambiar texto de botones
+                    function cambiarTextoBotones() {
+                        console.log('🔄 CAMBIANDO TEXTO DE BOTONES GUARDAR A ACTUALIZAR');
+                        document.querySelectorAll('.save-text').forEach(span => {
+                            if (span.textContent.includes('Guardar')) {
+                                const oldText = span.textContent;
+                                span.textContent = span.textContent.replace('Guardar en GitHub', 'Actualizar').replace('Guardar en GitHub Necesidades', 'Actualizar').replace('Guardar en GitHub Matriz de Investigación', 'Actualizar').replace('Guardar en GitHub Métricas', 'Actualizar');
+                                console.log('✅ Span cambiado:', oldText, '→', span.textContent);
+                            }
+                        });
+                        
+                        document.querySelectorAll('button[onclick*="saveToGitHub"]').forEach(btn => {
+                            if (btn.textContent.includes('Guardar')) {
+                                const oldText = btn.textContent;
+                                btn.innerHTML = btn.innerHTML.replace('Guardar en GitHub', 'Actualizar').replace('Guardar en GitHub Necesidades', 'Actualizar').replace('Guardar en GitHub Matriz de Investigación', 'Actualizar').replace('Guardar en GitHub Métricas', 'Actualizar');
+                                console.log('✅ Botón cambiado:', oldText, '→', btn.textContent);
+                            }
+                        });
+                    }
+                    
                     // Ejecutar múltiples veces con diferentes delays
+                    cambiarTextoBotones();
                     [100, 300, 500, 1000, 2000, 3000, 5000].forEach(delay => {
                         setTimeout(eliminarBotonModo, delay);
+                        setTimeout(cambiarTextoBotones, delay + 50);
                     });
                     
                     // Observer para capturar cualquier intento de recrear el botón
                     const observer = new MutationObserver(() => {
                         eliminarBotonModo();
+                        cambiarTextoBotones();
                     });
                     observer.observe(document.body, { childList: true, subtree: true });
                 }
@@ -3872,12 +3895,6 @@
                         }
                     });
                     
-                    // Cambiar texto de botones de guardar a "Actualizar" para viewers
-                    document.querySelectorAll('.save-text').forEach(span => {
-                        if (span.textContent.includes('Guardar')) {
-                            span.textContent = span.textContent.replace('Guardar en GitHub', 'Actualizar').replace('Guardar en GitHub Necesidades', 'Actualizar').replace('Guardar en GitHub Matriz de Investigación', 'Actualizar').replace('Guardar en GitHub Métricas', 'Actualizar');
-                        }
-                    });
                     
                     // Ocultar TODOS los botones de edición/eliminar/agregar (excepto guardar/actualizar)
                     document.querySelectorAll('.btn-danger, .btn-add, .add-btn, [onclick*="add"], [onclick*="remove"], [onclick*="delete"], [onclick*="eliminar"], [onclick*="Eliminar"], [onclick*="removeUnit"], [onclick*="addOrgPosition"]').forEach(el => {
