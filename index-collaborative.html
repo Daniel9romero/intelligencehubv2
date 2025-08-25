@@ -2077,8 +2077,18 @@
                     const modeButton = document.getElementById('modeIndicator');
                     if (modeButton) {
                         modeButton.style.display = 'none';
-                        console.log('🔒 Botón de modo oculto para usuario reader - SEGURIDAD');
+                        modeButton.remove(); // FORCE REMOVE BUTTON
+                        console.log('🔒 BOTÓN ELIMINADO PARA READER - FORZADO');
                     }
+                    
+                    // Double check after DOM loads
+                    setTimeout(() => {
+                        const btn = document.getElementById('modeIndicator');
+                        if (btn) {
+                            btn.style.display = 'none';
+                            btn.remove();
+                        }
+                    }, 1000);
                 }
             }
             
