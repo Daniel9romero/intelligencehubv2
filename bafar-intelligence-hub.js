@@ -138,11 +138,63 @@ class BafarIntelligenceHub {
 
     // Load data from GitHub
     async loadFromGitHub() {
-        // SIEMPRE cargar TUS 19 UNIDADES desde data.json - NO localStorage
-        console.log('🔄 CARGANDO TUS 19 UNIDADES desde data.json');
-        await this.loadDataJson();
-        this.updateSyncStatus('local-only');
-        return true;
+        try {
+            // Buscar token en múltiples ubicaciones
+            const privateToken = localStorage.getItem('github_private_token') || 
+                                localStorage.getItem('github_token') || 
+                                localStorage.getItem('privateRepoToken');
+            
+            if (!privateToken || privateToken === '') {
+                console.log('⚠️ Sin token - cargando TUS 19 UNIDADES desde data.json local');
+                await this.loadDataJson();
+                this.updateSyncStatus('local-only');
+                return true;
+            }
+            
+            // CON TOKEN: Intentar cargar desde GitHub privado
+            console.log('🔑 Token encontrado - intentando cargar desde GitHub privado');
+            const url = `https://api.github.com/repos/Daniel9romero/BafarIntelligence-Data/contents/data.json`;
+            
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `token ${privateToken}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            
+            if (response.ok) {
+                const fileInfo = await response.json();
+                
+                // Decodificar base64 correctamente para UTF-8
+                const base64Content = fileInfo.content.replace(/\s/g, '');
+                const binaryString = atob(base64Content);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const content = new TextDecoder('utf-8').decode(bytes);
+                const githubData = JSON.parse(content);
+                
+                console.log('✅ Datos cargados desde GitHub privado:', githubData.units ? githubData.units.length : 0, 'unidades');
+                this.appData = githubData;
+                this.updateSyncStatus('connected');
+                this.lastSync = new Date();
+                this.updateAllUI();
+                return true;
+            } else {
+                console.error('❌ Error GitHub:', response.status);
+                console.log('⚠️ Fallback - cargando TUS 19 UNIDADES desde data.json local');
+                await this.loadDataJson();
+                this.updateSyncStatus('local-only');
+                return false;
+            }
+        } catch (error) {
+            console.error('❌ Error:', error);
+            console.log('⚠️ Fallback - cargando TUS 19 UNIDADES desde data.json local');
+            await this.loadDataJson();
+            this.updateSyncStatus('local-only');
+            return false;
+        }
     }
     
     // NUEVO método para cargar data.json
