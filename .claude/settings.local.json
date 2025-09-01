@@ -24,7 +24,8 @@
       "Bash(git ls-tree:*)",
       "Bash(gh api:*)",
       "Bash(sed:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": [],
