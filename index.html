@@ -769,8 +769,8 @@
     </div>
     
     <!-- Digital Logo Animation -->
-    <div class="digital-logo-container crt-effect" id="digitalLogoContainer" style="position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; width: 350px !important; height: 200px !important; display: none; z-index: 2000 !important;">
-        <img src="diseno-sin-titulo.gif" alt="Grupo BAFAR" class="pixelated-logo" id="pixelatedLogo" style="max-width: 100%; height: auto;">
+    <div id="digitalLogoContainer" style="position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; display: none; z-index: 2000 !important;">
+        <img src="diseno-sin-titulo.gif" alt="Grupo BAFAR" id="pixelatedLogo" style="max-width: 100%; height: auto;">
     </div>
 
 
@@ -924,10 +924,8 @@
 
         // Show Access Granted
         function showAccessGranted(user) {
-            const accessGranted = document.getElementById('accessGranted');
             const loginContainer = document.getElementById('loginContainer');
             const digitalLogoContainer = document.getElementById('digitalLogoContainer');
-            const matrixBg = document.getElementById('matrix-bg');
             
             // Hide login container with fade out
             loginContainer.style.transition = 'opacity 0.5s ease-out';
@@ -936,15 +934,8 @@
             setTimeout(() => {
                 loginContainer.style.display = 'none';
                 
-                // Skip ACCESS GRANTED - go directly to logo with TV effect
-                // Start matrix convergence effect
-                createMatrixConvergence();
-                
-                // Show digital logo directly with TV retro effect
-                digitalLogoContainer.style.display = 'flex';
-                
-                // Add glitch effect during reveal
-                addGlitchEffect();
+                // Show GIF animation directly without effects
+                digitalLogoContainer.style.display = 'block';
                 
                 // Store user session
                 sessionStorage.setItem('user', JSON.stringify({
@@ -952,12 +943,10 @@
                     role: user.role
                 }));
                 
-                // Redirect after animation completes (3.5 seconds for TV effect)
+                // Redirect after GIF plays (3 seconds)
                 setTimeout(() => {
-                    // Todos van a index-collaborative.html
-                    // El modo (editor/lector) se determina por el rol
                     window.location.href = 'index-collaborative.html';
-                }, 3500);
+                }, 3000);
             }, 500);
         }
         
